@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MissTheBoat — Avoid cruise ship crowds</title>
+<meta name="description" content="Plan your trip around cruise ship port calls and excursions. Color-coded crowd heatmap for every stop.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;background:#f7f6f3;color:#1a1a1a;min-height:100vh}
+
+/* Layout */
+.page{max-width:720px;margin:0 auto;padding:0 0 4rem}
+.hdr{padding:2rem 1.5rem 1.25rem;border-bottom:1px solid #e8e6e0}
+.logo{font-size:22px;font-weight:600;letter-spacing:-.04em;color:#1a1a1a}
+.logo span{color:#2A7050}
+.tagline{font-size:13px;color:#888;margin-top:4px}
+
+/* Navigation tabs */
+.nav{display:flex;gap:0;border-bottom:1px solid #e8e6e0;padding:0 1.5rem;background:#fff}
+.ntab{padding:11px 16px 12px;font-size:13px;color:#888;cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;margin-bottom:-1px;font-weight:500;transition:color .15s}
+.ntab:hover{color:#444}
+.ntab.on{color:#1a1a1a;border-bottom-color:#1a1a1a}
+
+/* Main panels */
+.panel{padding:1.5rem}
+
+/* Input view */
+.modetog{display:flex;gap:6px;margin-bottom:1.25rem}
+.mbtn{padding:5px 14px;font-size:12px;border-radius:20px;border:1px solid #ddd;cursor:pointer;background:#fff;color:#888;font-weight:500;transition:all .15s}
+.mbtn.on{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
+.field-lbl{font-size:11px;font-weight:600;color:#999;text-transform:uppercase;letter-spacing:.07em;margin-bottom:7px}
+textarea{width:100%;height:130px;padding:12px 13px;font-size:13px;font-family:'SF Mono',Monaco,monospace;border:1px solid #ddd;border-radius:10px;background:#fafaf8;color:#1a1a1a;resize:none;line-height:1.7;outline:none;transition:border .15s}
+textarea:focus{border-color:#999;background:#fff}
+.hint{font-size:11px;color:#aaa;margin-top:7px;line-height:1.6}
+.hint a{color:#2A7050;text-decoration:none}
+
+/* Manual stops */
+.stop-list{margin-bottom:10px}
+.stop-row{display:flex;align-items:center;gap:8px;padding:9px 12px;background:#fafaf8;border-radius:8px;margin-bottom:5px;border:1px solid #eee}
+.stop-row .sname{flex:1;font-size:13px;color:#1a1a1a}
+.stop-row .sdate{font-size:12px;color:#999}
+.stop-rem{background:none;border:none;color:#ccc;cursor:pointer;font-size:18px;line-height:1;padding:0 2px;transition:color .15s}
+.stop-rem:hover{color:#999}
+.add-row{display:flex;gap:6px}
+.add-row input{padding:9px 11px;font-size:13px;border:1px solid #ddd;border-radius:8px;background:#fff;color:#1a1a1a;outline:none}
+.add-row input:focus{border-color:#999}
+.add-row input.idest{flex:1}
+.add-row input.idate{width:140px}
+.add-btn{padding:9px 14px;font-size:12px;border:1px solid #ddd;border-radius:8px;background:#fff;color:#666;cursor:pointer;white-space:nowrap;font-weight:500}
+.add-btn:hover{background:#f5f5f5}
+
+.analyze-btn{width:100%;padding:12px;font-size:14px;font-weight:600;border:none;border-radius:10px;background:#1a1a1a;color:#fff;cursor:pointer;margin-top:1.25rem;letter-spacing:-.01em;transition:background .15s}
+.analyze-btn:hover{background:#333}
+.analyze-btn:disabled{background:#ccc;cursor:not-allowed}
+
+/* Results */
+.trip-hdr{padding:1.25rem 1.5rem .75rem}
+.trip-title{font-size:20px;font-weight:600;letter-spacing:-.03em;color:#1a1a1a}
+.trip-sub{font-size:12px;color:#999;margin-top:3px}
+
+/* Summary strip */
+.summary{display:flex;gap:8px;margin:0 1.5rem 1.25rem}
+.sc{flex:1;padding:12px;text-align:center;background:#fff;border-radius:10px;border:1px solid #eee}
+.snum{font-size:24px;font-weight:700;line-height:1}
+.slbl{font-size:11px;color:#999;margin-top:3px;font-weight:500;text-transform:uppercase;letter-spacing:.05em}
+.nred{color:#B83232}.namb{color:#B87820}.ngrn{color:#2A7050}
+
+/* Action buttons */
+.action-row{display:flex;gap:8px;margin:0 1.5rem 1.25rem}
+.act-btn{display:flex;align-items:center;gap:6px;padding:8px 14px;font-size:12px;font-weight:500;border:1px solid #ddd;border-radius:8px;background:#fff;color:#555;cursor:pointer;transition:all .15s}
+.act-btn:hover{background:#f5f5f5;border-color:#ccc}
+.act-btn.primary{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
+.act-btn.primary:hover{background:#333}
+
+/* Legend */
+.legend{display:flex;gap:16px;margin:0 1.5rem 1rem;flex-wrap:wrap}
+.li{display:flex;align-items:center;gap:6px;font-size:12px;color:#888}
+.ls{width:18px;height:3px;border-radius:2px}
+.ls-r{background:#E24B4A}.ls-a{background:#EF9F27}.ls-g{background:#639922}
+
+.sec-lbl{font-size:11px;font-weight:600;color:#aaa;letter-spacing:.07em;text-transform:uppercase;margin:0 1.5rem .75rem}
+
+/* Destination cards */
+.cards{padding:0 1.5rem}
+.card{background:#fff;border:1px solid #eee;border-radius:12px;margin-bottom:8px;overflow:hidden;transition:box-shadow .15s}
+.card:hover{box-shadow:0 2px 8px rgba(0,0,0,.06)}
+
+.card-hdr{display:flex;align-items:center;cursor:pointer}
+.card-hdr:hover .ci{background:#fafaf8}
+.stripe{width:5px;align-self:stretch;flex-shrink:0}
+.st-r{background:#E24B4A}.st-a{background:#EF9F27}.st-g{background:#639922}
+.ci{flex:1;display:flex;align-items:center;gap:12px;padding:13px 14px;transition:background .1s}
+.ct{flex:1;min-width:0}
+.cname{font-size:15px;font-weight:600;letter-spacing:-.02em;color:#1a1a1a;margin-bottom:2px}
+.csub{font-size:12px;color:#999}
+.cr{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0}
+.cdate{font-size:11px;color:#aaa}
+
+.badge{display:inline-flex;align-items:center;font-size:11px;font-weight:700;letter-spacing:.05em;padding:4px 11px;border-radius:20px;min-width:68px;justify-content:center}
+.b-r{background:#FCEBEB;color:#7A1A1A;border:1px solid #F09595}
+.b-a{background:#FDF3E0;color:#7A4A08;border:1px solid #FAC775}
+.b-g{background:#EAF3DE;color:#164030;border:1px solid #C0DD97}
+
+.chev{font-size:11px;color:#ccc;flex-shrink:0;transition:transform .15s;margin-left:6px}
+.chev.open{transform:rotate(180deg)}
+
+/* Expanded detail */
+.det{display:none;border-top:1px solid #f0f0f0}
+
+/* Traffic charts */
+.traf-wrap{padding:14px 14px 12px;background:#fafaf8;border-bottom:1px solid #f0f0f0}
+.traf-block{margin-bottom:12px}
+.traf-block:last-child{margin-bottom:0}
+.traf-ttl{font-size:10px;font-weight:600;color:#aaa;text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px}
+.bar-chart{display:flex;gap:4px;align-items:flex-end;height:44px}
+.bc{display:flex;flex-direction:column;align-items:center;flex:1}
+.bbar{width:100%;border-radius:2px 2px 0 0;min-height:3px;background:#eee;transition:opacity .2s}
+.bbar.hi-r{background:#E24B4A}.bbar.hi-a{background:#EF9F27}.bbar.hi-g{background:#639922}
+.bbar.lo-r{background:#F7C1C1}.bbar.lo-a{background:#FAC775}.bbar.lo-g{background:#C0DD97}
+.bbar.lo-n{background:#e5e5e5}
+.bdl{font-size:9px;margin-top:3px;color:#ccc;font-weight:500}
+.bdl.act{color:#1a1a1a;font-weight:700}
+.no-cruise{font-size:12px;color:#2A7050;font-weight:500;padding:4px 0}
+
+/* Weather row */
+.wx-row{display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid #f0f0f0;font-size:12px;background:#fff}
+.wx-ico{font-size:16px;flex-shrink:0}
+.wx-txt{color:#666;flex:1}
+.wx-loading{color:#ccc;font-style:italic}
+
+/* Info rows */
+.info-rows{padding:4px 14px 10px}
+.irow{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid #f5f5f5;font-size:12px}
+.irow:last-child{border-bottom:none}
+.iico{color:#ccc;flex-shrink:0;width:14px;margin-top:1px;font-size:14px}
+.ibody{color:#666;line-height:1.6;flex:1}
+.ibody strong{color:#1a1a1a;font-weight:600}
+.pill{display:inline-block;font-size:10px;background:#f5f5f3;border:1px solid #eee;border-radius:6px;padding:2px 7px;margin:2px 2px 0 0;color:#888}
+.altbox{background:#EAF3DE;border-radius:8px;padding:8px 11px;margin-top:6px;color:#164030;line-height:1.6;font-size:12px}
+.altbox strong{color:#2A7050;font-weight:600}
+.shldbox{background:#FDF3E0;border-radius:8px;padding:8px 11px;margin-top:6px;color:#7A4A08;line-height:1.6;font-size:12px}
+
+/* Share bar */
+.share-row{margin:1.25rem 1.5rem 0;padding:10px 13px;background:#fff;border-radius:10px;border:1px solid #eee;display:flex;align-items:center;gap:10px}
+.share-url{flex:1;font-size:11px;font-family:monospace;color:#999;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.copy-btn{padding:5px 12px;font-size:11px;border:1px solid #ddd;border-radius:6px;background:#fff;color:#555;cursor:pointer;flex-shrink:0;font-weight:500;transition:all .15s}
+.copy-btn:hover{background:#f5f5f5}
+
+/* Minimize modal overlay */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;align-items:center;justify-content:center}
+.modal-bg.open{display:flex}
+.modal{background:#fff;border-radius:16px;padding:1.75rem;max-width:500px;width:calc(100% - 2rem);max-height:80vh;overflow-y:auto}
+.modal h2{font-size:17px;font-weight:600;letter-spacing:-.02em;margin-bottom:6px}
+.modal .msub{font-size:13px;color:#888;margin-bottom:1.25rem;line-height:1.5}
+.modal-card{background:#fafaf8;border:1px solid #eee;border-radius:10px;padding:12px 14px;margin-bottom:8px}
+.modal-card .mc-name{font-size:14px;font-weight:600;margin-bottom:3px}
+.modal-card .mc-cur{font-size:12px;color:#999;margin-bottom:6px}
+.mc-days{display:flex;gap:4px;flex-wrap:wrap}
+.mc-day{padding:4px 9px;font-size:11px;border-radius:6px;border:1px solid #eee;cursor:pointer;font-weight:500;background:#fff;transition:all .15s}
+.mc-day:hover{border-color:#aaa}
+.mc-day.best{background:#EAF3DE;color:#164030;border-color:#C0DD97}
+.mc-day.worst{background:#FCEBEB;color:#7A1A1A;border-color:#F09595}
+.modal-close{width:100%;padding:10px;font-size:13px;font-weight:600;border:1px solid #eee;border-radius:8px;background:#fff;cursor:pointer;margin-top:1rem;transition:background .15s}
+.modal-close:hover{background:#f5f5f5}
+
+/* Loading spinner */
+.spinner{display:inline-block;width:12px;height:12px;border:2px solid #eee;border-top-color:#999;border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;margin-right:5px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Mobile */
+@media(max-width:520px){
+  .panel,.cards,.summary,.action-row,.legend,.sec-lbl,.trip-hdr,.share-row{padding-left:1rem;padding-right:1rem}
+  .summary,.action-row,.legend,.share-row{margin-left:1rem;margin-right:1rem}
+  .hdr,.nav{padding-left:1rem;padding-right:1rem}
+  .badge{min-width:60px;font-size:10px}
+  .cname{font-size:14px}
+  .bar-chart{height:36px}
+  .action-row{flex-wrap:wrap}
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="hdr">
+    <div class="logo">Miss<span>TheBoat</span></div>
+    <div class="tagline">Plan your trip around cruise ship crowds · Mediterranean edition</div>
+  </header>
+
+  <nav class="nav">
+    <button class="ntab on" onclick="showView('input')">Plan a trip</button>
+    <button class="ntab" id="results-tab" onclick="showView('results')" style="display:none">Results</button>
+  </nav>
+
+  <!-- INPUT VIEW -->
+  <div id="view-input" class="panel">
+    <div class="modetog">
+      <button class="mbtn on" onclick="setMode('paste')">Paste itinerary</button>
+      <button class="mbtn" onclick="setMode('manual')">Add stops manually</button>
+    </div>
+
+    <!-- Paste mode -->
+    <div id="mode-paste">
+      <div class="field-lbl">Your itinerary</div>
+      <textarea id="paste-input" placeholder="May 12 – Arrive Florence&#10;May 13 – Livorno, then San Gimignano&#10;May 14 – Siena, then Volterra&#10;May 15 – Montalcino&#10;May 16 – Pisa + Lucca&#10;May 17 – Florence&#10;&#10;Paste any plain text itinerary. Dates and destinations are extracted automatically."></textarea>
+      <div class="hint">Supports plain text, TripIt exports, or any itinerary format. Year assumed to be 2026 unless specified. <a href="#">See supported formats →</a></div>
+    </div>
+
+    <!-- Manual mode -->
+    <div id="mode-manual" style="display:none">
+      <div class="field-lbl">Trip stops</div>
+      <div class="stop-list" id="stop-list">
+        <div class="stop-row"><span class="sname">Florence</span><span class="sdate">May 12, 2026</span><button class="stop-rem" onclick="this.parentElement.remove()">×</button></div>
+        <div class="stop-row"><span class="sname">Livorno → San Gimignano</span><span class="sdate">May 13, 2026</span><button class="stop-rem" onclick="this.parentElement.remove()">×</button></div>
+        <div class="stop-row"><span class="sname">Volterra</span><span class="sdate">May 14, 2026</span><button class="stop-rem" onclick="this.parentElement.remove()">×</button></div>
+      </div>
+      <div class="add-row">
+        <input type="text" id="new-dest" class="idest" placeholder="Destination" />
+        <input type="date" id="new-date" class="idate" />
+        <button class="add-btn" onclick="addManualStop()">+ Add</button>
+      </div>
+    </div>
+
+    <button class="analyze-btn" onclick="runAnalysis()">Check cruise traffic →</button>
+  </div>
+
+  <!-- RESULTS VIEW -->
+  <div id="view-results" style="display:none">
+    <div class="trip-hdr">
+      <div class="trip-title" id="trip-title">Tuscany, May 12–19</div>
+      <div class="trip-sub" id="trip-sub">Loading...</div>
+    </div>
+
+    <div class="summary">
+      <div class="sc"><div class="snum nred" id="sum-red">—</div><div class="slbl">Avoid</div></div>
+      <div class="sc"><div class="snum namb" id="sum-amb">—</div><div class="slbl">Caution</div></div>
+      <div class="sc"><div class="snum ngrn" id="sum-grn">—</div><div class="slbl">Clear</div></div>
+    </div>
+
+    <div class="action-row">
+      <button class="act-btn primary" onclick="openMinimize()">✦ Minimize crowds</button>
+      <button class="act-btn" onclick="openMinimize(true)">✦ Minimize + suggest alternatives</button>
+    </div>
+
+    <div class="legend">
+      <div class="li"><div class="ls ls-r"></div>Active port day</div>
+      <div class="li"><div class="ls ls-a"></div>Cruise excursion destination</div>
+      <div class="li"><div class="ls ls-g"></div>Cruise-free</div>
+    </div>
+
+    <div class="sec-lbl" id="sec-lbl">Loading destinations…</div>
+    <div class="cards" id="cards"></div>
+
+    <div class="share-row">
+      <div class="share-url" id="share-url">misstheboat.app/trip/...</div>
+      <button class="copy-btn" onclick="copyShareLink()">Copy link</button>
+    </div>
+  </div>
+</div>
+
+<!-- Minimize modal -->
+<div class="modal-bg" id="minimize-modal" onclick="if(event.target===this)closeMinimize()">
+  <div class="modal">
+    <h2>Minimize crowds</h2>
+    <div class="msub" id="modal-sub">For each stop, the best and worst days to visit based on cruise patterns and city traffic. Green = lowest crowd day for that destination.</div>
+    <div id="modal-content"></div>
+    <button class="modal-close" onclick="closeMinimize()">Close</button>
+  </div>
+</div>
+
+<script>
+// ─────────────────────────────────────────────────────────
+// DATA: CRUISE PORT DATABASE
+// Seasonal cruise call volume by day of week (Mon=0...Sun=6)
+// Scale 0–100 (0=no calls, 100=maximum call days in season)
+// Based on published port authority schedules and cruise line deployment patterns
+// ─────────────────────────────────────────────────────────
+const PORTS = {
+  livorno: {
+    name: 'Livorno', country: 'Italy', lat: 43.548, lng: 10.312,
+    spring: [55,88,42,80,72,28,15],
+    summer: [68,92,55,85,78,35,20],
+    fall:   [48,75,38,70,62,22,12],
+    excursions: ['florence','pisa','siena','san gimignano','lucca'],
+    notExcursions: ['volterra','montalcino','bolgheri','massa marittima','certaldo'],
+  },
+  civitavecchia: {
+    name: 'Civitavecchia', country: 'Italy', lat: 42.091, lng: 11.799,
+    spring: [72,75,70,78,80,65,62],
+    summer: [80,88,82,85,90,72,68],
+    fall:   [62,68,65,70,72,55,50],
+    excursions: ['rome','tivoli','orvieto','assisi','siena','pompeii'],
+    notExcursions: ['calcata','sutri','bracciano','tarquinia','viterbo old town'],
+  },
+  naples: {
+    name: 'Naples', country: 'Italy', lat: 40.852, lng: 14.268,
+    spring: [65,70,68,72,75,60,55],
+    summer: [78,85,80,88,90,70,65],
+    fall:   [58,62,60,65,68,52,48],
+    excursions: ['pompeii','amalfi','capri','sorrento','positano','herculaneum'],
+    notExcursions: ['ravello','cetara','maiori','vietri sul mare','paestum','cilento'],
+  },
+  venice: {
+    name: 'Venice', country: 'Italy', lat: 45.441, lng: 12.316,
+    spring: [45,50,48,52,55,70,80],
+    summer: [55,62,58,62,65,85,90],
+    fall:   [38,42,40,45,48,60,70],
+    excursions: ['venice','verona','padua','murano','burano'],
+    notExcursions: ['vicenza','treviso','bassano del grappa','asolo','marostica'],
+  },
+  dubrovnik: {
+    name: 'Dubrovnik', country: 'Croatia', lat: 42.651, lng: 18.094,
+    spring: [60,75,65,80,72,55,50],
+    summer: [82,92,85,90,88,70,65],
+    fall:   [50,65,55,70,62,45,40],
+    excursions: ['dubrovnik old town','kotor','mostar','split','hvar'],
+    notExcursions: ['ston','peljesac','mljet','cavtat','lastovo'],
+  },
+  split: {
+    name: 'Split', country: 'Croatia', lat: 43.508, lng: 16.440,
+    spring: [55,65,58,70,62,48,42],
+    summer: [72,85,78,88,82,65,58],
+    fall:   [45,55,48,60,52,38,32],
+    excursions: ['split old town','hvar','plitvice lakes','trogir','dubrovnik old town'],
+    notExcursions: ['vis','brac','imotski','sinj','omis'],
+  },
+  piraeus: {
+    name: 'Piraeus (Athens)', country: 'Greece', lat: 37.943, lng: 23.647,
+    spring: [65,70,68,72,75,80,85],
+    summer: [80,88,82,85,90,92,88],
+    fall:   [55,62,58,65,68,72,75],
+    excursions: ['athens','cape sounion','delphi','corinth','nafplio'],
+    notExcursions: ['aegina','epidaurus','nemea','marathon','mount parnitha'],
+  },
+  mykonos: {
+    name: 'Mykonos', country: 'Greece', lat: 37.444, lng: 25.328,
+    spring: [50,55,52,58,60,70,75],
+    summer: [82,88,85,90,92,95,90],
+    fall:   [40,45,42,48,50,60,65],
+    excursions: ['mykonos town','delos'],
+    notExcursions: ['ano mera','agios sostis'],
+  },
+  santorini: {
+    name: 'Santorini', country: 'Greece', lat: 36.393, lng: 25.461,
+    spring: [55,60,58,65,70,78,82],
+    summer: [85,90,88,92,95,98,95],
+    fall:   [45,50,48,55,60,68,72],
+    excursions: ['oia','fira','akrotiri','red beach'],
+    notExcursions: ['pyrgos','megalochori','emporio'],
+  },
+  barcelona: {
+    name: 'Barcelona', country: 'Spain', lat: 41.383, lng: 2.183,
+    spring: [70,75,72,78,80,65,60],
+    summer: [82,88,85,90,92,78,72],
+    fall:   [60,65,62,68,72,55,50],
+    excursions: ['barcelona','montserrat','sitges','tarragona'],
+    notExcursions: ['penedes','vic','cardona','besalu'],
+  },
+  palma: {
+    name: 'Palma de Mallorca', country: 'Spain', lat: 39.574, lng: 2.650,
+    spring: [55,62,58,65,70,75,72],
+    summer: [70,80,75,82,88,90,85],
+    fall:   [45,52,48,55,60,65,62],
+    excursions: ['palma old town','valldemossa','soller','formentor'],
+    notExcursions: ['alcudia','sineu','felanitx','ses salines'],
+  },
+  marseille: {
+    name: 'Marseille', country: 'France', lat: 43.297, lng: 5.381,
+    spring: [45,55,50,60,58,42,38],
+    summer: [58,70,62,72,68,55,48],
+    fall:   [38,48,42,52,50,35,30],
+    excursions: ['marseille','aix-en-provence','arles','cassis','avignon'],
+    notExcursions: ['luberon','les baux','cotignac','moustiers-sainte-marie'],
+  },
+  villefranche: {
+    name: 'Villefranche-sur-Mer', country: 'France', lat: 43.704, lng: 7.327,
+    spring: [50,60,55,65,62,48,42],
+    summer: [65,78,70,80,75,60,55],
+    fall:   [42,52,46,56,52,40,35],
+    excursions: ['nice','monaco','eze','cannes','antibes'],
+    notExcursions: ['menton','peillon','cotignac','saint-paul-de-vence'],
+  },
+  valletta: {
+    name: 'Valletta', country: 'Malta', lat: 35.899, lng: 14.514,
+    spring: [55,65,60,68,70,50,45],
+    summer: [68,78,72,80,82,62,58],
+    fall:   [48,58,52,60,62,42,38],
+    excursions: ['valletta','mdina','blue lagoon','gozo','marsaxlokk'],
+    notExcursions: ['dingli cliffs','hagar qim','marsaskala','gharb'],
+  },
+  kotor: {
+    name: 'Kotor', country: 'Montenegro', lat: 42.424, lng: 18.771,
+    spring: [45,58,50,62,55,40,35],
+    summer: [65,80,72,82,75,58,50],
+    fall:   [38,50,42,54,48,32,28],
+    excursions: ['kotor old town','budva','perast','cetinje'],
+    notExcursions: ['lovcen','virpazar','ulcinj','lustica peninsula'],
+  },
+};
+
+// ─────────────────────────────────────────────────────────
+// DATA: DESTINATION DATABASE
+// cityByDay: Mon–Sun general tourist crowd index (0–100)
+// nearPorts: ports within excursion range
+// alt: alternative with lower cruise exposure
+// ─────────────────────────────────────────────────────────
+const DESTS = {
+  // TUSCANY / LIVORNO
+  'florence': {
+    name:'Florence', country:'Italy', lat:43.770, lng:11.256,
+    nearPorts:['livorno','civitavecchia'],
+    cityByDay:[62,68,70,72,75,88,80],
+    sub:'Regional capital',
+    note:'Appears on most Livorno and Civitavecchia cruise excursion menus. City is large enough to absorb groups, but cruise crowds concentrate at the Uffizi, Duomo, and Ponte Vecchio 10am–3pm.',
+    shoulder:'Uffizi and Accademia require timed entry. Oltrarno neighborhood before 9am is a different city entirely.',
+    alt:null,
+  },
+  'pisa': {
+    name:'Pisa', country:'Italy', lat:43.723, lng:10.401,
+    nearPorts:['livorno'],
+    cityByDay:[55,72,60,68,65,78,70],
+    sub:'Port-adjacent city',
+    note:'Field of Miracles is the default cruise stop. Livorno is only 20km away — easily reached without a bus. Cruise groups cluster 10am–3pm.',
+    shoulder:'Before 8am the piazza is genuinely quiet. Late afternoon (after 4:30pm) also clears out significantly.',
+    alt:'Lucca — 20 min east, no cruise traffic on any known excursion menu, fully walkable walled city, substantially better restaurants.',
+  },
+  'siena': {
+    name:'Siena', country:'Italy', lat:43.318, lng:11.330,
+    nearPorts:['livorno','civitavecchia'],
+    cityByDay:[52,65,68,70,62,75,58],
+    sub:'Cathedral city',
+    note:'Secondary excursion from Livorno and Civitavecchia. Lower frequency than Florence or Pisa but consistent cruise presence on peak port days.',
+    shoulder:'Piazza del Campo before 9am or after 5pm is a different experience. Palio weeks (July, August) are extreme — avoid.',
+    alt:null,
+  },
+  'san gimignano': {
+    name:'San Gimignano', country:'Italy', lat:43.468, lng:11.043,
+    nearPorts:['livorno'],
+    cityByDay:[42,82,55,75,62,70,48],
+    sub:'Historic hill town',
+    note:'Appears on 14 of 17 major cruise lines\' Livorno shore excursion menus. Peak bus arrival 10am–2pm. Town population effectively doubles on Livorno port days.',
+    shoulder:'Before 9am or after 4:30pm the crowds thin substantially.',
+    alt:'Volterra — 30 min away, same medieval hilltop character, Etruscan museum, alabaster workshops, and zero presence on cruise excursion menus.',
+  },
+  'volterra': {
+    name:'Volterra', country:'Italy', lat:43.401, lng:10.860,
+    nearPorts:[],
+    cityByDay:[18,22,20,22,26,32,24],
+    sub:'Etruscan hilltop',
+    note:'Not on any major cruise excursion menu. No port within practical excursion range. One of the least-touristed walled hill towns in Tuscany.',
+    shoulder:null,
+    alt:null,
+  },
+  'lucca': {
+    name:'Lucca', country:'Italy', lat:43.843, lng:10.508,
+    nearPorts:[],
+    cityByDay:[22,28,24,26,30,48,32],
+    sub:'Walled medieval city',
+    note:'No cruise traffic on any shore excursion route despite proximity to Livorno. Fully walkable on top of the intact Renaissance walls.',
+    shoulder:null,
+    alt:null,
+  },
+  'montalcino': {
+    name:'Montalcino', country:'Italy', lat:43.058, lng:11.489,
+    nearPorts:[],
+    cityByDay:[16,20,18,19,24,30,22],
+    sub:'Brunello wine country',
+    note:'No cruise traffic in port schedule or excursion database. Small hilltop town; even on weekends crowds are light by Tuscan standards.',
+    shoulder:null,
+    alt:null,
+  },
+  'livorno': {
+    name:'Livorno', country:'Italy', lat:43.548, lng:10.312,
+    nearPorts:['livorno'],
+    cityByDay:[42,75,48,70,62,36,22],
+    sub:'Port city',
+    note:'The port itself. When ships are in, the waterfront and Piazza della Repubblica are noticeably busier. The Venezia neighborhood (canals) is worth a walk — less impacted.',
+    shoulder:null,
+    alt:null,
+  },
+  // AMALFI / NAPLES
+  'pompeii': {
+    name:'Pompeii', country:'Italy', lat:40.750, lng:14.486,
+    nearPorts:['naples'],
+    cityByDay:[55,62,58,65,70,80,75],
+    sub:'Archaeological site',
+    note:'Top-ranked cruise excursion from Naples. Lines at the main entrance (Porta Marina) regularly exceed 30 min on port days. Groups move in packs with audio guide flags.',
+    shoulder:'Site opens at 9am — arrive at opening for a dramatically different experience.',
+    alt:'Herculaneum — 20 min west, smaller, better preserved, fraction of the crowd. Equally impressive ruins.',
+  },
+  'amalfi': {
+    name:'Amalfi', country:'Italy', lat:40.634, lng:14.603,
+    nearPorts:['naples'],
+    cityByDay:[58,65,62,68,72,82,78],
+    sub:'Amalfi Coast town',
+    note:'Naples cruise excursion staple. The coastal road (SS163) becomes severely congested on port days — buses from Naples add 40–60 min each way.',
+    shoulder:'Early morning or after 5pm. The town is genuinely beautiful when the day-trippers leave.',
+    alt:'Ravello — 7km above Amalfi, no cruise buses, same coastline views, substantially better dining.',
+  },
+  'positano': {
+    name:'Positano', country:'Italy', lat:40.628, lng:14.485,
+    nearPorts:['naples'],
+    cityByDay:[60,68,65,70,75,85,80],
+    sub:'Amalfi Coast town',
+    note:'Heavily photographed and heavily trafficked. Cruise excursion coaches from Naples and Salerno both route through. Access is bottlenecked by the single coastal road.',
+    shoulder:'Ferry from Naples or Amalfi avoids road congestion. Before 9am the staircase streets are walkable.',
+    alt:'Praiano — 10 min west by ferry, half the people, same dramatic clifftop views, no cruise buses.',
+  },
+  'sorrento': {
+    name:'Sorrento', country:'Italy', lat:40.626, lng:14.376,
+    nearPorts:['naples'],
+    cityByDay:[55,65,60,68,70,80,75],
+    sub:'Bay of Naples town',
+    note:'Major cruise excursion hub from Naples. Circumvesuviana train brings an additional wave of day-trippers independently of the port.',
+    shoulder:'Evening (after 6pm) is the best time — cruise groups are long gone and local aperitivo culture takes over.',
+    alt:null,
+  },
+  'capri': {
+    name:'Capri', country:'Italy', lat:40.550, lng:14.242,
+    nearPorts:['naples'],
+    cityByDay:[62,70,65,72,78,88,85],
+    sub:'Island',
+    note:'Peak-season Capri receives up to 10,000 day visitors when multiple cruise ships are in Naples. The funicular from Marina Grande has queues of 45+ min.',
+    shoulder:'Staying overnight lets you experience the island after the day-trippers leave on the last ferry. Or go early on a non-port day.',
+    alt:'Ischia — 45 min ferry from Naples, thermal baths, volcanic beaches, a fraction of Capri\'s visitors.',
+  },
+  'ravello': {
+    name:'Ravello', country:'Italy', lat:40.650, lng:14.614,
+    nearPorts:[],
+    cityByDay:[28,35,30,36,38,50,45],
+    sub:'Hilltop garden town',
+    note:'Not on any cruise excursion menu despite proximity to the Amalfi Coast. Reachable only by a single winding road from Amalfi — buses don\'t run here.',
+    shoulder:null,
+    alt:null,
+  },
+  // ROME / CIVITAVECCHIA
+  'rome': {
+    name:'Rome', country:'Italy', lat:41.902, lng:12.496,
+    nearPorts:['civitavecchia'],
+    cityByDay:[70,75,72,78,80,85,82],
+    sub:'Capital city',
+    note:'Civitavecchia is 80km from Rome. Most cruise excursions are full-day coach trips. Colosseum, Vatican, and Trevi Fountain are concentration points for cruise groups 10am–4pm.',
+    shoulder:'Vatican Museums are best at opening (9am) or with evening access. Colosseum: first entry slot. Trevi Fountain: midnight visit is genuinely different.',
+    alt:null,
+  },
+  'orvieto': {
+    name:'Orvieto', country:'Italy', lat:42.718, lng:12.107,
+    nearPorts:['civitavecchia'],
+    cityByDay:[35,42,38,45,48,58,52],
+    sub:'Hilltop cathedral town',
+    note:'Appears on some Civitavecchia cruise menus but far less frequently than Rome. Manageable even on port days.',
+    shoulder:null,
+    alt:null,
+  },
+  // GREECE
+  'athens': {
+    name:'Athens', country:'Greece', lat:37.979, lng:23.716,
+    nearPorts:['piraeus'],
+    cityByDay:[65,68,70,72,75,80,78],
+    sub:'Capital city',
+    note:'Piraeus is 12km from central Athens. Cruise groups concentrate at the Acropolis — tickets have a timed-entry system but port days drive large group volumes.',
+    shoulder:'Acropolis opens at 8am. First 30 min before tour buses arrive is dramatically less crowded.',
+    alt:null,
+  },
+  'mykonos town': {
+    name:'Mykonos Town', country:'Greece', lat:37.447, lng:25.329,
+    nearPorts:['mykonos'],
+    cityByDay:[55,60,58,65,70,88,92],
+    sub:'Greek island town',
+    note:'Small Cycladic town with very limited capacity. Multiple ships in port simultaneously (common in summer) produce genuinely unpleasant crowding in the narrow streets.',
+    shoulder:'Before 10am or after 6pm. The port-side cafes are peaceful at breakfast.',
+    alt:'Ano Mera — 8km inland, actual village, monastery, local tavernas. No cruise groups.',
+  },
+  'santorini': {
+    name:'Santorini (Oia)', country:'Greece', lat:36.393, lng:25.461,
+    nearPorts:['santorini'],
+    cityByDay:[60,65,62,68,72,90,95],
+    sub:'Greek island',
+    note:'Santorini receives up to 15,000 cruise passengers per day at peak summer. Oia at sunset has become genuinely unnavigable — standing room only for an hour before sunset.',
+    shoulder:'Fira (the capital) is less impacted than Oia. Pyrgos village for sunset is a well-kept local secret.',
+    alt:'Pyrgos village — highest point on the island, panoramic sunset, no cruise buses, excellent wine.',
+  },
+  'delphi': {
+    name:'Delphi', country:'Greece', lat:38.482, lng:22.501,
+    nearPorts:['piraeus'],
+    cityByDay:[30,38,32,40,42,55,50],
+    sub:'Archaeological site',
+    note:'2.5-hour drive from Piraeus — occasional full-day cruise excursion. Manageable even on port days due to distance.',
+    shoulder:null,
+    alt:null,
+  },
+  // CROATIA
+  'dubrovnik old town': {
+    name:'Dubrovnik Old Town', country:'Croatia', lat:42.641, lng:18.110,
+    nearPorts:['dubrovnik'],
+    cityByDay:[62,78,68,82,75,60,55],
+    sub:'Walled medieval city',
+    note:'UNESCO site with a strict daily visitor cap, but cruise arrivals regularly push against the limit. The city walls walk is particularly congested 10am–2pm.',
+    shoulder:'City walls at 8am (opening). Old Town after 6pm when cruise groups reboard.',
+    alt:'Ston — 50 min north, 14th-century salt pans, Europe\'s second-longest walls, zero cruise traffic.',
+  },
+  'split old town': {
+    name:'Split (Diocletian\'s Palace)', country:'Croatia', lat:43.508, lng:16.440,
+    nearPorts:['split'],
+    cityByDay:[55,68,60,72,65,70,62],
+    sub:'Roman palace complex',
+    note:'The palace district (still a functioning neighborhood) absorbs cruise groups during peak hours. The Riva promenade gets crowded quickly.',
+    shoulder:'Early morning when locals are buying from the market inside the palace walls is the best time.',
+    alt:null,
+  },
+  'hvar': {
+    name:'Hvar Town', country:'Croatia', lat:43.172, lng:16.441,
+    nearPorts:['split','dubrovnik'],
+    cityByDay:[50,62,55,65,60,80,85],
+    sub:'Adriatic island',
+    note:'Small-boat ferry tender stop for cruise ships. The main square and fortress stairs get genuinely crowded on port days. Capacity is limited.',
+    shoulder:null,
+    alt:'Vis — 1 hour ferry from Split, far fewer tourists, same island landscape, excellent seafood, no cruise calls.',
+  },
+  'kotor old town': {
+    name:'Kotor Old Town', country:'Montenegro', lat:42.424, lng:18.771,
+    nearPorts:['kotor'],
+    cityByDay:[48,65,55,70,62,55,50],
+    sub:'Medieval walled city',
+    note:'One of the most dramatic cruise ship arrivals in the Adriatic. Ships anchor directly in the bay. The old town (small by any measure) can feel overwhelmed on heavy port days.',
+    shoulder:'The city walls hike (1,350 steps to the fortress) filters out many cruise visitors by noon.',
+    alt:'Perast — 15 min by boat, tiny fishing village, Our Lady of the Rocks, no cruise buses at all.',
+  },
+  // SPAIN / FRANCE
+  'barcelona': {
+    name:'Barcelona', country:'Spain', lat:41.383, lng:2.183,
+    nearPorts:['barcelona'],
+    cityByDay:[70,75,72,78,80,85,82],
+    sub:'Catalan capital',
+    note:'Large city that absorbs cruise groups reasonably well. Sagrada Familia and Park Güell require timed tickets. Las Ramblas and Barceloneta are the cruise concentration zones.',
+    shoulder:'Sagrada Familia interior at first light (9am). Gothic Quarter before 10am.',
+    alt:null,
+  },
+  'montserrat': {
+    name:'Montserrat', country:'Spain', lat:41.594, lng:1.837,
+    nearPorts:['barcelona'],
+    cityByDay:[45,55,48,58,60,75,80],
+    sub:'Mountain monastery',
+    note:'Accessible by rack railway and cable car — both have limited capacity. Cruise excursion groups book in advance and fill early time slots.',
+    shoulder:'Noon midweek after cruise groups leave. The trails above the monastery are quiet even when the plaza is crowded.',
+    alt:null,
+  },
+  'nice': {
+    name:'Nice', country:'France', lat:43.710, lng:7.262,
+    nearPorts:['villefranche'],
+    cityByDay:[58,65,60,68,70,78,75],
+    sub:'French Riviera city',
+    note:'Villefranche is just 6km from Nice. Old Town (Vieux-Nice) is the cruise concentration zone. Promenade des Anglais is broad enough to absorb it.',
+    shoulder:'Morning market in Cours Saleya before 11am is excellent. Old Town lunch after 2pm when bus tours have moved on.',
+    alt:null,
+  },
+  'monaco': {
+    name:'Monaco', country:'Monaco', lat:43.738, lng:7.425,
+    nearPorts:['villefranche'],
+    cityByDay:[55,62,58,65,68,75,72],
+    sub:'City-state',
+    note:'Very small geography for a consistent cruise stop. The Prince\'s Palace square and Casino square are the concentration points. Formula 1 week is a different category entirely.',
+    shoulder:null,
+    alt:'Menton — 20 min east, Belle Époque architecture, lemon festival, beautiful old town, no cruise groups.',
+  },
+  'avignon': {
+    name:'Avignon', country:'France', lat:43.949, lng:4.806,
+    nearPorts:['marseille'],
+    cityByDay:[40,48,42,50,52,65,60],
+    sub:'Papal city',
+    note:'Occasional Marseille cruise excursion. Long drive reduces frequency. Manageable even on port days.',
+    shoulder:null,
+    alt:null,
+  },
+  // MALTA
+  'valletta': {
+    name:'Valletta', country:'Malta', lat:35.899, lng:14.514,
+    nearPorts:['valletta'],
+    cityByDay:[48,58,52,62,65,55,50],
+    sub:'Capital city',
+    note:'Compact capital of a compact island. Multiple ships can produce genuine crowding on the main street (Republic Street) and at St. John\'s Co-Cathedral.',
+    shoulder:'Upper Barrakka Gardens at opening (7am) for harbor views before the crowds arrive.',
+    alt:null,
+  },
+  'mdina': {
+    name:'Mdina', country:'Malta', lat:35.887, lng:14.403,
+    nearPorts:['valletta'],
+    cityByDay:[35,45,38,48,50,62,58],
+    sub:'Silent city',
+    note:'Standard cruise excursion from Valletta. Small population, narrow streets. Very crowded during ship call windows but quiet outside them.',
+    shoulder:'Early morning or late afternoon after buses leave.',
+    alt:null,
+  },
+};
+
+// ─────────────────────────────────────────────────────────
+// UTILITY FUNCTIONS
+// ─────────────────────────────────────────────────────────
+const DAYS = ['M','T','W','T','F','S','S'];
+const MONTHS = {jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11,
+  january:0,february:1,march:2,april:3,june:5,july:6,august:7,september:8,october:9,november:10,december:11};
+
+function getSeason(date) {
+  const m = date.getMonth();
+  if (m >= 2 && m <= 4) return 'spring';
+  if (m >= 5 && m <= 7) return 'summer';
+  if (m >= 8 && m <= 10) return 'fall';
+  return 'spring'; // winter = spring patterns for Mediterranean
+}
+
+function getDayIdx(date) {
+  // Returns Mon=0 ... Sun=6
+  const d = date.getDay();
+  return d === 0 ? 6 : d - 1;
+}
+
+function parseDate(str) {
+  // Handles: "May 13", "May 13 2026", "13 May", "5/13", "5/13/2026"
+  str = str.trim().toLowerCase();
+  const curYear = new Date().getFullYear();
+
+  // MM/DD or MM/DD/YYYY
+  const slashM = str.match(/^(\d{1,2})\/(\d{1,2})(?:\/(\d{4}))?/);
+  if (slashM) {
+    const y = slashM[3] ? parseInt(slashM[3]) : curYear;
+    return new Date(y, parseInt(slashM[1])-1, parseInt(slashM[2]));
+  }
+
+  // Month name + day (+ optional year)
+  for (const [mon, idx] of Object.entries(MONTHS)) {
+    const re = new RegExp(`${mon}[a-z]*\\.?\\s+(\\d{1,2})(?:[,\\s]+(\\d{4}))?`, 'i');
+    const m = str.match(re);
+    if (m) {
+      const y = m[2] ? parseInt(m[2]) : curYear;
+      return new Date(y, idx, parseInt(m[1]));
+    }
+    // Day + month
+    const re2 = new RegExp(`(\\d{1,2})\\s+${mon}`, 'i');
+    const m2 = str.match(re2);
+    if (m2) return new Date(curYear, idx, parseInt(m2[1]));
+  }
+  return null;
+}
+
+function matchDestination(text) {
+  // Returns array of matched destination keys
+  text = text.toLowerCase().replace(/[^a-z\s\-']/g, ' ');
+  const found = [];
+  // Try longest keys first (avoid partial matches)
+  const keys = Object.keys(DESTS).sort((a,b) => b.length - a.length);
+  for (const key of keys) {
+    if (text.includes(key) && !found.includes(key)) {
+      found.push(key);
+    }
+  }
+  // Also check name aliases
+  const aliases = {
+    'san gim': 'san gimignano', 'gimignano': 'san gimignano',
+    'amalfi coast': 'amalfi', 'pompei': 'pompeii',
+    'dubrovnik': 'dubrovnik old town', 'split': 'split old town',
+    'kotor': 'kotor old town', 'mykonos': 'mykonos town',
+    'oia': 'santorini', 'fira': 'santorini',
+  };
+  for (const [alias, key] of Object.entries(aliases)) {
+    if (text.includes(alias) && !found.includes(key)) found.push(key);
+  }
+  return found;
+}
+
+function parsePastedItinerary(text) {
+  const lines = text.split('\n').filter(l => l.trim());
+  const stops = [];
+  let currentDate = null;
+
+  for (const line of lines) {
+    // Try to find a date in this line
+    const dateMatch = line.match(/(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?\s+\d{1,2}|\d{1,2}\s+(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*|\d{1,2}\/\d{1,2}(?:\/\d{4})?/i);
+    if (dateMatch) currentDate = parseDate(dateMatch[0]);
+
+    // Find destinations in this line
+    const dests = matchDestination(line);
+    for (const key of dests) {
+      if (!stops.find(s => s.key === key && s.date && currentDate &&
+          s.date.toDateString() === currentDate.toDateString())) {
+        stops.push({ key, date: currentDate ? new Date(currentDate) : null });
+      }
+    }
+  }
+  return stops;
+}
+
+function scoreStop(key, date) {
+  const dest = DESTS[key];
+  if (!dest) return null;
+
+  const dayIdx = getDayIdx(date);
+  const season = getSeason(date);
+
+  let maxCruise = 0;
+  let cruiseByDay = [0,0,0,0,0,0,0];
+  let primaryPort = null;
+  let isExcursionDest = false;
+
+  for (const portKey of dest.nearPorts) {
+    const port = PORTS[portKey];
+    if (!port) continue;
+    const vol = port[season][dayIdx];
+    if (vol > maxCruise) {
+      maxCruise = vol;
+      cruiseByDay = port[season];
+      primaryPort = port;
+    }
+    if (port.excursions.includes(key)) isExcursionDest = true;
+  }
+
+  const cityVol = dest.cityByDay[dayIdx];
+  let status;
+  if (maxCruise >= 65 && isExcursionDest) status = 'red';
+  else if (maxCruise >= 40 || cityVol >= 70) status = 'amber';
+  else status = 'green';
+
+  return {
+    key, date, dest, dayIdx, season,
+    status, cityVol, maxCruise, cruiseByDay,
+    primaryPort, isExcursionDest,
+  };
+}
+
+// ─────────────────────────────────────────────────────────
+// WEATHER (Open-Meteo historical archive — seasonal proxy)
+// ─────────────────────────────────────────────────────────
+const wxCache = {};
+
+async function fetchWeather(lat, lng, date) {
+  // Use previous year same date as seasonal proxy (archive API works for any past date)
+  const proxyDate = new Date(date);
+  proxyDate.setFullYear(proxyDate.getFullYear() - 1);
+  const fmt = d => d.toISOString().split('T')[0];
+  const cacheKey = `${lat}_${lng}_${fmt(proxyDate)}`;
+  if (wxCache[cacheKey]) return wxCache[cacheKey];
+
+  try {
+    const url = `https://archive-api.open-meteo.com/v1/archive?latitude=${lat}&longitude=${lng}&start_date=${fmt(proxyDate)}&end_date=${fmt(proxyDate)}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,weathercode&timezone=auto`;
+    const res = await fetch(url);
+    const data = await res.json();
+    const result = {
+      tempMax: Math.round(data.daily.temperature_2m_max[0]),
+      tempMin: Math.round(data.daily.temperature_2m_min[0]),
+      precip: Math.round(data.daily.precipitation_sum[0] * 10) / 10,
+      code: data.daily.weathercode[0],
+    };
+    wxCache[cacheKey] = result;
+    return result;
+  } catch(e) {
+    return null;
+  }
+}
+
+function wxIcon(code) {
+  if (code === 0) return '☀️';
+  if (code <= 3) return '⛅';
+  if (code <= 48) return '🌫️';
+  if (code <= 67) return '🌧️';
+  if (code <= 77) return '❄️';
+  if (code <= 82) return '🌦️';
+  return '⛈️';
+}
+
+function wxDesc(code, tempMax, precip) {
+  let desc = code === 0 ? 'Clear' : code <= 3 ? 'Partly cloudy' : code <= 48 ? 'Foggy' :
+    code <= 67 ? 'Rain likely' : code <= 77 ? 'Snow' : code <= 82 ? 'Showers' : 'Storms';
+  return `${wxIcon(code)} ${desc} · High ${tempMax}°C${precip > 2 ? ` · ${precip}mm rain` : ''}`;
+}
+
+// ─────────────────────────────────────────────────────────
+// RENDER
+// ─────────────────────────────────────────────────────────
+let currentStops = [];
+
+function renderBars(vals, activeDay, isCruise) {
+  const max = Math.max(...vals, 1);
+  let h = '<div class="bar-chart">';
+  for (let i = 0; i < 7; i++) {
+    const pct = vals[i] / max;
+    const px = Math.max(3, Math.round(pct * 40));
+    const isAct = i === activeDay;
+    let cls = '';
+    if (isAct) {
+      cls = vals[i] >= 65 ? 'hi-r' : vals[i] >= 35 ? 'hi-a' : 'hi-g';
+    } else {
+      if (isCruise && vals[i] === 0) cls = 'lo-n';
+      else cls = vals[i] >= 65 ? 'lo-r' : vals[i] >= 35 ? 'lo-a' : 'lo-g';
+    }
+    h += `<div class="bc">
+      <div class="bbar ${cls}" style="height:${px}px"></div>
+      <div class="bdl${isAct?' act':''}">${DAYS[i]}</div>
+    </div>`;
+  }
+  return h + '</div>';
+}
+
+function renderCard(scored, idx) {
+  const {key, date, dest, dayIdx, status, cityVol, maxCruise, cruiseByDay, primaryPort, isExcursionDest} = scored;
+  const bl = status === 'red' ? 'AVOID' : status === 'amber' ? 'CAUTION' : 'FREE';
+  const allZeroCruise = cruiseByDay.every(v => v === 0);
+  const dateStr = date ? date.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'}) : '—';
+
+  const portNote = primaryPort && isExcursionDest
+    ? `Standard excursion from ${primaryPort.name}.`
+    : primaryPort && maxCruise > 40
+    ? `Near ${primaryPort.name} port. Cruise spillover likely.`
+    : '';
+
+  return `
+  <div class="card" id="card-${idx}">
+    <div class="card-hdr" onclick="toggleCard(${idx})">
+      <div class="stripe st-${status[0]}"></div>
+      <div class="ci">
+        <div class="ct">
+          <div class="cname">${dest.name}</div>
+          <div class="csub">${dest.sub}${portNote ? ' · ' + portNote : ''}</div>
+        </div>
+        <div class="cr">
+          <div class="cdate">${dateStr}</div>
+          <span class="badge b-${status[0]}">${bl}</span>
+        </div>
+        <span class="chev" id="chev-${idx}">▾</span>
+      </div>
+    </div>
+    <div class="det" id="det-${idx}">
+      <div class="traf-wrap">
+        <div class="traf-block">
+          <div class="traf-ttl">City-wide traffic by day of week · ${scored.season.charAt(0).toUpperCase()+scored.season.slice(1)} avg (Google)</div>
+          ${renderBars(dest.cityByDay, dayIdx, false)}
+        </div>
+        <div class="traf-block">
+          <div class="traf-ttl">Cruise passenger volume by day · ${scored.season.charAt(0).toUpperCase()+scored.season.slice(1)} avg</div>
+          ${allZeroCruise
+            ? '<div class="no-cruise">✓ No cruise traffic on record for this destination.</div>'
+            : renderBars(cruiseByDay, dayIdx, true)
+          }
+        </div>
+      </div>
+      <div class="wx-row" id="wx-${idx}">
+        <span class="wx-loading"><span class="spinner"></span>Loading historical weather…</span>
+      </div>
+      <div class="info-rows">
+        ${primaryPort && isExcursionDest ? `
+        <div class="irow">
+          <div class="iico">⚓</div>
+          <div class="ibody"><strong>Port:</strong> ${primaryPort.name} · Est. cruise call volume ${maxCruise}% of season peak on ${DAYS[dayIdx]}s.</div>
+        </div>` : ''}
+        ${dest.note ? `
+        <div class="irow">
+          <div class="iico">📋</div>
+          <div class="ibody">${dest.note}</div>
+        </div>` : ''}
+        ${dest.shoulder ? `
+        <div class="irow">
+          <div class="iico">⏱</div>
+          <div class="ibody"><div class="shldbox"><strong>Shoulder strategy:</strong> ${dest.shoulder}</div></div>
+        </div>` : ''}
+        ${dest.alt ? `
+        <div class="irow">
+          <div class="iico">↗</div>
+          <div class="ibody"><div class="altbox"><strong>Better option:</strong> ${dest.alt}</div></div>
+        </div>` : ''}
+        ${!dest.note && !dest.shoulder && !dest.alt ? `
+        <div class="irow">
+          <div class="iico">✓</div>
+          <div class="ibody" style="color:#2A7050;">No cruise traffic in port schedule or excursion database.</div>
+        </div>` : ''}
+      </div>
+    </div>
+  </div>`;
+}
+
+async function loadWeather(scored, idx) {
+  const wx = await fetchWeather(scored.dest.lat, scored.dest.lng, scored.date);
+  const el = document.getElementById(`wx-${idx}`);
+  if (!el) return;
+  if (wx) {
+    el.innerHTML = `<span class="wx-ico">${wxIcon(wx.code)}</span><span class="wx-txt">Historical avg this week: ${wxDesc(wx.code, wx.tempMax, wx.precip)}</span>`;
+  } else {
+    el.innerHTML = `<span class="wx-txt" style="color:#ccc">Weather data unavailable</span>`;
+  }
+}
+
+function renderResults(stops) {
+  currentStops = stops;
+  const scored = stops.map(s => scoreStop(s.key, s.date)).filter(Boolean);
+
+  const counts = {red:0,amber:0,green:0};
+  scored.forEach(s => counts[s.status]++);
+  document.getElementById('sum-red').textContent = counts.red;
+  document.getElementById('sum-amb').textContent = counts.amber;
+  document.getElementById('sum-grn').textContent = counts.green;
+
+  // Trip title
+  const names = [...new Set(scored.map(s => s.dest.country))];
+  const dates = scored.map(s => s.date).filter(Boolean).sort((a,b)=>a-b);
+  const titleDest = scored.length > 2 ? scored[0].dest.name + ' region' : scored.map(s=>s.dest.name).join(' & ');
+  document.getElementById('trip-title').textContent = titleDest;
+  document.getElementById('trip-sub').textContent =
+    `${scored.length} destination${scored.length!==1?'s':''} · ${dates.length > 0 ? dates[0].toLocaleDateString('en-US',{month:'long',day:'numeric'}) + (dates.length>1?' – '+dates[dates.length-1].toLocaleDateString('en-US',{month:'long',day:'numeric'}):'') : 'Dates TBD'} · Data: seasonal averages`;
+
+  document.getElementById('sec-lbl').textContent =
+    names.join(' / ') + (dates.length > 0 ? ' · ' + dates[0].toLocaleDateString('en-US',{month:'long',year:'numeric'}) : '');
+
+  document.getElementById('cards').innerHTML = scored.map((s,i) => renderCard(s,i)).join('');
+
+  // Async weather loads
+  scored.forEach((s,i) => { if (s.date) loadWeather(s, i); });
+
+  // Share URL
+  const hash = stops.map(s => `${encodeURIComponent(s.key)}|${s.date?s.date.toISOString().split('T')[0]:''}`).join(',');
+  window.location.hash = hash;
+  document.getElementById('share-url').textContent = window.location.href.split('#')[0] + '#' + hash;
+
+  // Show results tab & switch
+  document.getElementById('results-tab').style.display = 'inline-block';
+  showView('results');
+}
+
+function toggleCard(idx) {
+  const det = document.getElementById(`det-${idx}`);
+  const chev = document.getElementById(`chev-${idx}`);
+  const isOpen = det.style.display === 'block';
+  det.style.display = isOpen ? 'none' : 'block';
+  chev.className = isOpen ? 'chev' : 'chev open';
+}
+
+// ─────────────────────────────────────────────────────────
+// MINIMIZE CROWDS
+// ─────────────────────────────────────────────────────────
+function openMinimize(withAlts) {
+  const scored = currentStops.map(s => scoreStop(s.key, s.date)).filter(Boolean);
+  let h = '';
+
+  for (const s of scored) {
+    const {dest, dayIdx, season} = s;
+    // Compute score for each day of week
+    const dayScores = dest.cityByDay.map((city, i) => {
+      let cruise = 0;
+      for (const pk of dest.nearPorts) {
+        const p = PORTS[pk];
+        if (p) cruise = Math.max(cruise, p[season][i]);
+      }
+      return Math.round((city * 0.4 + cruise * 0.6));
+    });
+    const minScore = Math.min(...dayScores);
+    const maxScore = Math.max(...dayScores);
+
+    h += `<div class="modal-card">
+      <div class="mc-name">${dest.name}</div>
+      <div class="mc-cur">Currently: ${s.date ? s.date.toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'}) : 'date TBD'} · Crowd score: ${dayScores[dayIdx]}/100</div>
+      <div class="mc-days">`;
+
+    const fullDays = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+    for (let i = 0; i < 7; i++) {
+      const isBest = dayScores[i] === minScore;
+      const isWorst = dayScores[i] === maxScore;
+      const isCur = i === dayIdx;
+      h += `<div class="mc-day${isBest?' best':isWorst?' worst':''}" title="Crowd score: ${dayScores[i]}/100">
+        ${fullDays[i].slice(0,3)} <strong>${dayScores[i]}</strong>${isCur?' ●':''}
+      </div>`;
+    }
+    h += '</div>';
+    if (withAlts && dest.alt) {
+      h += `<div class="altbox" style="margin-top:8px;font-size:11px"><strong>Alternative:</strong> ${dest.alt}</div>`;
+    }
+    h += '</div>';
+  }
+
+  document.getElementById('modal-sub').textContent = withAlts
+    ? 'Best and worst days per destination with crowd score (0–100) and lower-traffic alternatives. Green = lowest crowd day, red = worst.'
+    : 'Best and worst days per destination based on combined city traffic and cruise passenger volume. Green = lowest crowd day, red = worst.';
+  document.getElementById('modal-content').innerHTML = h;
+  document.getElementById('minimize-modal').classList.add('open');
+}
+function closeMinimize() {
+  document.getElementById('minimize-modal').classList.remove('open');
+}
+
+// ─────────────────────────────────────────────────────────
+// INPUT HANDLING
+// ─────────────────────────────────────────────────────────
+let inputMode = 'paste';
+
+function setMode(m) {
+  inputMode = m;
+  document.getElementById('mode-paste').style.display = m === 'paste' ? 'block' : 'none';
+  document.getElementById('mode-manual').style.display = m === 'manual' ? 'block' : 'none';
+  document.querySelectorAll('.mbtn').forEach((b,i) => {
+    b.classList.toggle('on', (i===0&&m==='paste')||(i===1&&m==='manual'));
+  });
+}
+
+function addManualStop() {
+  const dest = document.getElementById('new-dest').value.trim();
+  const dt = document.getElementById('new-date').value;
+  if (!dest) return;
+  const date = dt ? new Date(dt + 'T12:00:00') : null;
+  const row = document.createElement('div');
+  row.className = 'stop-row';
+  row.innerHTML = `<span class="sname">${dest}</span><span class="sdate">${date ? date.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—'}</span><button class="stop-rem" onclick="this.parentElement.remove()">×</button>`;
+  document.getElementById('stop-list').appendChild(row);
+  document.getElementById('new-dest').value = '';
+  document.getElementById('new-date').value = '';
+}
+
+function runAnalysis() {
+  let stops = [];
+
+  if (inputMode === 'paste') {
+    const text = document.getElementById('paste-input').value.trim();
+    if (!text) { alert('Please enter your itinerary first.'); return; }
+    stops = parsePastedItinerary(text);
+    if (stops.length === 0) {
+      alert('No recognizable destinations found. Try listing cities by name, e.g. "May 13 – Florence, Pisa".');
+      return;
+    }
+  } else {
+    const rows = document.querySelectorAll('#stop-list .stop-row');
+    rows.forEach(row => {
+      const name = row.querySelector('.sname').textContent.trim().toLowerCase();
+      const dateText = row.querySelector('.sdate').textContent.trim();
+      const keys = matchDestination(name);
+      const date = dateText && dateText !== '—' ? parseDate(dateText) : null;
+      keys.forEach(key => stops.push({ key, date }));
+    });
+  }
+
+  renderResults(stops);
+}
+
+function copyShareLink() {
+  const url = document.getElementById('share-url').textContent;
+  navigator.clipboard.writeText(url).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy link', 2000);
+  });
+}
+
+// ─────────────────────────────────────────────────────────
+// NAV
+// ─────────────────────────────────────────────────────────
+function showView(v) {
+  document.getElementById('view-input').style.display = v === 'input' ? 'block' : 'none';
+  document.getElementById('view-results').style.display = v === 'results' ? 'block' : 'none';
+  document.querySelectorAll('.ntab').forEach((t,i) => {
+    t.classList.toggle('on', (i===0&&v==='input')||(i===1&&v==='results'));
+  });
+}
+
+// ─────────────────────────────────────────────────────────
+// INIT: Load from URL hash if present
+// ─────────────────────────────────────────────────────────
+function init() {
+  const hash = window.location.hash.slice(1);
+  if (hash && hash.includes('|')) {
+    const stops = hash.split(',').map(part => {
+      const [k, d] = part.split('|');
+      const key = decodeURIComponent(k);
+      const date = d ? new Date(d + 'T12:00:00') : null;
+      return DESTS[key] ? { key, date } : null;
+    }).filter(Boolean);
+    if (stops.length > 0) renderResults(stops);
+  }
+}
+
+init();
+</script>
+</body>
+</html>
