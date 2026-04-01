@@ -113,8 +113,8 @@ textarea:focus{border-color:#999;background:#fff}
 .traf-wrap{padding:14px 14px 12px;background:#fafaf8;border-bottom:1px solid #f0f0f0}
 .traf-block{margin-bottom:12px}
 .traf-block:last-child{margin-bottom:0}
-.traf-ttl{font-size:10px;font-weight:600;color:#aaa;text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px}
-.bar-chart{display:flex;gap:4px;align-items:flex-end;height:44px}
+.traf-ttl{font-size:10px;font-weight:600;color:#aaa;text-transform:uppercase;letter-spacing:.07em;margin-bottom:12px;display:block}
+.bar-chart{display:flex;gap:4px;align-items:flex-end;height:44px;margin-top:4px}
 .bc{display:flex;flex-direction:column;align-items:center;flex:1}
 .bbar{width:100%;border-radius:2px 2px 0 0;min-height:3px;background:#eee;transition:opacity .2s}
 .bbar.hi-r{background:#E24B4A}.bbar.hi-a{background:#EF9F27}.bbar.hi-g{background:#639922}
@@ -282,8 +282,8 @@ const PORTS = {
     spring: [55,88,42,80,72,28,15],
     summer: [68,92,55,85,78,35,20],
     fall:   [48,75,38,70,62,22,12],
-    excursions: ['florence','pisa','siena','san gimignano','lucca'],
-    notExcursions: ['volterra','montalcino','bolgheri','massa marittima','certaldo'],
+    excursions: ['florence','pisa','siena','san gimignano','lucca','cinque terre','portofino'],
+    notExcursions: ['volterra','montalcino','bolgheri','massa marittima','certaldo','san miniato'],
   },
   civitavecchia: {
     name: 'Civitavecchia', country: 'Italy', lat: 42.091, lng: 11.799,
@@ -378,7 +378,7 @@ const PORTS = {
     spring: [50,60,55,65,62,48,42],
     summer: [65,78,70,80,75,60,55],
     fall:   [42,52,46,56,52,40,35],
-    excursions: ['nice','monaco','eze','cannes','antibes'],
+    excursions: ['nice','monaco','eze','cannes','antibes','saint-paul-de-vence'],
     notExcursions: ['menton','peillon','cotignac','saint-paul-de-vence'],
   },
   valletta: {
@@ -419,9 +419,9 @@ const DESTS = {
   'pisa': {
     name:'Pisa', country:'Italy', lat:43.723, lng:10.401,
     nearPorts:['livorno'],
-    cityByDay:[55,72,60,68,65,78,70],
+    cityByDay:[55,80,62,75,72,88,82],
     sub:'Port-adjacent city',
-    note:'Field of Miracles is the default cruise stop. Livorno is only 20km away — easily reached without a bus. Cruise groups cluster 10am–3pm.',
+    note:'Field of Miracles is the default cruise stop from Livorno — only 20km. Cruise groups cluster 10am–3pm. Saturday adds a heavy independent tourist wave on top of cruise traffic.',
     shoulder:'Before 8am the piazza is genuinely quiet. Late afternoon (after 4:30pm) also clears out significantly.',
     alt:'Lucca — 20 min east, no cruise traffic on any known excursion menu, fully walkable walled city, substantially better restaurants.',
   },
@@ -467,6 +467,42 @@ const DESTS = {
     cityByDay:[16,20,18,19,24,30,22],
     sub:'Brunello wine country',
     note:'No cruise traffic in port schedule or excursion database. Small hilltop town; even on weekends crowds are light by Tuscan standards.',
+    shoulder:null,
+    alt:null,
+  },
+  'cinque terre': {
+    name:'Cinque Terre', country:'Italy', lat:44.127, lng:9.737,
+    nearPorts:['livorno'],
+    cityByDay:[55,68,60,70,72,88,92],
+    sub:'Five coastal villages',
+    note:'The trail and villages have a daily visitor cap but cruise excursion groups from Livorno and Genoa fill quota slots fast. Vernazza and Monterosso are the worst; Corniglia (no boat access) is the most manageable.',
+    shoulder:'Take the first morning train from La Spezia (6:30am) before day-tripper coaches arrive. Manarola at dusk after the crowds leave is exceptional.',
+    alt:'Portovenere — 20 min from La Spezia by ferry, same dramatic coastline, far fewer visitors, Byron\'s Grotto worth seeing.',
+  },
+  'portofino': {
+    name:'Portofino', country:'Italy', lat:44.303, lng:9.210,
+    nearPorts:['livorno'],
+    cityByDay:[42,52,46,55,58,80,85],
+    sub:'Ligurian fishing village',
+    note:'Tiny harbor village with very limited capacity. Cruise tenders from Genoa and Livorno occasionally stop directly. Weekends are extreme — private yacht crowd plus day-trippers.',
+    shoulder:'Weekday mornings are substantially quieter. The walk from Santa Margherita (45 min along the coast) is better than the bus.',
+    alt:'Camogli — 15 min west by ferry, same Ligurian harbor character, a fraction of the visitors, excellent focaccia.',
+  },
+  'bolgheri': {
+    name:'Bolgheri', country:'Italy', lat:43.163, lng:10.604,
+    nearPorts:[],
+    cityByDay:[12,15,13,16,18,28,24],
+    sub:'Super Tuscan wine village',
+    note:'Not on any cruise excursion menu. The cypress-lined avenue (Viale dei Cipressi) is one of the most photographed roads in Tuscany but the village itself stays genuinely quiet.',
+    shoulder:null,
+    alt:null,
+  },
+  'san miniato': {
+    name:'San Miniato', country:'Italy', lat:43.681, lng:10.851,
+    nearPorts:[],
+    cityByDay:[10,14,12,14,16,22,18],
+    sub:'Hilltop truffle town',
+    note:'Not on any cruise excursion route. White truffle capital of Tuscany. Almost no foreign tourists mid-week.',
     shoulder:null,
     alt:null,
   },
@@ -663,6 +699,42 @@ const DESTS = {
     note:'Very small geography for a consistent cruise stop. The Prince\'s Palace square and Casino square are the concentration points. Formula 1 week is a different category entirely.',
     shoulder:null,
     alt:'Menton — 20 min east, Belle Époque architecture, lemon festival, beautiful old town, no cruise groups.',
+  },
+  'eze': {
+    name:'Eze', country:'France', lat:43.727, lng:7.362,
+    nearPorts:['villefranche'],
+    cityByDay:[38,48,42,50,52,68,72],
+    sub:'Perched medieval village',
+    note:'Villefranche cruise excursion staple — appears on most French Riviera shore excursion menus. The single road in means the village becomes genuinely congested when buses arrive 10am–2pm.',
+    shoulder:'Before 9:30am or after 4pm. The exotic garden at the top is quieter than the main street even on busy days.',
+    alt:'Peillon — 30 min inland, equally dramatic perched village, not on any cruise itinerary, almost no tourists at all.',
+  },
+  'antibes': {
+    name:'Antibes', country:'France', lat:43.580, lng:7.125,
+    nearPorts:['villefranche'],
+    cityByDay:[45,52,48,55,58,72,68],
+    sub:'Old town and ramparts',
+    note:'Occasional cruise excursion from Villefranche. More manageable than Nice or Monaco due to size. Picasso Museum and the market are the main cruise stops.',
+    shoulder:null,
+    alt:null,
+  },
+  'saint-paul-de-vence': {
+    name:'Saint-Paul-de-Vence', country:'France', lat:43.697, lng:7.121,
+    nearPorts:['villefranche'],
+    cityByDay:[32,40,35,42,45,62,68],
+    sub:'Hilltop art village',
+    note:'Appears on some Villefranche excursion menus but less frequently than Nice or Monaco. The single entrance gate creates a bottleneck on busy port days.',
+    shoulder:'After 5pm when day-trippers leave — the light on the valley is better for photography anyway.',
+    alt:null,
+  },
+  'menton': {
+    name:'Menton', country:'France', lat:43.776, lng:7.500,
+    nearPorts:[],
+    cityByDay:[22,28,24,30,32,45,42],
+    sub:'Belle Époque border town',
+    note:'Not on any major cruise excursion menu. Just 3km from the Italian border. Consistently underrated — better beaches than Nice, less crowded old town than Monaco.',
+    shoulder:null,
+    alt:null,
   },
   'avignon': {
     name:'Avignon', country:'France', lat:43.949, lng:4.806,
@@ -942,7 +1014,7 @@ function renderCard(scored, idx) {
           }
         </div>
       </div>
-      <div class="wx-row" id="wx-${idx}">
+      <div class="wx-row" id="wx-${idx}" ${!scored.date ? 'style="display:none"' : ''}><span class="wx-loading"><span class="spinner"></span>Loading historical weather…</span></div>
         <span class="wx-loading"><span class="spinner"></span>Loading historical weather…</span>
       </div>
       <div class="info-rows">
@@ -1000,8 +1072,34 @@ function renderResults(stops) {
   // Trip title
   const names = [...new Set(scored.map(s => s.dest.country))];
   const dates = scored.map(s => s.date).filter(Boolean).sort((a,b)=>a-b);
-  const titleDest = scored.length > 2 ? scored[0].dest.name + ' region' : scored.map(s=>s.dest.name).join(' & ');
-  document.getElementById('trip-title').textContent = titleDest;
+  // Smart region naming based on countries and known regions
+  const countries = [...new Set(scored.map(s => s.dest.country))];
+  const italianTuscanKeys = ['florence','pisa','siena','san gimignano','volterra','lucca','montalcino','livorno','bolgheri','certaldo','san miniato','cinque terre','portofino'];
+  const italianAmalfiKeys = ['amalfi','positano','ravello','praiano','cetara','sorrento','capri','ischia','pompeii','herculaneum'];
+  const italianRomeKeys = ['rome','orvieto','tivoli','assisi'];
+  const croatiaKeys = ['dubrovnik old town','split old town','hvar','vis','ston','korcula'];
+  const greeceKeys = ['athens','mykonos town','santorini','delphi','cape sounion'];
+  const scoredKeys = scored.map(s=>s.key);
+  const inRegion = (regionKeys) => scoredKeys.some(k => regionKeys.includes(k));
+  let titleDest;
+  if (countries.length > 1) {
+    titleDest = countries.slice(0,2).join(' & ');
+  } else if (countries[0] === 'Italy' && inRegion(italianTuscanKeys) && !inRegion(italianAmalfiKeys) && !inRegion(italianRomeKeys)) {
+    titleDest = 'Tuscany';
+  } else if (countries[0] === 'Italy' && inRegion(italianAmalfiKeys)) {
+    titleDest = 'Amalfi Coast';
+  } else if (countries[0] === 'Italy' && inRegion(italianRomeKeys)) {
+    titleDest = 'Rome & Surrounds';
+  } else if (countries[0] === 'Croatia' && inRegion(croatiaKeys)) {
+    titleDest = 'Dalmatian Coast';
+  } else if (countries[0] === 'Greece' && inRegion(greeceKeys)) {
+    titleDest = 'Greece';
+  } else if (scored.length > 3) {
+    titleDest = countries[0];
+  } else {
+    titleDest = scored.map(s=>s.dest.name).join(' & ');
+  }
+  document.getElementById('trip-title').textContent = titleDest || scored[0].dest.name;
   document.getElementById('trip-sub').textContent =
     `${scored.length} destination${scored.length!==1?'s':''} · ${dates.length > 0 ? dates[0].toLocaleDateString('en-US',{month:'long',day:'numeric'}) + (dates.length>1?' – '+dates[dates.length-1].toLocaleDateString('en-US',{month:'long',day:'numeric'}):'') : 'Dates TBD'} · Data: seasonal averages`;
 
