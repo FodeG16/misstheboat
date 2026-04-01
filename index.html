@@ -89,7 +89,7 @@ textarea:focus{border-color:#999;background:#fff}
 
 .card-hdr{display:flex;align-items:center;cursor:pointer}
 .card-hdr:hover .ci{background:#fafaf8}
-.stripe{width:5px;align-self:stretch;flex-shrink:0}
+.stripe{width:9px;align-self:stretch;flex-shrink:0}
 .st-r{background:#E24B4A}.st-a{background:#EF9F27}.st-g{background:#639922}
 .ci{flex:1;display:flex;align-items:center;gap:12px;padding:13px 14px;transition:background .1s}
 .ct{flex:1;min-width:0}
@@ -1451,7 +1451,7 @@ async function enrichCardWithLiveData(scored, idx) {
   if (portEl) {
     const shipList = live.ships.slice(0,4).map(s => `<span class="pill">${s.name}</span>`).join('');
     const extra = live.ships.length > 4 ? `<span class="pill">+${live.ships.length-4} more</span>` : '';
-    portEl.innerHTML = `<strong>Ships in port (live):</strong> ${live.ship_count} ship${live.ship_count!==1?'s':''} · ${live.total_passengers.toLocaleString()} passengers<br>${shipList}${extra}`;
+    portEl.innerHTML = `<strong>Ships in port (forecasted):</strong> ${live.ship_count} ship${live.ship_count!==1?'s':''} · ${live.total_passengers.toLocaleString()} passengers expected<br>${shipList}${extra}`;
   }
 
   // Update badge and stripe if real data changes status
@@ -1550,16 +1550,58 @@ function renderBars(vals, activeDay, isCruise) {
   return h + '</div>';
 }
 
+function volToShipCount(vol) {
+  // Convert 0-100 volume index to estimated ship count
+  if (vol === 0) return 0;
+  if (vol < 20) return 1;
+  if (vol < 40) return 1;
+  if (vol < 60) return 2;
+  if (vol < 75) return 3;
+  if (vol < 88) return 4;
+  return 5;
+}
+
+function renderShipCount(cruiseByDay, activeDay) {
+  const counts = cruiseByDay.map(v => volToShipCount(v));
+  const maxCount = Math.max(...counts, 1);
+  let h = '<div class="bar-chart">';
+  for (let i = 0; i < 7; i++) {
+    const n = counts[i];
+    const isAct = i === activeDay;
+    const px = n === 0 ? 3 : Math.max(6, Math.round((n / maxCount) * 40));
+    let barCls = 'bbar';
+    if (n === 0) barCls += ' lo-n';
+    else if (isAct) barCls += n >= 4 ? ' hi-r' : n >= 2 ? ' hi-a' : ' hi-g';
+    else barCls += n >= 4 ? ' lo-r' : n >= 2 ? ' lo-a' : ' lo-g';
+    h += `<div class="bc">
+      <div style="display:flex;flex-direction:column;align-items:center;flex:1">
+        ${isAct ? `<div style="font-size:9px;font-weight:700;color:${n>=4?'#B83232':n>=2?'#B87820':'#2A7050'};margin-bottom:2px">${n===0?'—':n}</div>` : `<div style="font-size:9px;color:#ccc;margin-bottom:2px">${n===0?'—':n}</div>`}
+        <div class="${barCls}" style="height:${px}px;width:100%"></div>
+      </div>
+      <div class="bdl${isAct?' act':''}">${DAYS[i]}</div>
+    </div>`;
+  }
+  return h + '</div>';
+}
+
 function renderCard(scored, idx) {
   const {key, date, dest, dayIdx, status, cityVol, maxCruise, cruiseByDay, primaryPort, isExcursionDest} = scored;
   const bl = status === 'red' ? 'AVOID' : status === 'amber' ? 'CAUTION' : 'FREE';
   const allZeroCruise = cruiseByDay.every(v => v === 0);
   const dateStr = date ? date.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'}) : '—';
 
+  // Port city detection — destination is itself a cruise port
+  const PORT_CITY_KEYS = new Set(['livorno','civitavecchia','naples','venice','dubrovnik old town',
+    'split old town','piraeus','mykonos town','santorini','barcelona','palma de mallorca',
+    'marseille','valletta','kotor old town','genoa','salerno','palermo','messina','kusadasi',
+    'bodrum','istanbul','las palmas','santa cruz tenerife','corfu','haifa','casablanca',
+    'athens','rhodes old town','heraklion','zakynthos','skiathos']);
+  const isPortCity = PORT_CITY_KEYS.has(key);
+
   const portNote = primaryPort && isExcursionDest
-    ? `Standard excursion from ${primaryPort.name}.`
+    ? `Excursion from ${primaryPort.name}.`
     : primaryPort && maxCruise > 40
-    ? `Near ${primaryPort.name} port. Cruise spillover likely.`
+    ? `Near ${primaryPort.name}. Cruise spillover likely.`
     : '';
 
   return `
@@ -1568,7 +1610,7 @@ function renderCard(scored, idx) {
       <div class="stripe st-${status[0]}" id="stripe-${idx}"></div>
       <div class="ci">
         <div class="ct">
-          <div class="cname">${dest.name}</div>
+          <div class="cname">${dest.name}${isPortCity ? ' <span style="font-size:10px;font-weight:500;color:#aaa;letter-spacing:.03em;vertical-align:middle">⚓ PORT</span>' : ''}</div>
           <div class="csub">${dest.sub}${portNote ? ' · ' + portNote : ''}</div>
         </div>
         <div class="cr">
@@ -1582,16 +1624,21 @@ function renderCard(scored, idx) {
     <div class="det" id="det-${idx}">
       <div class="traf-wrap">
         <div class="traf-block">
-          <div class="traf-ttl">City-wide traffic by day of week · ${scored.season.charAt(0).toUpperCase()+scored.season.slice(1)} avg (Google)</div>
+          <div class="traf-ttl">City-wide traffic · ${scored.season.charAt(0).toUpperCase()+scored.season.slice(1)} avg</div>
           ${renderBars(dest.cityByDay, dayIdx, false)}
         </div>
         <div class="traf-block">
-          <div class="traf-ttl">Cruise passenger volume by day · ${scored.season.charAt(0).toUpperCase()+scored.season.slice(1)} avg</div>
+          <div class="traf-ttl">Cruise passenger volume · ${scored.season.charAt(0).toUpperCase()+scored.season.slice(1)} avg</div>
           ${allZeroCruise
             ? '<div class="no-cruise">✓ No cruise traffic on record for this destination.</div>'
             : renderBars(cruiseByDay, dayIdx, true)
           }
         </div>
+        ${!allZeroCruise ? `
+        <div class="traf-block">
+          <div class="traf-ttl">Est. ships in port · ${scored.season.charAt(0).toUpperCase()+scored.season.slice(1)} avg</div>
+          ${renderShipCount(cruiseByDay, dayIdx)}
+        </div>` : ''}
       </div>
       <div class="wx-row" id="wx-${idx}" ${!scored.date ? 'style="display:none"' : ''}><span class="wx-loading"><span class="spinner"></span>Loading historical weather…</span></div>
       <div class="info-rows">
