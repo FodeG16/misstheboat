@@ -153,6 +153,25 @@ textarea:focus{border-color:#999;background:#fff}
 .share-pill.wa:hover{background:#1ebe5d}
 .share-pill.sms{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
 .share-pill.sms:hover{background:#333}
+.lpill{padding:5px 12px;font-size:12px;font-weight:500;border:1px solid #ddd;border-radius:20px;background:#fff;color:#888;cursor:pointer;transition:all .15s}
+.lpill.on{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
+.rpill{padding:7px 14px;font-size:12px;font-weight:500;border:1px solid #ddd;border-radius:20px;background:#fff;color:#555;cursor:pointer;transition:all .15s}
+.rpill:hover{background:#f5f5f5}
+.rpill.on{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
+.excard{background:#fff;border:1px solid #eee;border-radius:12px;margin-bottom:8px;padding:13px 14px;display:flex;align-items:center;gap:12px}
+.excard:hover{box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.exrank{font-size:18px;font-weight:700;color:#ddd;width:28px;flex-shrink:0;text-align:center}
+.exmain{flex:1;min-width:0}
+.exname{font-size:14px;font-weight:600;color:#1a1a1a;margin-bottom:3px}
+.exsub{font-size:11px;color:#999}
+.exbars{display:flex;flex-direction:column;gap:4px;min-width:140px}
+.exbar-row{display:flex;align-items:center;gap:6px;font-size:10px;color:#aaa}
+.exbar-track{flex:1;height:5px;background:#f0f0f0;border-radius:3px;overflow:hidden}
+.exbar-fill{height:100%;border-radius:3px}
+.exbtn{padding:5px 12px;font-size:11px;font-weight:600;border:1px solid #ddd;border-radius:6px;background:#fff;color:#555;cursor:pointer;white-space:nowrap;flex-shrink:0}
+.exbtn:hover{background:#f5f5f5}
+.ex-use-btn{margin-top:1rem;width:100%;padding:10px;font-size:13px;font-weight:600;border:none;border-radius:8px;background:#1a1a1a;color:#fff;cursor:pointer}
+.ex-use-btn:hover{background:#333}
 
 /* Minimize modal overlay */
 .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;align-items:center;justify-content:center}
@@ -197,6 +216,7 @@ textarea:focus{border-color:#999;background:#fff}
   <nav class="nav">
     <button class="ntab on" onclick="showView('input')">Plan a trip</button>
     <button class="ntab" id="results-tab" onclick="showView('results')" style="display:none">Results</button>
+    <button class="ntab" onclick="showView('explore')">Explore regions</button>
   </nav>
 
   <!-- INPUT VIEW -->
@@ -209,8 +229,12 @@ textarea:focus{border-color:#999;background:#fff}
     <!-- Paste mode -->
     <div id="mode-paste">
       <div class="field-lbl">Your itinerary</div>
-      <textarea id="paste-input" placeholder="May 12 – Arrive Florence&#10;May 13 – Livorno, then San Gimignano&#10;May 14 – Siena, then Volterra&#10;May 15 – Montalcino&#10;May 16 – Pisa + Lucca&#10;May 17 – Florence&#10;&#10;Paste any plain text itinerary. Dates and destinations are extracted automatically."></textarea>
-      <div class="hint">Supports plain text, TripIt exports, or any itinerary format. Year assumed to be 2026 unless specified. <a href="#">See supported formats →</a></div>
+      <textarea id="paste-input" placeholder="May 12 – Arrive Florence&#10;May 13 – Livorno, then San Gimignano&#10;May 14 – Siena, then Volterra&#10;May 15 – Montalcino&#10;May 16 – Pisa + Lucca&#10;May 17 – Florence&#10;&#10;Paste any plain text — hotel confirmations, Google trip text, TripIt exports, travel blog itineraries, anything."></textarea>
+      <div class="hint" style="display:flex;justify-content:space-between;align-items:center">
+        <span>Plain text, copy-paste from Google Trips, TripIt, booking confirmations, or any format.</span>
+        <button onclick="parseWithAI()" id="ai-parse-btn" style="padding:4px 10px;font-size:11px;font-weight:600;border:1px solid #2A7050;border-radius:6px;background:#EAF3DE;color:#164030;cursor:pointer;flex-shrink:0;margin-left:8px">✦ Parse with AI</button>
+      </div>
+      <div id="ai-parse-status" style="display:none;font-size:12px;color:#888;margin-top:6px;padding:8px 10px;background:#fafaf8;border-radius:6px;border:1px solid #eee"></div>
     </div>
 
     <!-- Manual mode -->
@@ -229,6 +253,44 @@ textarea:focus{border-color:#999;background:#fff}
     </div>
 
     <button class="analyze-btn" onclick="runAnalysis()">Check cruise traffic →</button>
+  </div>
+
+  <!-- EXPLORE VIEW -->
+  <div id="view-explore" style="display:none">
+    <div class="panel" style="padding-bottom:0">
+      <div class="field-lbl">Choose a region</div>
+      <div id="region-pills" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:1.25rem"></div>
+
+      <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:1.25rem">
+        <div style="flex:1;min-width:140px">
+          <div class="field-lbl" style="margin-bottom:6px">Trip length</div>
+          <div style="display:flex;gap:5px" id="length-pills">
+            <button class="lpill on" data-n="3" onclick="setLen(this,3)">3 days</button>
+            <button class="lpill" data-n="5" onclick="setLen(this,5)">5 days</button>
+            <button class="lpill" data-n="7" onclick="setLen(this,7)">7 days</button>
+          </div>
+        </div>
+        <div style="flex:1;min-width:140px">
+          <div class="field-lbl" style="margin-bottom:6px">Season</div>
+          <div style="display:flex;gap:5px" id="season-pills">
+            <button class="lpill on" data-s="spring" onclick="setSeason(this,'spring')">Spring</button>
+            <button class="lpill" data-s="summer" onclick="setSeason(this,'summer')">Summer</button>
+            <button class="lpill" data-s="fall" onclick="setSeason(this,'fall')">Fall</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="explore-prompt-wrap" class="panel" style="padding-top:0;padding-bottom:1.5rem">
+      <div class="field-lbl" style="margin-bottom:6px">Or describe your ideal trip <span style="font-size:10px;color:#aaa;font-weight:400">(AI-generated)</span></div>
+      <div style="display:flex;gap:8px">
+        <input type="text" id="explore-prompt" style="flex:1;padding:9px 12px;font-size:13px;border:1px solid #ddd;border-radius:8px;background:#fff;color:#1a1a1a;outline:none" placeholder="e.g. A week in Tuscany focused on wine and hilltop villages, avoiding tourists" />
+        <button onclick="generateAIItinerary()" style="padding:9px 16px;font-size:13px;font-weight:600;border:none;border-radius:8px;background:#1a1a1a;color:#fff;cursor:pointer;white-space:nowrap">Generate ✦</button>
+      </div>
+      <div id="ai-gen-status" style="display:none;font-size:12px;color:#888;margin-top:6px"></div>
+    </div>
+
+    <div id="explore-results" class="panel" style="padding-top:0"></div>
   </div>
 
   <!-- RESULTS VIEW -->
@@ -1232,10 +1294,87 @@ const DESTS = {
   },
 };
 
+// ─────────────────────────────────────────────────────────
+// ENTERTAINMENT VALUE SCORES (1–10)
+// Independent of crowds — how worthwhile is this destination?
+// Factors: cultural/historical significance, food, scenery, things to do
+// Deliberately avoids penalizing "too touristy" (crowds are separate)
+// ─────────────────────────────────────────────────────────
+const VALUE_SCORES = {
+  'florence':9,'pisa':6,'siena':8,'san gimignano':7,'volterra':8,'lucca':8,
+  'montalcino':7,'bolgheri':6,'san miniato':5,'cinque terre':8,'portofino':7,
+  'camogli':7,'santa margherita ligure':6,'livorno':5,'rome':10,'orvieto':8,
+  'assisi':7,'amalfi':8,'positano':8,'ravello':9,'sorrento':7,'capri':8,
+  'pompeii':9,'herculaneum':8,'ischia':7,'taormina':8,'agrigento':9,
+  'cefalu':7,'palermo':7,'athens':9,'mykonos town':7,'santorini':9,
+  'delphi':8,'dubrovnik old town':9,'split old town':8,'hvar':7,'ston':6,
+  'trogir':7,'kotor old town':8,'perast':7,'budva':6,'rhodes old town':8,
+  'lindos':7,'knossos':8,'chania':8,'rethymno':7,'corfu':7,'zakynthos':8,
+  'skiathos':7,'barcelona':9,'montserrat':8,'sitges':6,'tarragona':7,
+  'palma de mallorca':7,'valldemossa':7,'soller':6,'nice':8,'monaco':7,
+  'eze':7,'antibes':7,'saint-paul-de-vence':7,'menton':7,'marseille':7,
+  'avignon':8,'valletta':8,'mdina':7,'ephesus':9,'kusadasi':5,'pamukkale':8,
+  'bodrum':6,'istanbul':10,'las palmas':6,'maspalomas':5,'santa cruz tenerife':5,
+  'teide':8,'haifa':6,'jerusalem':10,'casablanca':6,'marrakech':9,
+};
 
 // ─────────────────────────────────────────────────────────
-// UTILITY FUNCTIONS
+// REGIONS — destination keys grouped for the Explore tab
 // ─────────────────────────────────────────────────────────
+const REGIONS = {
+  tuscany: {
+    label:'Tuscany & Liguria', emoji:'🍷',
+    keys:['florence','siena','san gimignano','volterra','lucca','montalcino','pisa','bolgheri','san miniato','cinque terre','portofino','camogli'],
+    port:'livorno',
+  },
+  amalfi: {
+    label:'Amalfi Coast & Naples', emoji:'🍋',
+    keys:['amalfi','ravello','positano','sorrento','capri','pompeii','herculaneum','ischia'],
+    port:'naples',
+  },
+  rome: {
+    label:'Rome & Central Italy', emoji:'🏛️',
+    keys:['rome','orvieto','assisi'],
+    port:'civitavecchia',
+  },
+  sicily: {
+    label:'Sicily', emoji:'🌋',
+    keys:['taormina','agrigento','cefalu','palermo'],
+    port:'messina',
+  },
+  greece: {
+    label:'Greek Islands', emoji:'🏺',
+    keys:['santorini','mykonos town','athens','delphi','rhodes old town','lindos','knossos','chania','rethymno','corfu','zakynthos'],
+    port:'piraeus',
+  },
+  adriatic: {
+    label:'Adriatic Coast', emoji:'⚓',
+    keys:['dubrovnik old town','split old town','hvar','trogir','ston','kotor old town','perast','budva'],
+    port:'dubrovnik',
+  },
+  riviera: {
+    label:'French Riviera', emoji:'☀️',
+    keys:['nice','monaco','eze','antibes','saint-paul-de-vence','menton','avignon'],
+    port:'villefranche',
+  },
+  spain: {
+    label:'Spain & Mallorca', emoji:'🥘',
+    keys:['barcelona','montserrat','tarragona','sitges','palma de mallorca','valldemossa','soller'],
+    port:'barcelona',
+  },
+  turkey: {
+    label:'Turkish Coast', emoji:'🕌',
+    keys:['istanbul','ephesus','pamukkale','bodrum'],
+    port:'kusadasi',
+  },
+  morocco: {
+    label:'Morocco', emoji:'🌙',
+    keys:['marrakech','casablanca'],
+    port:'casablanca',
+  },
+};
+
+
 const DAYS = ['M','T','W','T','F','S','S'];
 const MONTHS = {jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11,
   january:0,february:1,march:2,april:3,june:5,july:6,august:7,september:8,october:9,november:10,december:11};
@@ -1634,9 +1773,14 @@ function renderCard(scored, idx) {
             : renderBars(cruiseByDay, dayIdx, true)
           }
         </div>
-        ${!allZeroCruise ? `
+        ${isPortCity && !allZeroCruise ? `
         <div class="traf-block">
-          <div class="traf-ttl">Est. ships in port · ${scored.season.charAt(0).toUpperCase()+scored.season.slice(1)} avg</div>
+          <div class="traf-ttl">Ships scheduled at ${dest.name} · ${scored.season.charAt(0).toUpperCase()+scored.season.slice(1)}</div>
+          ${renderShipCount(cruiseByDay, dayIdx)}
+        </div>` : ''}
+        ${!isPortCity && primaryPort && !allZeroCruise ? `
+        <div class="traf-block">
+          <div class="traf-ttl">Ships scheduled at ${primaryPort.name} (source port)</div>
           ${renderShipCount(cruiseByDay, dayIdx)}
         </div>` : ''}
       </div>
@@ -2040,9 +2184,12 @@ function initShareButtons(url) {
 function showView(v) {
   document.getElementById('view-input').style.display = v === 'input' ? 'block' : 'none';
   document.getElementById('view-results').style.display = v === 'results' ? 'block' : 'none';
+  document.getElementById('view-explore').style.display = v === 'explore' ? 'block' : 'none';
   document.querySelectorAll('.ntab').forEach((t,i) => {
-    t.classList.toggle('on', (i===0&&v==='input')||(i===1&&v==='results'));
+    t.classList.toggle('on',
+      (i===0&&v==='input')||(i===1&&v==='results')||(i===2&&v==='explore'));
   });
+  if (v === 'explore') initExplore();
 }
 
 // ─────────────────────────────────────────────────────────
@@ -2058,6 +2205,210 @@ function init() {
       return DESTS[key] ? { key, date } : null;
     }).filter(Boolean);
     if (stops.length > 0) renderResults(stops);
+  }
+}
+
+// ─────────────────────────────────────────────────────────
+// EXPLORE REGIONS
+// ─────────────────────────────────────────────────────────
+let exploreRegion = null;
+let exploreLen = 5;
+let exploreSeason = 'spring';
+
+function initExplore() {
+  // Build region pills
+  const pillsEl = document.getElementById('region-pills');
+  if (pillsEl && !pillsEl.dataset.built) {
+    pillsEl.dataset.built = '1';
+    Object.entries(REGIONS).forEach(([k,r]) => {
+      const b = document.createElement('button');
+      b.className = 'rpill';
+      b.textContent = r.emoji + ' ' + r.label;
+      b.onclick = () => {
+        document.querySelectorAll('.rpill').forEach(x=>x.classList.remove('on'));
+        b.classList.add('on');
+        exploreRegion = k;
+        renderExplore();
+      };
+      pillsEl.appendChild(b);
+    });
+  }
+}
+
+function setLen(el, n) {
+  document.querySelectorAll('.lpill[data-n]').forEach(x=>x.classList.remove('on'));
+  el.classList.add('on');
+  exploreLen = n;
+  if (exploreRegion) renderExplore();
+}
+
+function setSeason(el, s) {
+  document.querySelectorAll('.lpill[data-s]').forEach(x=>x.classList.remove('on'));
+  el.classList.add('on');
+  exploreSeason = s;
+  if (exploreRegion) renderExplore();
+}
+
+function crowdValueRank(key, season) {
+  const dest = DESTS[key];
+  if (!dest) return null;
+  const val = VALUE_SCORES[key] || 5;
+  let cruise = 0;
+  for (const pk of dest.nearPorts) {
+    const p = PORTS[pk];
+    if (p) cruise = Math.max(cruise, Math.round(p[season].reduce((a,b)=>a+b,0)/7));
+  }
+  const city = Math.round(dest.cityByDay.reduce((a,b)=>a+b,0)/7);
+  const crowd = Math.round(city*0.4 + cruise*0.6);
+  // Ratio: entertainment per crowd unit. Ghost-town penalty: val<5 gets a boost to crowd
+  const ratio = (val * 10) / (crowd + 15);
+  return {key, dest, val, crowd, cruise:Math.round(cruise), ratio};
+}
+
+function renderExplore() {
+  const region = REGIONS[exploreRegion];
+  if (!region) return;
+  const el = document.getElementById('explore-results');
+
+  // Score and rank all destinations in region
+  const ranked = region.keys
+    .map(k => crowdValueRank(k, exploreSeason))
+    .filter(Boolean)
+    .sort((a,b) => b.ratio - a.ratio)
+    .slice(0, Math.min(exploreLen + 2, region.keys.length)); // show a few extras
+
+  const topN = ranked.slice(0, exploreLen);
+
+  let h = `<div class="sec-lbl" style="margin-bottom:10px">${region.label} · Best ${exploreLen} stops · ${exploreSeason.charAt(0).toUpperCase()+exploreSeason.slice(1)} — ranked by value vs. crowds</div>`;
+
+  ranked.forEach((r, i) => {
+    const isTop = i < exploreLen;
+    const crowdColor = r.crowd >= 65 ? '#B83232' : r.crowd >= 35 ? '#B87820' : '#2A7050';
+    const valColor = r.val >= 8 ? '#2A7050' : r.val >= 6 ? '#B87820' : '#999';
+    h += `<div class="excard" style="${isTop?'':'opacity:.55;'}">
+      <div class="exrank">${i+1}</div>
+      <div class="exmain">
+        <div class="exname">${r.dest.name}${isTop?'':' <span style="font-size:10px;color:#ccc">optional</span>'}</div>
+        <div class="exsub">${r.dest.sub}</div>
+      </div>
+      <div class="exbars">
+        <div class="exbar-row">
+          <span style="width:50px">Value</span>
+          <div class="exbar-track"><div class="exbar-fill" style="width:${r.val*10}%;background:${valColor}"></div></div>
+          <span style="width:18px;color:${valColor};font-weight:600">${r.val}</span>
+        </div>
+        <div class="exbar-row">
+          <span style="width:50px">Crowds</span>
+          <div class="exbar-track"><div class="exbar-fill" style="width:${r.crowd}%;background:${crowdColor}"></div></div>
+          <span style="width:18px;color:${crowdColor};font-weight:600">${r.crowd}</span>
+        </div>
+      </div>
+    </div>`;
+  });
+
+  // Button to load into planner
+  h += `<button class="ex-use-btn" onclick="loadExploreItinerary()">Plan this itinerary →</button>`;
+
+  el.innerHTML = h;
+  el._ranked = topN;
+}
+
+function loadExploreItinerary() {
+  const el = document.getElementById('explore-results');
+  const ranked = el._ranked;
+  if (!ranked || !ranked.length) return;
+
+  // Assign dates starting from next Monday
+  const start = new Date();
+  start.setDate(start.getDate() + ((8 - start.getDay()) % 7 || 7));
+
+  const stops = ranked.map((r, i) => {
+    const d = new Date(start);
+    d.setDate(d.getDate() + i);
+    return { key: r.key, date: d };
+  });
+
+  renderResults(stops);
+}
+
+// ─────────────────────────────────────────────────────────
+// AI ITINERARY PARSING (Claude API via Vercel function)
+// ─────────────────────────────────────────────────────────
+async function parseWithAI() {
+  const text = document.getElementById('paste-input').value.trim();
+  if (!text) { alert('Paste your itinerary text first.'); return; }
+
+  const btn = document.getElementById('ai-parse-btn');
+  const status = document.getElementById('ai-parse-status');
+  btn.textContent = '...';
+  btn.disabled = true;
+  status.style.display = 'block';
+  status.textContent = 'Parsing with AI…';
+
+  try {
+    const resp = await fetch('/api/parse', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({text}),
+    });
+    if (!resp.ok) throw new Error('API error');
+    const data = await resp.json();
+
+    if (!data.stops || !data.stops.length) {
+      status.textContent = 'No destinations found. Try adding more detail to your itinerary.';
+      return;
+    }
+
+    // Convert to our stop format
+    const stops = data.stops.map(s => {
+      const keys = matchDestination(s.destination);
+      const date = s.date ? new Date(s.date + 'T12:00:00') : null;
+      return keys.length ? {key: keys[0], date} : null;
+    }).filter(Boolean);
+
+    if (!stops.length) {
+      status.textContent = `AI found ${data.stops.length} stops but couldn't match them to our database. Try the manual entry mode.`;
+      return;
+    }
+
+    status.textContent = `Found ${stops.length} destination${stops.length!==1?'s':''} — loading results…`;
+    setTimeout(() => renderResults(stops), 400);
+  } catch(e) {
+    status.textContent = 'Parse failed. Try the keyword parser instead (it works for most plain text).';
+  } finally {
+    btn.textContent = '✦ Parse with AI';
+    btn.disabled = false;
+  }
+}
+
+async function generateAIItinerary() {
+  const prompt = document.getElementById('explore-prompt').value.trim();
+  if (!prompt) { alert('Describe your ideal trip first.'); return; }
+
+  const status = document.getElementById('ai-gen-status');
+  status.style.display = 'block';
+  status.textContent = '✦ Generating itinerary…';
+
+  try {
+    const resp = await fetch('/api/parse', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({text: prompt, mode: 'generate', season: exploreSeason, days: exploreLen}),
+    });
+    if (!resp.ok) throw new Error();
+    const data = await resp.json();
+    if (!data.stops || !data.stops.length) { status.textContent = 'Try rephrasing your request.'; return; }
+
+    const stops = data.stops.map(s => {
+      const keys = matchDestination(s.destination);
+      const date = s.date ? new Date(s.date + 'T12:00:00') : null;
+      return keys.length ? {key: keys[0], date} : null;
+    }).filter(Boolean);
+
+    status.textContent = `Generated ${stops.length} stops — loading…`;
+    setTimeout(() => { renderResults(stops); showView('results'); }, 400);
+  } catch(e) {
+    status.textContent = 'Generation failed. Try selecting a region manually above.';
   }
 }
 
