@@ -1800,7 +1800,7 @@ function openMinimize(withAlts) {
   rearranged.forEach((r, idx) => {
     const {s, scores, curScore, bestScore, bestOffset, newDate} = r;
     const changed = bestOffset !== 0;
-    h += `<div class="modal-card" style="${changed?'border-color:#C0DD97;':'}">
+    h += `<div class="modal-card" style="${changed?'border-color:#C0DD97;border-background:#f9fdf7;':''}">
       <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:3px">
         <div class="mc-name">${s.dest.name}</div>
         ${changed ? `<span style="font-size:10px;font-weight:600;color:#2A7050;">Save ${curScore-bestScore} pts</span>` : ''}
