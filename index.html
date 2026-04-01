@@ -147,6 +147,12 @@ textarea:focus{border-color:#999;background:#fff}
 .share-url{flex:1;font-size:11px;font-family:monospace;color:#999;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 .copy-btn{padding:5px 12px;font-size:11px;border:1px solid #ddd;border-radius:6px;background:#fff;color:#555;cursor:pointer;flex-shrink:0;font-weight:500;transition:all .15s}
 .copy-btn:hover{background:#f5f5f5}
+.share-pill{padding:6px 13px;font-size:12px;font-weight:500;border:1px solid #ddd;border-radius:20px;background:#fff;color:#555;cursor:pointer;transition:all .15s}
+.share-pill:hover{background:#f5f5f5;border-color:#ccc}
+.share-pill.wa{background:#25D366;color:#fff;border-color:#25D366}
+.share-pill.wa:hover{background:#1ebe5d}
+.share-pill.sms{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
+.share-pill.sms:hover{background:#333}
 
 /* Minimize modal overlay */
 .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;align-items:center;justify-content:center}
@@ -254,8 +260,10 @@ textarea:focus{border-color:#999;background:#fff}
 
     <div class="share-row">
       <div class="share-url" id="share-url">misstheboat.app/trip/...</div>
-      <button class="copy-btn" onclick="copyShareLink()">Copy link</button>
+      <button class="copy-btn" id="copy-btn" onclick="copyShareLink()">Copy link</button>
+      <button class="copy-btn" onclick="nativeShare()" id="native-share-btn" style="display:none;background:#1a1a1a;color:#fff;border-color:#1a1a1a">Share ↗</button>
     </div>
+    <div id="share-btns" style="display:none;margin:.5rem 1.5rem 0;display:flex;gap:6px;flex-wrap:wrap"></div>
   </div>
 </div>
 
@@ -1710,7 +1718,9 @@ function renderResults(stops) {
   // Share URL
   const hash = stops.map(s => `${encodeURIComponent(s.key)}|${s.date?s.date.toISOString().split('T')[0]:''}`).join(',');
   window.location.hash = hash;
-  document.getElementById('share-url').textContent = window.location.href.split('#')[0] + '#' + hash;
+  const shareUrl = window.location.href.split('#')[0] + '#' + hash;
+  document.getElementById('share-url').textContent = shareUrl;
+  initShareButtons(shareUrl);
 
   // Show results tab & switch
   document.getElementById('results-tab').style.display = 'inline-block';
@@ -1729,50 +1739,117 @@ function toggleCard(idx) {
 // MINIMIZE CROWDS
 // ─────────────────────────────────────────────────────────
 function openMinimize(withAlts) {
-  const scored = currentStops.map(s => scoreStop(s.key, s.date)).filter(Boolean);
-  let h = '';
+  const scored = currentStops.map(s => scoreStop(s.key, s.date)).filter(Boolean)
+    .filter(s => s.date); // only stops with dates
+  if (scored.length === 0) { alert('Add dates to your stops first.'); return; }
 
-  for (const s of scored) {
+  // For each stop, compute crowd score for every day of week
+  const perStop = scored.map(s => {
     const {dest, dayIdx, season} = s;
-    // Compute score for each day of week
-    const dayScores = dest.cityByDay.map((city, i) => {
+    const scores = dest.cityByDay.map((city, i) => {
       let cruise = 0;
       for (const pk of dest.nearPorts) {
-        const p = PORTS[pk];
-        if (p) cruise = Math.max(cruise, p[season][i]);
+        const p = PORTS[pk]; if (p) cruise = Math.max(cruise, p[season][i]);
       }
-      return Math.round((city * 0.4 + cruise * 0.6));
+      return Math.round(city * 0.4 + cruise * 0.6);
     });
-    const minScore = Math.min(...dayScores);
-    const maxScore = Math.max(...dayScores);
+    return { s, scores, curScore: scores[dayIdx] };
+  });
 
-    h += `<div class="modal-card">
-      <div class="mc-name">${dest.name}</div>
-      <div class="mc-cur">Currently: ${s.date ? s.date.toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'}) : 'date TBD'} · Crowd score: ${dayScores[dayIdx]}/100</div>
-      <div class="mc-days">`;
+  // Greedy rearrangement: for each stop, shift its date to lowest-score day of week
+  // within ±3 days of original date (keeps trip roughly intact)
+  const rearranged = perStop.map(({s, scores, curScore}) => {
+    const orig = s.date;
+    let bestOffset = 0, bestScore = curScore;
+    for (let offset = -3; offset <= 3; offset++) {
+      const trial = new Date(orig);
+      trial.setDate(trial.getDate() + offset);
+      const dayI = getDayIdx(trial);
+      if (scores[dayI] < bestScore) {
+        bestScore = scores[dayI];
+        bestOffset = offset;
+      }
+    }
+    const newDate = new Date(orig);
+    newDate.setDate(newDate.getDate() + bestOffset);
+    const saving = curScore - bestScore;
+    return { s, scores, curScore, bestScore, bestOffset, newDate, saving };
+  });
 
-    const fullDays = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
-    for (let i = 0; i < 7; i++) {
-      const isBest = dayScores[i] === minScore;
-      const isWorst = dayScores[i] === maxScore;
-      const isCur = i === dayIdx;
-      h += `<div class="mc-day${isBest?' best':isWorst?' worst':''}" title="Crowd score: ${dayScores[i]}/100">
-        ${fullDays[i].slice(0,3)} <strong>${dayScores[i]}</strong>${isCur?' ●':''}
-      </div>`;
-    }
-    h += '</div>';
-    if (withAlts && dest.alt) {
-      h += `<div class="altbox" style="margin-top:8px;font-size:11px"><strong>Alternative:</strong> ${dest.alt}</div>`;
-    }
-    h += '</div>';
+  const totalOrig = rearranged.reduce((a, r) => a + r.curScore, 0);
+  const totalNew  = rearranged.reduce((a, r) => a + r.bestScore, 0);
+  const totalSaving = totalOrig - totalNew;
+  const anyImprovement = rearranged.some(r => r.bestOffset !== 0);
+
+  let h = '';
+
+  // Summary banner
+  if (anyImprovement) {
+    h += `<div style="background:#EAF3DE;border-radius:8px;padding:10px 13px;margin-bottom:1rem;font-size:12px;color:#164030;">
+      <strong>Optimization found.</strong> Shifting ${rearranged.filter(r=>r.bestOffset!==0).length} stop${rearranged.filter(r=>r.bestOffset!==0).length!==1?'s':''} reduces your total crowd exposure by <strong>${Math.round((totalSaving/totalOrig)*100)}%</strong>.
+      <button onclick="applyRearrangement()" style="display:block;margin-top:8px;padding:6px 14px;font-size:12px;font-weight:600;background:#2A7050;color:#fff;border:none;border-radius:6px;cursor:pointer;">Apply suggested dates →</button>
+    </div>`;
+  } else {
+    h += `<div style="background:#fafaf8;border-radius:8px;padding:10px 13px;margin-bottom:1rem;font-size:12px;color:#888;">
+      Your current dates are already close to optimal within a ±3 day window.
+    </div>`;
   }
 
+  // Per-stop cards
+  const fullDays = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  rearranged.forEach((r, idx) => {
+    const {s, scores, curScore, bestScore, bestOffset, newDate} = r;
+    const changed = bestOffset !== 0;
+    h += `<div class="modal-card" style="${changed?'border-color:#C0DD97;':'}">
+      <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:3px">
+        <div class="mc-name">${s.dest.name}</div>
+        ${changed ? `<span style="font-size:10px;font-weight:600;color:#2A7050;">Save ${curScore-bestScore} pts</span>` : ''}
+      </div>
+      <div class="mc-cur">
+        Current: ${s.date.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})} · score ${curScore}
+        ${changed ? `→ <strong style="color:#2A7050">${newDate.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})} · score ${bestScore}</strong>` : ' <span style="color:#aaa">(already optimal)</span>'}
+      </div>
+      <div class="mc-days" style="margin-top:8px">`;
+
+    for (let i = 0; i < 7; i++) {
+      const isBest = scores[i] === Math.min(...scores);
+      const isCur = i === getDayIdx(s.date);
+      const isNew = changed && i === getDayIdx(newDate);
+      let cls = 'mc-day';
+      if (isNew) cls += ' best';
+      else if (isCur && !isNew) cls += scores[i] > 60 ? ' worst' : '';
+      h += `<div class="${cls}" title="${fullDays[i]}: score ${scores[i]}/100" style="${isNew?'outline:2px solid #2A7050;':''}">${fullDays[i]} <strong>${scores[i]}</strong>${isCur?' ◉':''}</div>`;
+    }
+
+    h += `</div>`;
+    if (withAlts && s.dest.alt) {
+      h += `<div class="altbox" style="margin-top:8px;font-size:11px"><strong>Lower-traffic alternative:</strong> ${s.dest.alt}</div>`;
+    }
+    h += `</div>`;
+  });
+
+  // Store rearrangement for apply button
+  window._pendingRearrangement = rearranged;
+
   document.getElementById('modal-sub').textContent = withAlts
-    ? 'Best and worst days per destination with crowd score (0–100) and lower-traffic alternatives. Green = lowest crowd day, red = worst.'
-    : 'Best and worst days per destination based on combined city traffic and cruise passenger volume. Green = lowest crowd day, red = worst.';
+    ? 'Suggested date shifts to minimize cruise and tourist crowds, with lower-traffic alternatives.'
+    : 'Suggested date shifts (±3 days) to minimize cruise and tourist crowds. ◉ = current date.';
   document.getElementById('modal-content').innerHTML = h;
   document.getElementById('minimize-modal').classList.add('open');
 }
+
+function applyRearrangement() {
+  if (!window._pendingRearrangement) return;
+  // Update currentStops with new dates
+  window._pendingRearrangement.forEach(r => {
+    const stop = currentStops.find(s => s.key === r.s.key);
+    if (stop && r.bestOffset !== 0) stop.date = r.newDate;
+  });
+  closeMinimize();
+  // Re-render with new dates
+  renderResults(currentStops);
+}
+
 function closeMinimize() {
   document.getElementById('minimize-modal').classList.remove('open');
 }
@@ -1829,13 +1906,85 @@ function runAnalysis() {
   renderResults(stops);
 }
 
+function getShareUrl() {
+  return document.getElementById('share-url').textContent;
+}
+
+function getShareText() {
+  const title = document.getElementById('trip-title').textContent;
+  const counts = {
+    red: document.getElementById('sum-red').textContent,
+    amb: document.getElementById('sum-amb').textContent,
+    grn: document.getElementById('sum-grn').textContent,
+  };
+  return `🚢 ${title} crowd check via MissTheBoat: ${counts.red} avoid, ${counts.amb} caution, ${counts.grn} clear. See the full heatmap:`;
+}
+
 function copyShareLink() {
-  const url = document.getElementById('share-url').textContent;
+  const url = getShareUrl();
   navigator.clipboard.writeText(url).then(() => {
-    const btn = document.querySelector('.copy-btn');
+    const btn = document.getElementById('copy-btn');
     btn.textContent = 'Copied!';
-    setTimeout(() => btn.textContent = 'Copy link', 2000);
+    btn.style.background = '#EAF3DE';
+    btn.style.color = '#2A7050';
+    btn.style.borderColor = '#C0DD97';
+    setTimeout(() => {
+      btn.textContent = 'Copy link';
+      btn.style.background = '';
+      btn.style.color = '';
+      btn.style.borderColor = '';
+    }, 2000);
+  }).catch(() => {
+    // Fallback: select text
+    const el = document.getElementById('share-url');
+    const range = document.createRange();
+    range.selectNode(el);
+    window.getSelection().removeAllRanges();
+    window.getSelection().addRange(range);
   });
+}
+
+function nativeShare() {
+  const url = getShareUrl();
+  const text = getShareText();
+  if (navigator.share) {
+    navigator.share({ title: 'MissTheBoat trip plan', text, url }).catch(() => {});
+  }
+}
+
+function shareWhatsApp() {
+  const url = getShareUrl();
+  const text = encodeURIComponent(getShareText() + ' ' + url);
+  window.open(`https://wa.me/?text=${text}`, '_blank');
+}
+
+function shareSMS() {
+  const url = getShareUrl();
+  const text = encodeURIComponent(getShareText() + ' ' + url);
+  window.open(`sms:?body=${text}`, '_blank');
+}
+
+function shareEmail() {
+  const url = getShareUrl();
+  const title = document.getElementById('trip-title').textContent;
+  const subject = encodeURIComponent(`MissTheBoat — ${title} crowd plan`);
+  const body = encodeURIComponent(getShareText() + '\n\n' + url);
+  window.open(`mailto:?subject=${subject}&body=${body}`, '_blank');
+}
+
+function initShareButtons(url) {
+  // Show native share on mobile if available
+  if (navigator.share) {
+    document.getElementById('native-share-btn').style.display = 'inline-block';
+  }
+  // Always show pill buttons
+  const btns = document.getElementById('share-btns');
+  btns.style.display = 'flex';
+  btns.innerHTML = `
+    <button class="share-pill wa" onclick="shareWhatsApp()">WhatsApp</button>
+    <button class="share-pill sms" onclick="shareSMS()">Text message</button>
+    <button class="share-pill" onclick="shareEmail()">Email</button>
+  `;
 }
 
 // ─────────────────────────────────────────────────────────
