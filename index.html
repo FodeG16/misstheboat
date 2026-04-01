@@ -2051,11 +2051,6 @@ function renderCard(scored, idx) {
           <div class="traf-ttl">Ships scheduled at ${dest.name} · ${scored.season.charAt(0).toUpperCase()+scored.season.slice(1)}</div>
           ${renderShipCount(cruiseByDay, dayIdx)}
         </div>` : ''}
-        ${!isPortCity && primaryPort && !allZeroCruise ? `
-        <div class="traf-block">
-          <div class="traf-ttl">Ships scheduled at ${primaryPort.name} (source port)</div>
-          ${renderShipCount(cruiseByDay, dayIdx)}
-        </div>` : ''}
       </div>
       <div class="wx-row" id="wx-${idx}" ${!scored.date ? 'style="display:none"' : ''}><span class="wx-loading"><span class="spinner"></span>Loading historical weather…</span></div>
       <div class="info-rows">
