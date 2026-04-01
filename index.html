@@ -258,6 +258,7 @@ textarea:focus{border-color:#999;background:#fff}
   <!-- EXPLORE VIEW -->
   <div id="view-explore" style="display:none">
     <div class="panel" style="padding-bottom:0">
+      <div style="font-size:12px;color:#888;margin-bottom:1rem;line-height:1.6">Destinations ranked by entertainment value relative to cruise crowd levels. Pick a region to find the best stops for your trip — or use AI to generate a full itinerary from a description.</div>
       <div class="field-lbl">Choose a region</div>
       <div id="region-pills" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:1.25rem"></div>
 
@@ -374,10 +375,42 @@ const PORTS = {
   venice: {
     name: 'Venice', country: 'Italy', lat: 45.441, lng: 12.316,
     spring: [45,50,48,52,55,70,80],
-    summer: [55,62,58,62,65,85,90],
-    fall:   [38,42,40,45,48,60,70],
-    excursions: ['venice','verona','padua','murano','burano'],
-    notExcursions: ['vicenza','treviso','bassano del grappa','asolo','marostica'],
+    summer: [55,62,58,62,65,85,92],
+    fall:   [38,42,40,45,48,62,72],
+    excursions: ['venice','murano','burano','verona','padua'],
+    notExcursions: ['vicenza','treviso','chioggia','bassano del grappa','asolo'],
+  },
+  catania: {
+    name: 'Catania', country: 'Italy', lat: 37.502, lng: 15.087,
+    spring: [48,58,52,62,65,55,48],
+    summer: [65,78,70,80,82,68,60],
+    fall:   [38,48,42,52,55,45,38],
+    excursions: ['catania','etna','taormina','syracuse','noto'],
+    notExcursions: ['ragusa','modica','piazza armerina','caltagirone','marzamemi'],
+  },
+  malaga: {
+    name: 'Málaga', country: 'Spain', lat: 36.721, lng: -4.421,
+    spring: [55,62,58,65,68,72,70],
+    summer: [65,75,68,78,80,85,82],
+    fall:   [45,52,48,55,58,62,60],
+    excursions: ['malaga','granada','ronda','marbella','cordoba'],
+    notExcursions: ['frigiliana','nerja','antequera','ardales','zahara de la sierra'],
+  },
+  cadiz: {
+    name: 'Cádiz', country: 'Spain', lat: 36.527, lng: -6.288,
+    spring: [42,52,46,55,58,62,60],
+    summer: [52,65,58,68,70,75,72],
+    fall:   [35,44,38,47,50,55,52],
+    excursions: ['cadiz','seville','jerez','tarifa'],
+    notExcursions: ['vejer de la frontera','arcos de la frontera','medina sidonia','chipiona'],
+  },
+  antalya: {
+    name: 'Antalya', country: 'Turkey', lat: 36.897, lng: 30.713,
+    spring: [45,55,50,58,62,55,50],
+    summer: [62,75,68,78,80,72,65],
+    fall:   [35,45,40,48,52,45,40],
+    excursions: ['antalya','aspendos','side','perge','pamukkale'],
+    notExcursions: ['olympos','cirali','demre','kas','simena'],
   },
   dubrovnik: {
     name: 'Dubrovnik', country: 'Croatia', lat: 42.651, lng: 18.094,
@@ -1292,6 +1325,214 @@ const DESTS = {
     shoulder:'Souks before 10am or after 5pm. The Saadian Tombs and Bahia Palace are less crowded than Djemaa el-Fna at any hour.',
     alt:null,
   },
+
+  // VENICE & VENETO
+  'venice': {
+    name:'Venice', country:'Italy', lat:45.441, lng:12.316,
+    nearPorts:['venice'],
+    cityByDay:[68,72,70,74,75,88,92],
+    sub:'Lagoon city ⚓ PORT',
+    note:'Venice is ground zero for cruise overcrowding — it\'s both the port AND the destination. On days when multiple ships dock, the sestieri of San Marco and Rialto become genuinely impassable. The city now charges a day-visitor entry fee (€5) on peak days.',
+    shoulder:'Dorsoduro, Cannaregio, and Castello neighborhoods see a fraction of the cruise-area crowds. Arrive by 8am or stay after 7pm when day-trippers leave.',
+    alt:'Chioggia — 45 min by vaporetto, authentic fishing port, same lagoon architecture, zero cruise passengers.',
+  },
+  'murano': {
+    name:'Murano', country:'Italy', lat:45.458, lng:12.354,
+    nearPorts:['venice'],
+    cityByDay:[52,60,55,62,65,75,80],
+    sub:'Glass-blowing island',
+    note:'Standard Venice cruise excursion — glassblowing demonstrations are on every shore excursion menu. The main canal gets congested when multiple groups arrive simultaneously.',
+    shoulder:'Morning before 10am is calmer. The glass museum is often skipped by tour groups.',
+    alt:'Burano — 40 min further, brightly painted fishermen\'s houses, lacemaking tradition, quieter and more photogenic.',
+  },
+  'burano': {
+    name:'Burano', country:'Italy', lat:45.484, lng:12.418,
+    nearPorts:['venice'],
+    cityByDay:[40,48,44,50,52,68,72],
+    sub:'Colorful fishing island',
+    note:'Less frequently on cruise itineraries than Murano, but growing. The main street (Via Galuppi) gets crowded quickly given the island\'s small size.',
+    shoulder:'Weekday mornings before the vaporetto crowds arrive.',
+    alt:null,
+  },
+  'verona': {
+    name:'Verona', country:'Italy', lat:45.438, lng:10.993,
+    nearPorts:['venice'],
+    cityByDay:[48,55,52,58,60,72,68],
+    sub:'Romeo & Juliet city',
+    note:'Occasional Venice cruise excursion (2hr drive). The Arena, Piazza Bra, and Juliet\'s balcony are the cruise concentration points.',
+    shoulder:'The Arena opera season (June–August) is spectacular but adds non-cruise crowds. Piazza delle Erbe early morning is excellent.',
+    alt:null,
+  },
+  'padua': {
+    name:'Padua', country:'Italy', lat:45.406, lng:11.876,
+    nearPorts:['venice'],
+    cityByDay:[42,50,46,52,55,65,60],
+    sub:'University city',
+    note:'Occasionally on Venice cruise excursions. Scrovegni Chapel (Giotto frescoes) requires advance booking — cruise groups often fill slots months ahead.',
+    shoulder:'The Bo Palace university tour and Prato della Valle square are rarely overrun.',
+    alt:null,
+  },
+  'vicenza': {
+    name:'Vicenza', country:'Italy', lat:45.547, lng:11.547,
+    nearPorts:[],
+    cityByDay:[28,34,30,36,38,48,44],
+    sub:'Palladio\'s city',
+    note:'Not on any cruise excursion menu. UNESCO-listed Palladian architecture in a manageable, authentically Italian city. Underrated.',
+    shoulder:null,
+    alt:null,
+  },
+
+  // SICILY — CATANIA PORT
+  'catania': {
+    name:'Catania', country:'Italy', lat:37.502, lng:15.087,
+    nearPorts:['catania'],
+    cityByDay:[42,50,46,54,56,60,55],
+    sub:'Baroque port city ⚓ PORT',
+    note:'Catania itself is underrated — the Baroque Piazza del Duomo and covered fish market (La Pescheria) are among the most authentic urban experiences in Sicily. Cruise groups typically pass through en route to Etna or Taormina.',
+    shoulder:'The fish market is best at 7–9am when it\'s purely local.',
+    alt:null,
+  },
+  'etna': {
+    name:'Mount Etna', country:'Italy', lat:37.748, lng:15.001,
+    nearPorts:['catania','messina'],
+    cityByDay:[45,58,50,60,65,70,68],
+    sub:'Active volcano',
+    note:'Top cruise excursion from both Catania and Messina. The crater rim (3,350m) is accessible by cable car and 4x4 — capacity is limited and cruise groups book the first morning slots.',
+    shoulder:'Afternoon visits after 2pm see far fewer cruise groups. The Valle del Bove viewpoint on the eastern flank is not on standard cruise itineraries.',
+    alt:null,
+  },
+  'syracuse': {
+    name:'Syracuse', country:'Italy', lat:37.075, lng:15.286,
+    nearPorts:['catania'],
+    cityByDay:[38,48,42,50,55,62,60],
+    sub:'Ancient Greek capital',
+    note:'Long cruise excursion from Catania (1.5hrs). Ortigia island and the Greek theatre are the cruise stops. Neapolis archaeological park requires a full day to appreciate — cruise groups rarely have time.',
+    shoulder:'Ortigia early morning before 9am is genuinely peaceful.',
+    alt:null,
+  },
+  'noto': {
+    name:'Noto', country:'Italy', lat:36.890, lng:15.068,
+    nearPorts:['catania'],
+    cityByDay:[28,38,32,40,44,55,52],
+    sub:'Baroque hill town',
+    note:'Occasionally on Catania cruise menus. The golden limestone main street is one of Italy\'s most beautiful. Manageable even on port days due to its size.',
+    shoulder:null,
+    alt:null,
+  },
+  'ragusa': {
+    name:'Ragusa', country:'Italy', lat:36.927, lng:14.731,
+    nearPorts:['catania'],
+    cityByDay:[22,30,26,32,35,45,42],
+    sub:'Ibleo Baroque',
+    note:'Rarely on cruise excursion menus — too far from Catania for a half-day. Ragusa Ibla (the lower town) is one of Sicily\'s best-preserved Baroque quarters with almost no cruise traffic.',
+    shoulder:null,
+    alt:null,
+  },
+
+  // SPAIN — MALAGA PORT
+  'malaga': {
+    name:'Málaga', country:'Spain', lat:36.721, lng:-4.421,
+    nearPorts:['malaga'],
+    cityByDay:[50,58,54,62,65,72,68],
+    sub:'Costa del Sol port ⚓ PORT',
+    note:'Picasso\'s birthplace and gateway to Andalusia. The Alcazaba, Picasso Museum, and old town are the cruise stops. City is large enough to absorb groups.',
+    shoulder:null,
+    alt:null,
+  },
+  'granada': {
+    name:'Granada', country:'Spain', lat:37.177, lng:-3.598,
+    nearPorts:['malaga'],
+    cityByDay:[58,65,62,68,70,78,75],
+    sub:'Alhambra city',
+    note:'Top cruise excursion from Málaga (1.5hr drive). The Alhambra has a strict ticket quota — cruise groups book in advance and take the first morning entry slots. Without a pre-booked ticket you cannot enter.',
+    shoulder:'Alhambra Generalife gardens (separate ticket, easier to access) and the Albaicín neighborhood are less impacted. Sacromonte at dusk is excellent.',
+    alt:'Ronda — 1hr west of Málaga, dramatic cliff-top setting, bullring, much lower cruise traffic.',
+  },
+  'ronda': {
+    name:'Ronda', country:'Spain', lat:36.746, lng:-5.161,
+    nearPorts:['malaga'],
+    cityByDay:[38,48,42,52,55,65,62],
+    sub:'Cliff-top Andalusian town',
+    note:'Occasional Málaga cruise excursion. The Puente Nuevo bridge and old town are small but dramatic. Much less crowded than Granada or Marbella.',
+    shoulder:null,
+    alt:null,
+  },
+  'marbella': {
+    name:'Marbella', country:'Spain', lat:36.510, lng:-4.886,
+    nearPorts:['malaga'],
+    cityByDay:[45,52,48,55,58,78,82],
+    sub:'Riviera resort',
+    note:'Occasional cruise stop or excursion from Málaga. Old town (Casco Antiguo) is small and photogenic; resort strip is separate and independent of cruise traffic.',
+    shoulder:null,
+    alt:null,
+  },
+
+  // SPAIN — CADIZ PORT
+  'cadiz': {
+    name:'Cádiz', country:'Spain', lat:36.527, lng:-6.288,
+    nearPorts:['cadiz'],
+    cityByDay:[42,50,46,52,55,60,58],
+    sub:'Atlantic port city ⚓ PORT',
+    note:'One of Europe\'s oldest cities and a beautifully underrated cruise port. The old town peninsula is compact and walkable. Cruise groups concentrate at the cathedral and central market.',
+    shoulder:'The Barrio del Pópulo and La Viña neighborhoods are the most authentic and least cruise-trafficked.',
+    alt:null,
+  },
+  'seville': {
+    name:'Seville', country:'Spain', lat:37.389, lng:-5.984,
+    nearPorts:['cadiz'],
+    cityByDay:[62,70,66,72,75,80,78],
+    sub:'Andalusian capital',
+    note:'Top cruise excursion from Cádiz (1.5hr drive). Alcázar, cathedral, and Barrio de Santa Cruz are the cruise concentration zones 10am–3pm. The Alcázar has timed entry but cruise groups fill slots.',
+    shoulder:'Real Alcázar at opening (9:30am). Triana neighborhood across the river sees almost no cruise groups.',
+    alt:null,
+  },
+  'jerez': {
+    name:'Jerez de la Frontera', country:'Spain', lat:36.687, lng:-6.136,
+    nearPorts:['cadiz'],
+    cityByDay:[32,40,36,42,45,55,52],
+    sub:'Sherry and flamenco',
+    note:'Occasional Cádiz cruise excursion. Sherry bodegas (González Byass, Tío Pepe) are the main draw — tours are timed and manageable even on port days.',
+    shoulder:null,
+    alt:null,
+  },
+
+  // TURKEY — ANTALYA PORT
+  'antalya': {
+    name:'Antalya', country:'Turkey', lat:36.897, lng:30.713,
+    nearPorts:['antalya'],
+    cityByDay:[45,55,50,58,62,70,68],
+    sub:'Turkish Riviera port ⚓ PORT',
+    note:'Major Mediterranean cruise homeport and stop. The old town (Kaleiçi) and Hadrian\'s Gate are the cruise focal points. City is large enough to absorb groups.',
+    shoulder:'Kaleiçi harbor at dusk after cruise groups reboard is worth staying for.',
+    alt:null,
+  },
+  'aspendos': {
+    name:'Aspendos', country:'Turkey', lat:36.938, lng:31.172,
+    nearPorts:['antalya'],
+    cityByDay:[30,40,34,42,46,52,50],
+    sub:'Roman theatre',
+    note:'Standard Antalya cruise excursion. The best-preserved Roman theatre in the world — capacity is genuinely limited and cruise buses arrive in convoys 10am–1pm.',
+    shoulder:'Before 9am or after 3pm the site is dramatically quieter.',
+    alt:null,
+  },
+  'side': {
+    name:'Side', country:'Turkey', lat:36.768, lng:31.389,
+    nearPorts:['antalya'],
+    cityByDay:[38,48,42,52,55,65,62],
+    sub:'Ancient coastal ruins',
+    note:'Occasional Antalya excursion. Temple of Apollo by the sea is the signature image — cruise groups cluster there 10am–2pm.',
+    shoulder:'Dusk at the Apollo temple after cruise groups leave is exceptional.',
+    alt:null,
+  },
+  'olympos': {
+    name:'Olympos & Chimaera', country:'Turkey', lat:36.392, lng:30.463,
+    nearPorts:['antalya'],
+    cityByDay:[20,28,24,30,34,45,42],
+    sub:'Ancient ruins and eternal flame',
+    note:'Not on standard cruise menus — too far and too rugged for coach groups. The eternal flame (Chimaera) burning from the hillside is a genuine once-in-a-lifetime sight.',
+    shoulder:null,
+    alt:null,
+  },
 };
 
 // ─────────────────────────────────────────────────────────
@@ -1316,6 +1557,11 @@ const VALUE_SCORES = {
   'avignon':8,'valletta':8,'mdina':7,'ephesus':9,'kusadasi':5,'pamukkale':8,
   'bodrum':6,'istanbul':10,'las palmas':6,'maspalomas':5,'santa cruz tenerife':5,
   'teide':8,'haifa':6,'jerusalem':10,'casablanca':6,'marrakech':9,
+  'venice':10,'murano':7,'burano':8,'verona':9,'padua':8,'vicenza':7,
+  'catania':7,'etna':9,'syracuse':9,'noto':8,'ragusa':8,
+  'malaga':7,'granada':10,'ronda':8,'marbella':5,
+  'cadiz':8,'seville':9,'jerez':7,
+  'antalya':6,'aspendos':8,'side':7,'olympos':8,
 };
 
 // ─────────────────────────────────────────────────────────
@@ -1337,10 +1583,15 @@ const REGIONS = {
     keys:['rome','orvieto','assisi'],
     port:'civitavecchia',
   },
+  venice: {
+    label:'Venice & the Veneto', emoji:'🚤',
+    keys:['venice','murano','burano','verona','padua','vicenza'],
+    port:'venice',
+  },
   sicily: {
     label:'Sicily', emoji:'🌋',
-    keys:['taormina','agrigento','cefalu','palermo'],
-    port:'messina',
+    keys:['taormina','agrigento','cefalu','palermo','catania','etna','syracuse','noto','ragusa'],
+    port:'catania',
   },
   greece: {
     label:'Greek Islands', emoji:'🏺',
@@ -1362,9 +1613,14 @@ const REGIONS = {
     keys:['barcelona','montserrat','tarragona','sitges','palma de mallorca','valldemossa','soller'],
     port:'barcelona',
   },
+  andalusia: {
+    label:'Andalusia', emoji:'💃',
+    keys:['seville','granada','cadiz','malaga','ronda','jerez','marbella'],
+    port:'cadiz',
+  },
   turkey: {
     label:'Turkish Coast', emoji:'🕌',
-    keys:['istanbul','ephesus','pamukkale','bodrum'],
+    keys:['istanbul','ephesus','pamukkale','bodrum','antalya','aspendos','side','olympos'],
     port:'kusadasi',
   },
   morocco: {
@@ -1482,6 +1738,22 @@ function matchDestination(text) {
     'hassan ii mosque':'casablanca','casablanca mosque':'casablanca',
     'djemaa el fna':'marrakech','jemaa el fna':'marrakech','marrakesh':'marrakech',
     'corfu town':'corfu','kerkyra':'corfu',
+    'venezia':'venice','venice italy':'venice',
+    'murano island':'murano','burano island':'burano',
+    'verona italy':'verona','romeo juliet':'verona',
+    'padova':'padua','padua italy':'padua',
+    'mount etna':'etna','etna volcano':'etna','stromboli':'etna',
+    'siracusa':'syracuse','ortigia':'syracuse',
+    'catania sicily':'catania',
+    'alhambra':'granada','granada spain':'granada',
+    'seville spain':'seville','sevilla':'seville',
+    'cadiz spain':'cadiz',
+    'jerez sherry':'jerez','jerez frontera':'jerez',
+    'malaga spain':'malaga',
+    'antalya turkey':'antalya',
+    'aspendos theatre':'aspendos','aspendos theater':'aspendos',
+    'side turkey':'side','apollon temple':'side',
+    'olympos turkey':'olympos','chimaera':'olympos',
   };
   for (const [alias, key] of Object.entries(aliases)) {
     if (normText.includes(normalizeText(alias)) && !found.includes(key) && DESTS[key]) {
@@ -1732,9 +2004,10 @@ function renderCard(scored, idx) {
   // Port city detection — destination is itself a cruise port
   const PORT_CITY_KEYS = new Set(['livorno','civitavecchia','naples','venice','dubrovnik old town',
     'split old town','piraeus','mykonos town','santorini','barcelona','palma de mallorca',
-    'marseille','valletta','kotor old town','genoa','salerno','palermo','messina','kusadasi',
-    'bodrum','istanbul','las palmas','santa cruz tenerife','corfu','haifa','casablanca',
-    'athens','rhodes old town','heraklion','zakynthos','skiathos']);
+    'marseille','valletta','kotor old town','genoa','salerno','palermo','messina','catania',
+    'kusadasi','bodrum','istanbul','las palmas','santa cruz tenerife','corfu','haifa',
+    'casablanca','athens','rhodes old town','heraklion','zakynthos','skiathos',
+    'malaga','cadiz','antalya']);
   const isPortCity = PORT_CITY_KEYS.has(key);
 
   const portNote = primaryPort && isExcursionDest
@@ -1843,16 +2116,18 @@ function renderResults(stops) {
   // Smart region naming based on countries and known regions
   const countries = [...new Set(scored.map(s => s.dest.country))];
   const italianTuscanKeys = ['florence','pisa','siena','san gimignano','volterra','lucca','montalcino','livorno','bolgheri','certaldo','san miniato','cinque terre','portofino','santa margherita ligure','camogli'];
+  const italianVenetoKeys = ['venice','murano','burano','verona','padua','vicenza'];
   const italianAmalfiKeys = ['amalfi','positano','ravello','praiano','cetara','sorrento','capri','ischia','pompeii','herculaneum'];
   const italianRomeKeys = ['rome','orvieto','tivoli','assisi'];
-  const italianSicilyKeys = ['taormina','agrigento','cefalu','palermo'];
+  const italianSicilyKeys = ['taormina','agrigento','cefalu','palermo','catania','etna','syracuse','noto','ragusa'];
   const croatiaKeys = ['dubrovnik old town','split old town','hvar','vis','ston','korcula','trogir'];
   const montenegroKeys = ['kotor old town','perast','budva'];
   const greeceKeys = ['athens','mykonos town','santorini','delphi','cape sounion','rhodes old town','lindos','knossos','chania','rethymno','corfu','zakynthos','skiathos'];
   const frenchRivieraKeys = ['nice','monaco','eze','antibes','saint-paul-de-vence','menton','cannes'];
   const spainKeys = ['barcelona','montserrat','sitges','tarragona','palma de mallorca','valldemossa','soller'];
+  const andalusiaKeys = ['seville','granada','cadiz','malaga','ronda','jerez','marbella'];
   const canaryKeys = ['las palmas','maspalomas','santa cruz tenerife','teide'];
-  const turkeyKeys = ['ephesus','kusadasi','pamukkale','bodrum','istanbul'];
+  const turkeyKeys = ['ephesus','kusadasi','pamukkale','bodrum','istanbul','antalya','aspendos','side','olympos'];
   const israelKeys = ['haifa','jerusalem'];
   const moroccoKeys = ['casablanca','marrakech'];
   const scoredKeys = scored.map(s=>s.key);
@@ -1862,6 +2137,8 @@ function renderResults(stops) {
     titleDest = 'Mediterranean';
   } else if (countries.length > 1) {
     titleDest = countries.slice(0,2).join(' & ');
+  } else if (countries[0] === 'Italy' && inRegion(italianVenetoKeys)) {
+    titleDest = 'Venice & the Veneto';
   } else if (countries[0] === 'Italy' && inRegion(italianSicilyKeys)) {
     titleDest = 'Sicily';
   } else if (countries[0] === 'Italy' && inRegion(italianTuscanKeys) && !inRegion(italianAmalfiKeys) && !inRegion(italianRomeKeys)) {
@@ -1876,6 +2153,8 @@ function renderResults(stops) {
     titleDest = 'Greek Islands';
   } else if (countries[0] === 'France' && inRegion(frenchRivieraKeys)) {
     titleDest = 'French Riviera';
+  } else if (countries[0] === 'Spain' && inRegion(andalusiaKeys)) {
+    titleDest = 'Andalusia';
   } else if (countries[0] === 'Spain' && inRegion(canaryKeys)) {
     titleDest = 'Canary Islands';
   } else if (countries[0] === 'Spain' && inRegion(spainKeys)) {
@@ -2308,6 +2587,13 @@ function renderExplore() {
 
   // Button to load into planner
   h += `<button class="ex-use-btn" onclick="loadExploreItinerary()">Plan this itinerary →</button>`;
+
+  h += `<div style="margin-top:1.25rem;padding:12px 14px;background:#fafaf8;border:1px solid #eee;border-radius:10px;font-size:11px;color:#aaa;line-height:1.7">
+    <strong style="color:#888;font-size:11px">How these scores are calculated</strong><br>
+    <strong style="color:#999">Value (1–10):</strong> Editorial score for cultural significance, food, scenery, and things to do — independent of crowds. Assigned manually; not derived from an external data source.<br>
+    <strong style="color:#999">Crowds (0–100):</strong> Weighted composite of two seasonal weekly averages: city-wide tourist traffic (40%, estimated from Google Popular Times patterns) and cruise call volume at the nearest port (60%, estimated from historical deployment schedules). Both are averages across the week for the selected season — not specific-date data.<br>
+    <strong style="color:#999">Ranking:</strong> Destinations are sorted by value-to-crowd ratio, so a hidden gem with low crowds ranks above a famous but overwhelmed city. A minimum crowd floor prevents ghost towns from scoring artificially high.
+  </div>`;
 
   el.innerHTML = h;
   el._ranked = topN;
