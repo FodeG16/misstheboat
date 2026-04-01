@@ -445,6 +445,86 @@ const PORTS = {
     excursions: ['knossos','heraklion','rethymno','chania'],
     notExcursions: ['archanes','zaros','spinalonga','elounda hinterland','argyroupoli'],
   },
+  kusadasi: {
+    name: 'Kusadasi', country: 'Turkey', lat: 37.858, lng: 27.260,
+    spring: [52,65,58,68,72,55,48],
+    summer: [72,85,78,88,90,68,62],
+    fall:   [42,55,48,58,62,45,38],
+    excursions: ['ephesus','kusadasi','pamukkale','selcuk'],
+    notExcursions: ['priene','miletus','didyma','sirince','bodrum'],
+  },
+  bodrum: {
+    name: 'Bodrum', country: 'Turkey', lat: 37.034, lng: 27.430,
+    spring: [38,50,42,52,55,65,68],
+    summer: [58,72,65,75,78,88,90],
+    fall:   [30,42,35,45,48,58,62],
+    excursions: ['bodrum','marmaris','ephesus'],
+    notExcursions: ['gumusluk','yalikavak','turgutreis'],
+  },
+  istanbul: {
+    name: 'Istanbul', country: 'Turkey', lat: 41.008, lng: 28.978,
+    spring: [62,70,65,72,75,80,78],
+    summer: [75,85,80,88,90,92,88],
+    fall:   [55,62,58,65,68,72,70],
+    excursions: ['istanbul','topkapi','hagia sophia','grand bazaar'],
+    notExcursions: ['karakoy','balat','fener','princes islands','belgrade forest'],
+  },
+  'las palmas': {
+    name: 'Las Palmas', country: 'Spain', lat: 28.124, lng: -15.430,
+    spring: [42,50,45,52,55,65,68],
+    summer: [38,45,40,48,52,60,62],
+    fall:   [45,55,48,55,58,68,70],
+    excursions: ['las palmas','maspalomas','roque nublo'],
+    notExcursions: ['teror','agaete','arucas','guia'],
+  },
+  'santa cruz': {
+    name: 'Santa Cruz de Tenerife', country: 'Spain', lat: 28.463, lng: -16.252,
+    spring: [45,55,48,55,58,65,62],
+    summer: [42,52,45,52,55,62,60],
+    fall:   [48,58,52,60,62,70,68],
+    excursions: ['santa cruz tenerife','teide','puerto de la cruz','loro parque'],
+    notExcursions: ['anaga','garachico','masca','el hierro'],
+  },
+  corfu: {
+    name: 'Corfu', country: 'Greece', lat: 39.621, lng: 19.921,
+    spring: [50,60,55,62,65,72,75],
+    summer: [68,80,72,80,82,88,90],
+    fall:   [40,50,45,52,55,62,65],
+    excursions: ['corfu','paleokastritsa','achillion palace'],
+    notExcursions: ['agios georgios','peroulades','kavos','gardiki'],
+  },
+  zakynthos: {
+    name: 'Zakynthos', country: 'Greece', lat: 37.849, lng: 20.760,
+    spring: [42,52,46,55,58,70,72],
+    summer: [60,72,65,72,75,85,88],
+    fall:   [32,42,36,45,48,60,62],
+    excursions: ['zakynthos','navagio','blue caves'],
+    notExcursions: ['keri','volimes','agios nikolaos village'],
+  },
+  skiathos: {
+    name: 'Skiathos', country: 'Greece', lat: 39.162, lng: 23.493,
+    spring: [35,45,40,48,52,65,68],
+    summer: [55,68,60,68,70,82,85],
+    fall:   [28,38,32,40,44,55,58],
+    excursions: ['skiathos','koukounaries'],
+    notExcursions: ['kastro skiathos','lalaria beach'],
+  },
+  haifa: {
+    name: 'Haifa', country: 'Israel', lat: 32.794, lng: 34.989,
+    spring: [50,60,55,62,65,68,30],
+    summer: [58,68,62,70,72,75,35],
+    fall:   [45,55,50,58,62,65,28],
+    excursions: ['haifa','jerusalem','nazareth','acre','caesarea'],
+    notExcursions: ['isfiya','daliyat al-carmel','zichron yaakov'],
+  },
+  casablanca: {
+    name: 'Casablanca', country: 'Morocco', lat: 33.589, lng: -7.603,
+    spring: [40,48,43,50,52,58,45],
+    summer: [38,45,40,48,50,55,42],
+    fall:   [42,50,45,52,55,60,48],
+    excursions: ['casablanca','marrakech','rabat','fes','meknes'],
+    notExcursions: ['chefchaouen','essaouira','ouarzazate','azemmour'],
+  },
 };
 
 // ─────────────────────────────────────────────────────────
@@ -988,7 +1068,162 @@ const DESTS = {
     shoulder:null,
     alt:null,
   },
+
+  // TURKISH COAST
+  'ephesus': {
+    name:'Ephesus', country:'Turkey', lat:37.940, lng:27.341,
+    nearPorts:['kusadasi'],
+    cityByDay:[52,65,58,68,72,78,80],
+    sub:'Ancient Roman city',
+    note:'The single most visited ancient site in Turkey and one of the top Mediterranean cruise excursions from Kusadasi. The main street (Curetes Way) is completely dominated by cruise groups 10am–2pm.',
+    shoulder:'Site opens at 8am. First 90 minutes before the cruise buses arrive is genuinely different. The Terrace Houses (ticketed separately) stay quieter throughout the day.',
+    alt:'Priene — 45 min south, equally atmospheric Hellenistic ruins on a hillside, virtually no cruise groups.',
+  },
+  'kusadasi': {
+    name:'Kusadasi', country:'Turkey', lat:37.858, lng:27.260,
+    nearPorts:['kusadasi'],
+    cityByDay:[45,60,52,65,68,72,70],
+    sub:'Aegean resort port',
+    note:'Major cruise homeport and transit hub. The bazaar district immediately outside the port gate fills with cruise day-trippers on port days.',
+    shoulder:null,
+    alt:null,
+  },
+  'pamukkale': {
+    name:'Pamukkale', country:'Turkey', lat:37.920, lng:29.119,
+    nearPorts:['kusadasi'],
+    cityByDay:[38,50,42,55,58,68,65],
+    sub:'Travertine terraces',
+    note:'Long-haul cruise excursion from Kusadasi (3hrs each way). Coach groups arrive in waves — the terraces are small enough that this is very noticeable.',
+    shoulder:'Arrive before 9am or stay past 4pm when day-tripper buses leave. The site is stunning at golden hour.',
+    alt:null,
+  },
+  'bodrum': {
+    name:'Bodrum', country:'Turkey', lat:37.034, lng:27.430,
+    nearPorts:['bodrum'],
+    cityByDay:[42,55,48,60,65,80,85],
+    sub:'Aegean coastal town',
+    note:'Increasingly popular cruise stop and yacht charter hub. The Castle of St Peter and old bazaar are the cruise focal points. Weekend general tourism adds to port day crowds.',
+    shoulder:'Early evening when the day boats return and cruise passengers reboard is the best time.',
+    alt:null,
+  },
+  'istanbul': {
+    name:'Istanbul', country:'Turkey', lat:41.008, lng:28.978,
+    nearPorts:['istanbul'],
+    cityByDay:[65,70,68,72,75,80,78],
+    sub:'Historic capital',
+    note:'Large city with significant capacity but Hagia Sophia, Blue Mosque, and Grand Bazaar are severe bottlenecks on cruise call days. Multiple ships can land 15,000+ passengers.',
+    shoulder:'Hagia Sophia at 9am opening. Grand Bazaar before 10am. Galata and Karakoy neighborhoods are rarely on cruise itineraries.',
+    alt:null,
+  },
+
+  // CANARY ISLANDS
+  'las palmas': {
+    name:'Las Palmas', country:'Spain', lat:28.124, lng:-15.430,
+    nearPorts:['las palmas'],
+    cityByDay:[42,50,45,52,55,65,68],
+    sub:'Gran Canaria capital',
+    note:'Major Atlantic cruise hub and homeport. Vegueta old town and Las Canteras beach are the cruise stops. City is large enough to absorb most groups.',
+    shoulder:null,
+    alt:null,
+  },
+  'maspalomas': {
+    name:'Maspalomas', country:'Spain', lat:27.762, lng:-15.586,
+    nearPorts:['las palmas'],
+    cityByDay:[38,45,40,48,52,72,78],
+    sub:'Dune resort',
+    note:'Occasional cruise excursion from Las Palmas. The dunes themselves are vast — crowds dilute quickly. The resort strip is a separate issue.',
+    shoulder:null,
+    alt:null,
+  },
+  'santa cruz tenerife': {
+    name:'Santa Cruz de Tenerife', country:'Spain', lat:28.463, lng:-16.252,
+    nearPorts:['santa cruz'],
+    cityByDay:[40,48,43,50,54,62,60],
+    sub:'Tenerife capital',
+    note:'Major Atlantic cruise port. Teide National Park is the top excursion (3hrs). City itself is manageable.',
+    shoulder:null,
+    alt:null,
+  },
+  'teide': {
+    name:'Teide National Park', country:'Spain', lat:28.272, lng:-16.642,
+    nearPorts:['santa cruz'],
+    cityByDay:[45,55,48,58,62,75,78],
+    sub:'Volcanic national park',
+    note:'Top cruise excursion from Tenerife. The cable car has limited capacity — cruise groups booking in advance fill slots fast on port days.',
+    shoulder:'Arrive at park opening (9am) before coach convoys. The walk around the base caldera is rarely on cruise itineraries.',
+    alt:null,
+  },
+
+  // MORE GREEK ISLANDS
+  'corfu': {
+    name:'Corfu Old Town', country:'Greece', lat:39.621, lng:19.921,
+    nearPorts:['corfu'],
+    cityByDay:[50,62,55,65,68,78,80],
+    sub:'Venetian island capital',
+    note:'UNESCO old town with narrow alleyways that funnel cruise groups through the same streets. Multiple ships simultaneously is common in summer.',
+    shoulder:'The Liston promenade before 9:30am. The Venetian fortress is often skipped by cruise groups — excellent views.',
+    alt:'Paleokastritsa — 25km northwest, dramatic monastery on a cliff, no cruise buses.',
+  },
+  'zakynthos': {
+    name:'Zakynthos (Shipwreck Beach)', country:'Greece', lat:37.849, lng:20.760,
+    nearPorts:['zakynthos'],
+    cityByDay:[45,55,50,58,62,80,85],
+    sub:'Ionian island',
+    note:'Navagio (Shipwreck Beach) is one of the most photographed spots in Greece and a standard cruise excursion. Boat tours from the port go in convoys — midday is peak.',
+    shoulder:'First boats from Agios Nikolaos port depart at 9am. Go early.',
+    alt:null,
+  },
+  'skiathos': {
+    name:'Skiathos', country:'Greece', lat:39.162, lng:23.493,
+    nearPorts:['skiathos'],
+    cityByDay:[40,50,45,55,58,75,80],
+    sub:'Sporades island',
+    note:'Small island that can feel overwhelmed on busy port days. Koukounaries beach is the cruise group default.',
+    shoulder:'The old town and Kastro (abandoned medieval capital) are rarely on cruise itineraries.',
+    alt:null,
+  },
+
+  // ISRAEL
+  'haifa': {
+    name:'Haifa', country:'Israel', lat:32.794, lng:34.989,
+    nearPorts:['haifa'],
+    cityByDay:[42,50,45,52,55,60,38],
+    sub:'Port city',
+    note:'Major Israeli cruise port. Bahai Gardens and Acre (Akko) are the standard excursions. City itself is relaxed and manageable.',
+    shoulder:null,
+    alt:null,
+  },
+  'jerusalem': {
+    name:'Jerusalem Old City', country:'Israel', lat:31.778, lng:35.235,
+    nearPorts:['haifa'],
+    cityByDay:[58,65,62,68,72,75,30],
+    sub:'Holy city',
+    note:'2-hour drive from Haifa — full-day cruise excursion staple. Western Wall and Church of the Holy Sepulchre are extremely crowded on port days. Friday is quieter for general tourism but note Shabbat begins at sundown.',
+    shoulder:'Damascus Gate and the Muslim Quarter early morning (8–9am) before tour groups arrive.',
+    alt:null,
+  },
+
+  // MOROCCO
+  'casablanca': {
+    name:'Casablanca', country:'Morocco', lat:33.589, lng:-7.603,
+    nearPorts:['casablanca'],
+    cityByDay:[38,45,40,48,52,55,42],
+    sub:'Atlantic port city',
+    note:'Atlantic cruise port and Morocco\'s largest city. Hassan II Mosque is the cruise focal point — the medina is less touristed than Marrakech but still busy on port days.',
+    shoulder:null,
+    alt:null,
+  },
+  'marrakech': {
+    name:'Marrakech', country:'Morocco', lat:31.629, lng:-7.981,
+    nearPorts:['casablanca'],
+    cityByDay:[55,62,58,65,68,75,70],
+    sub:'Imperial city',
+    note:'Long cruise excursion from Casablanca (2.5hrs each way). Djemaa el-Fna square and souks are intense even without cruise groups — with them it\'s overwhelming midday.',
+    shoulder:'Souks before 10am or after 5pm. The Saadian Tombs and Bahia Palace are less crowded than Djemaa el-Fna at any hour.',
+    alt:null,
+  },
 };
+
 
 // ─────────────────────────────────────────────────────────
 // UTILITY FUNCTIONS
@@ -1087,6 +1322,19 @@ function matchDestination(text) {
     'napoli':'pompeii','naples':'pompeii',
     'pisa tower':'pisa','leaning tower':'pisa',
     'split':'split old town','split palace':'split old town','diocletian':'split old town',
+    'ephesus ruins':'ephesus','selcuk':'ephesus','efes':'ephesus',
+    'hagia sophia':'istanbul','topkapi':'istanbul','blue mosque':'istanbul','grand bazaar':'istanbul',
+    'bosphorus':'istanbul','sultanahmet':'istanbul',
+    'pamukkale travertine':'pamukkale','hierapolis':'pamukkale',
+    'shipwreck beach':'zakynthos','navagio':'zakynthos',
+    'gran canaria':'las palmas','gran canaria island':'las palmas',
+    'tenerife':'santa cruz tenerife','tenerife island':'santa cruz tenerife',
+    'mount teide':'teide','pico teide':'teide',
+    'acre':'haifa','akko':'haifa','caesarea':'haifa','nazareth':'haifa',
+    'western wall':'jerusalem','temple mount':'jerusalem','old city jerusalem':'jerusalem',
+    'hassan ii mosque':'casablanca','casablanca mosque':'casablanca',
+    'djemaa el fna':'marrakech','jemaa el fna':'marrakech','marrakesh':'marrakech',
+    'corfu town':'corfu','kerkyra':'corfu',
   };
   for (const [alias, key] of Object.entries(aliases)) {
     if (normText.includes(normalizeText(alias)) && !found.includes(key) && DESTS[key]) {
@@ -1156,8 +1404,71 @@ function scoreStop(key, date) {
 }
 
 // ─────────────────────────────────────────────────────────
-// WEATHER (Open-Meteo historical archive — seasonal proxy)
+// LIVE SCHEDULE (Vercel API → CruiseDig real data)
+// Falls back silently to seasonal patterns if unavailable
 // ─────────────────────────────────────────────────────────
+const scheduleCache = {};
+
+async function fetchLiveSchedule(portKey, date) {
+  if (!portKey || !date) return null;
+  const dateStr = date.toISOString().split('T')[0];
+  const cacheKey = `${portKey}_${dateStr}`;
+  if (scheduleCache[cacheKey] !== undefined) return scheduleCache[cacheKey];
+
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000);
+    const resp = await fetch(`/api/schedule?port=${encodeURIComponent(portKey)}&date=${dateStr}`, {signal: controller.signal});
+    clearTimeout(timeout);
+    if (!resp.ok) { scheduleCache[cacheKey] = null; return null; }
+    const data = await resp.json();
+    scheduleCache[cacheKey] = data;
+    return data;
+  } catch(e) {
+    scheduleCache[cacheKey] = null;
+    return null;
+  }
+}
+
+async function enrichCardWithLiveData(scored, idx) {
+  if (!scored.date || !scored.primaryPort) return;
+  const portKey = scored.dest.nearPorts[0];
+  if (!portKey) return;
+
+  const live = await fetchLiveSchedule(portKey, scored.date);
+  if (!live || live.ship_count === 0) return;
+
+  // Update the port info row with real data
+  const portEl = document.getElementById(`port-info-${idx}`);
+  if (portEl) {
+    const shipList = live.ships.slice(0,4).map(s => `<span class="pill">${s.name}</span>`).join('');
+    const extra = live.ships.length > 4 ? `<span class="pill">+${live.ships.length-4} more</span>` : '';
+    portEl.innerHTML = `<strong>Ships in port (live):</strong> ${live.ship_count} ship${live.ship_count!==1?'s':''} · ${live.total_passengers.toLocaleString()} passengers<br>${shipList}${extra}`;
+  }
+
+  // Update badge and stripe if real data changes status
+  const realCruiseVol = Math.min(100, Math.round(live.total_passengers / 120));
+  if (realCruiseVol >= 65 && scored.isExcursionDest) {
+    updateCardStatus(idx, 'red', 'AVOID');
+  } else if (realCruiseVol >= 30) {
+    if (scored.status === 'green') updateCardStatus(idx, 'amber', 'CAUTION');
+  } else if (realCruiseVol === 0 && scored.status === 'red') {
+    updateCardStatus(idx, 'amber', 'CAUTION');
+  }
+
+  // Mark card as using live data
+  const liveTag = document.getElementById(`live-tag-${idx}`);
+  if (liveTag) { liveTag.style.display = 'inline'; }
+}
+
+function updateCardStatus(idx, status, label) {
+  const stripe = document.getElementById(`stripe-${idx}`);
+  const badge = document.getElementById(`badge-${idx}`);
+  if (stripe) stripe.className = `stripe st-${status[0]}`;
+  if (badge) { badge.className = `badge b-${status[0]}`; badge.textContent = label; }
+}
+
+
 const wxCache = {};
 
 async function fetchWeather(lat, lng, date) {
@@ -1246,7 +1557,7 @@ function renderCard(scored, idx) {
   return `
   <div class="card" id="card-${idx}">
     <div class="card-hdr" onclick="toggleCard(${idx})">
-      <div class="stripe st-${status[0]}"></div>
+      <div class="stripe st-${status[0]}" id="stripe-${idx}"></div>
       <div class="ci">
         <div class="ct">
           <div class="cname">${dest.name}</div>
@@ -1254,7 +1565,8 @@ function renderCard(scored, idx) {
         </div>
         <div class="cr">
           <div class="cdate">${dateStr}</div>
-          <span class="badge b-${status[0]}">${bl}</span>
+          <span class="badge b-${status[0]}" id="badge-${idx}">${bl}</span>
+          <span id="live-tag-${idx}" style="display:none;font-size:9px;color:#2A7050;font-weight:600;letter-spacing:.05em">LIVE</span>
         </div>
         <span class="chev" id="chev-${idx}">▾</span>
       </div>
@@ -1278,7 +1590,7 @@ function renderCard(scored, idx) {
         ${primaryPort && isExcursionDest ? `
         <div class="irow">
           <div class="iico">⚓</div>
-          <div class="ibody"><strong>Port:</strong> ${primaryPort.name} · Est. cruise call volume ${maxCruise}% of season peak on ${DAYS[dayIdx]}s.</div>
+          <div class="ibody" id="port-info-${idx}"><strong>Port:</strong> ${primaryPort.name} · Est. cruise call volume ${maxCruise}% of season peak on ${DAYS[dayIdx]}s.</div>
         </div>` : ''}
         ${dest.note ? `
         <div class="irow">
@@ -1334,12 +1646,16 @@ function renderResults(stops) {
   const italianTuscanKeys = ['florence','pisa','siena','san gimignano','volterra','lucca','montalcino','livorno','bolgheri','certaldo','san miniato','cinque terre','portofino','santa margherita ligure','camogli'];
   const italianAmalfiKeys = ['amalfi','positano','ravello','praiano','cetara','sorrento','capri','ischia','pompeii','herculaneum'];
   const italianRomeKeys = ['rome','orvieto','tivoli','assisi'];
-  const italianSicilyKeys = ['taormina','agrigento','cefalu','palermo','cefalu'];
+  const italianSicilyKeys = ['taormina','agrigento','cefalu','palermo'];
   const croatiaKeys = ['dubrovnik old town','split old town','hvar','vis','ston','korcula','trogir'];
   const montenegroKeys = ['kotor old town','perast','budva'];
-  const greeceKeys = ['athens','mykonos town','santorini','delphi','cape sounion','rhodes old town','lindos','knossos','chania','rethymno'];
+  const greeceKeys = ['athens','mykonos town','santorini','delphi','cape sounion','rhodes old town','lindos','knossos','chania','rethymno','corfu','zakynthos','skiathos'];
   const frenchRivieraKeys = ['nice','monaco','eze','antibes','saint-paul-de-vence','menton','cannes'];
   const spainKeys = ['barcelona','montserrat','sitges','tarragona','palma de mallorca','valldemossa','soller'];
+  const canaryKeys = ['las palmas','maspalomas','santa cruz tenerife','teide'];
+  const turkeyKeys = ['ephesus','kusadasi','pamukkale','bodrum','istanbul'];
+  const israelKeys = ['haifa','jerusalem'];
+  const moroccoKeys = ['casablanca','marrakech'];
   const scoredKeys = scored.map(s=>s.key);
   const inRegion = (regionKeys) => scoredKeys.some(k => regionKeys.includes(k));
   let titleDest;
@@ -1350,8 +1666,6 @@ function renderResults(stops) {
   } else if (countries[0] === 'Italy' && inRegion(italianSicilyKeys)) {
     titleDest = 'Sicily';
   } else if (countries[0] === 'Italy' && inRegion(italianTuscanKeys) && !inRegion(italianAmalfiKeys) && !inRegion(italianRomeKeys)) {
-    titleDest = 'Tuscany & Liguria';
-  } else if (countries[0] === 'Italy' && inRegion(italianTuscanKeys) && !inRegion(italianAmalfiKeys)) {
     titleDest = 'Tuscany';
   } else if (countries[0] === 'Italy' && inRegion(italianAmalfiKeys)) {
     titleDest = 'Amalfi Coast';
@@ -1360,11 +1674,19 @@ function renderResults(stops) {
   } else if ((countries[0] === 'Croatia' || countries[0] === 'Montenegro') && (inRegion(croatiaKeys) || inRegion(montenegroKeys))) {
     titleDest = 'Adriatic Coast';
   } else if (countries[0] === 'Greece' && inRegion(greeceKeys)) {
-    titleDest = 'Greece';
+    titleDest = 'Greek Islands';
   } else if (countries[0] === 'France' && inRegion(frenchRivieraKeys)) {
     titleDest = 'French Riviera';
+  } else if (countries[0] === 'Spain' && inRegion(canaryKeys)) {
+    titleDest = 'Canary Islands';
   } else if (countries[0] === 'Spain' && inRegion(spainKeys)) {
-    titleDest = scored.some(s=>s.key==='palma de mallorca'||s.key==='valldemossa'||s.key==='soller') ? 'Mallorca' : 'Spain';
+    titleDest = scored.some(s=>['palma de mallorca','valldemossa','soller'].includes(s.key)) ? 'Mallorca' : 'Spain';
+  } else if (countries[0] === 'Turkey' && inRegion(turkeyKeys)) {
+    titleDest = 'Turkish Coast';
+  } else if (countries[0] === 'Israel' && inRegion(israelKeys)) {
+    titleDest = 'Israel';
+  } else if (countries[0] === 'Morocco' && inRegion(moroccoKeys)) {
+    titleDest = 'Morocco';
   } else if (scored.length > 3) {
     titleDest = countries[0];
   } else {
@@ -1372,15 +1694,18 @@ function renderResults(stops) {
   }
   document.getElementById('trip-title').textContent = titleDest || scored[0].dest.name;
   document.getElementById('trip-sub').textContent =
-    `${scored.length} destination${scored.length!==1?'s':''} · ${dates.length > 0 ? dates[0].toLocaleDateString('en-US',{month:'long',day:'numeric'}) + (dates.length>1?' – '+dates[dates.length-1].toLocaleDateString('en-US',{month:'long',day:'numeric'}):'') : 'Dates TBD'} · Data: seasonal averages`;
+    `${scored.length} destination${scored.length!==1?'s':''} · ${dates.length > 0 ? dates[0].toLocaleDateString('en-US',{month:'long',day:'numeric'}) + (dates.length>1?' – '+dates[dates.length-1].toLocaleDateString('en-US',{month:'long',day:'numeric'}):'') : 'Dates TBD'} · Seasonal data + live port schedules`;
 
   document.getElementById('sec-lbl').textContent =
     names.join(' / ') + (dates.length > 0 ? ' · ' + dates[0].toLocaleDateString('en-US',{month:'long',year:'numeric'}) : '');
 
   document.getElementById('cards').innerHTML = scored.map((s,i) => renderCard(s,i)).join('');
 
-  // Async weather loads
-  scored.forEach((s,i) => { if (s.date) loadWeather(s, i); });
+  // Fire async enrichments in parallel — weather + live port schedule
+  scored.forEach((s,i) => {
+    if (s.date) loadWeather(s, i);
+    if (s.date && s.dest.nearPorts.length > 0) enrichCardWithLiveData(s, i);
+  });
 
   // Share URL
   const hash = stops.map(s => `${encodeURIComponent(s.key)}|${s.date?s.date.toISOString().split('T')[0]:''}`).join(',');
