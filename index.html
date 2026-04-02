@@ -1958,9 +1958,64 @@ const DESTS = {
     alt:null,
   },
 
+  // UMBRIA — pairs with Rome region
+  'spoleto': {
+    name:'Spoleto', country:'Italy', lat:42.734, lng:12.737,
+    nearPorts:['civitavecchia'],
+    cityByDay:[20,28,24,30,34,42,38],
+    sub:'Umbrian hill town',
+    note:'Medieval hill town with a spectacular Roman aqueduct and annual Festival dei Due Mondi (arts). Almost no cruise traffic. One of Umbria\'s most authentically Italian towns.',
+    shoulder:null,
+    alt:null,
+  },
+  'todi': {
+    name:'Todi', country:'Italy', lat:42.782, lng:12.406,
+    nearPorts:['civitavecchia'],
+    cityByDay:[15,20,18,22,25,32,30],
+    sub:'Perfect medieval hill town',
+    note:'Consistently rated one of Italy\'s most beautiful towns. Piazza del Popolo is a genuine medieval ensemble. Very few cruise groups make the 90-min journey from Civitavecchia.',
+    shoulder:null,
+    alt:null,
+  },
+  'spello': {
+    name:'Spello', country:'Italy', lat:42.990, lng:12.671,
+    nearPorts:['civitavecchia'],
+    cityByDay:[18,25,20,27,30,38,35],
+    sub:'Flower-filled Roman village',
+    note:'Small Roman village famous for its flower-covered alleyways (infiorata). Adjacent to Assisi but far less crowded. The Pinturicchio frescoes in Santa Maria Maggiore are extraordinary.',
+    shoulder:null,
+    alt:null,
+  },
+  // PROVENCE — pairs with Riviera/Marseille
+  'les baux de provence': {
+    name:'Les Baux-de-Provence', country:'France', lat:43.744, lng:4.800,
+    nearPorts:['marseille'],
+    cityByDay:[35,48,40,50,55,68,72],
+    sub:'Clifftop village & Carrières de Lumières',
+    note:'Ruined fortress village perched on white limestone cliffs. The Carrières de Lumières immersive art show fills an old quarry — extraordinary experience that cruise groups do visit, usually as part of an Arles day.',
+    shoulder:'Early morning or after 5pm when the light on the limestone cliffs is best.',
+    alt:null,
+  },
+  'cassis': {
+    name:'Cassis', country:'France', lat:43.214, lng:5.538,
+    nearPorts:['marseille'],
+    cityByDay:[30,42,36,45,50,68,75],
+    sub:'Calanques port village',
+    note:'Small fishing port between Marseille and Toulon, gateway to the Calanques (dramatic limestone fjords). Weekend summer crowds are severe but weekday visits are manageable. Occasional cruise excursion from Marseille.',
+    shoulder:'Arrive by 9am or take a boat into the Calanques before the midday heat.',
+    alt:null,
+  },
+  'gordes': {
+    name:'Gordes', country:'France', lat:43.911, lng:5.200,
+    nearPorts:['marseille'],
+    cityByDay:[28,38,32,40,44,58,62],
+    sub:'Perched Luberon village',
+    note:'Frequently cited as one of France\'s most beautiful villages. Lavender fields below in July. Not directly on cruise excursion menus but close enough to Marseille for a long day.',
+    shoulder:'Early morning before tour buses arrive from Aix-en-Provence. The abbey of Sénanque nearby is quieter.',
+    alt:null,
+  },
   // VENICE & VENETO
   'venice': {
-    name:'Venice', country:'Italy', lat:45.441, lng:12.316,
     nearPorts:['venice'],
     cityByDay:[68,72,70,74,75,88,92],
     sub:'Lagoon city ⚓ PORT',
@@ -2202,7 +2257,8 @@ const VALUE_SCORES = {
   'hyeres islands':8,
   'montepulciano':8,'pienza':8,'cortona':8,'greve in chianti':7,
   'pitigliano':8,'castelnuovo berardenga':7,'san quirico d orcia':7,'montefalco':8,
-  'matera':9,'alberobello':8,'lecce':8,'ostuni':7,'polignano a mare':7,
+  'spoleto':8,'todi':8,'spello':7,
+  'les baux de provence':8,'cassis':7,'gordes':8,
   'olympia':9,'kos town':7,'meteora':10,'thessaloniki':8,'patmos town':9,
   'pergamon':8,'izmir city':6,'dalyan':7,'datca':6,
   'valencia city':7,'cartagena city':7,'gibraltar rock':6,
@@ -2230,7 +2286,7 @@ const REGIONS = {
   },
   rome: {
     label:'Rome & Central Italy', emoji:'🏛️',
-    keys:['rome','orvieto','assisi'],
+    keys:['rome','orvieto','assisi','spoleto','todi','spello','montefalco'],
     port:'civitavecchia',
   },
   venice: {
@@ -2271,8 +2327,9 @@ const REGIONS = {
     port:'limassol',
   },
   riviera: {
-    label:'French Riviera', emoji:'☀️',
-    keys:['nice','monaco','eze','antibes','saint-paul-de-vence','menton','avignon'],
+    label:'French Riviera & Provence', emoji:'☀️',
+    keys:['nice','monaco','eze','antibes','saint-paul-de-vence','menton','avignon',
+          'les baux de provence','cassis','gordes'],
     port:'villefranche',
   },
   spain: {
@@ -2456,8 +2513,58 @@ function matchDestination(text) {
     'malaga spain':'malaga',
     'antalya turkey':'antalya',
     'aspendos theatre':'aspendos','aspendos theater':'aspendos',
-    'side turkey':'side','apollon temple':'side',
-    'olympos turkey':'olympos','chimaera':'olympos',
+    'side turkey':'side','apollon temple':'side','apollo temple side':'side',
+    'olympos turkey':'olympos','chimaera':'olympos','chimera flame':'olympos',
+    // Italy new
+    'sassi':'matera','matera caves':'matera','cave city matera':'matera',
+    'trulli':'alberobello','trulli alberobello':'alberobello',
+    'baroque lecce':'lecce','lecce puglia':'lecce',
+    'white city ostuni':'ostuni','ostuni puglia':'ostuni',
+    'polignano':'polignano a mare','sea caves polignano':'polignano a mare',
+    'val dorcia':'san quirico d orcia','orcia valley':'san quirico d orcia',
+    'val d orcia':'san quirico d orcia',
+    'pitigliano tuff':'pitigliano','etruscan pitigliano':'pitigliano',
+    'chianti classico':'greve in chianti','chianti wine':'greve in chianti',
+    'montepulciano wine':'montepulciano','vino nobile':'montepulciano',
+    'pienza cheese':'pienza','pecorino pienza':'pienza',
+    'cortona tuscany':'cortona','under the tuscan sun':'cortona',
+    // Greece new
+    'ancient olympia':'olympia','olympia ruins':'olympia','birthplace olympics':'olympia',
+    'katakolon port':'olympia',
+    'kos island':'kos town','hippocrates tree':'kos town',
+    'northern greece':'thessaloniki','thessaloniki greece':'thessaloniki',
+    'revelation island':'patmos town','monastery patmos':'patmos town',
+    // Turkey new
+    'pergamon turkey':'pergamon','bergama':'pergamon','acropolis pergamon':'pergamon',
+    'dalyan turkey':'dalyan','kaunos':'dalyan','iztuzu':'dalyan',
+    'datca peninsula':'datca','knidos':'datca',
+    // Spain new
+    'valencia spain':'valencia city','city arts sciences':'valencia city','paella city':'valencia city',
+    'cartagena spain':'cartagena city','roman theatre cartagena':'cartagena city',
+    'rock of gibraltar':'gibraltar rock','gibraltar apes':'gibraltar rock',
+    // France/Corsica
+    'corsica capital':'ajaccio','napoleon birthplace':'ajaccio',
+    'bonifacio corsica':'bonifacio','cliffs bonifacio':'bonifacio',
+    // Cyprus
+    'aphrodite birthplace':'paphos','paphos cyprus':'paphos','paphos mosaics':'paphos',
+    'painted churches cyprus':'troodos','troodos cyprus':'troodos',
+    'cyprus capital':'nicosia','ledra street':'nicosia','divided city':'nicosia',
+    // Morocco new
+    'blue city morocco':'chefchaouen','chaouen':'chefchaouen',
+    'essaouira morocco':'essaouira','mogador':'essaouira',
+    'taroudant morocco':'taroudant','little marrakech':'taroudant',
+    // Israel new
+    'tel aviv israel':'tel aviv','jaffa':'tel aviv','old jaffa':'tel aviv',
+    'masada fortress':'masada','masada israel':'masada',
+    'dead sea israel':'dead sea','lowest point earth':'dead sea',
+    // Canary
+    'lanzarote':'arrecife','lanzarote island':'arrecife',
+    'timanfaya park':'timanfaya','fire mountains':'timanfaya',
+    'fuerteventura':'corralejo','fuerteventura island':'corralejo',
+    'medieval fuerteventura':'betancuria',
+    // Kefalonia
+    'kefalonia island':'kefalonia','cephalonia':'kefalonia',
+    'melissani lake':'melissani cave','melissani grotto':'melissani cave',
   };
   for (const [alias, key] of Object.entries(aliases)) {
     if (normText.includes(normalizeText(alias)) && !found.includes(key) && DESTS[key]) {
@@ -3447,9 +3554,11 @@ function crowdValueRank(key, season) {
   const crowdLow  = Math.min(...dailyScores);
   const crowdAvg  = Math.round(dailyScores.reduce((a,b) => a+b, 0) / 7);
 
-  // Rank on peak crowd so worst-case destinations sort correctly
+  const bestDayIdx   = dailyScores.indexOf(Math.min(...dailyScores));
+  const bestDayName  = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'][bestDayIdx];
+
   const ratio = (val * 10) / (crowdHigh + 5);
-  return {key, dest, val, crowd: crowdHigh, crowdLow, crowdAvg, crowdHigh, ratio};
+  return {key, dest, val, crowd: crowdHigh, crowdLow, crowdAvg, crowdHigh, bestDayName, ratio};
 }
 
 function renderExplore() {
@@ -3477,11 +3586,15 @@ function renderExplore() {
     const valColor = r.val >= 8 ? '#2A7050' : r.val >= 6 ? '#B87820' : '#999';
 
 
+    const rankColor = r.crowdHigh >= 65 ? '#E8C4C4' : r.crowdHigh >= 35 ? '#FAE3B0' : '#C8E6C9';
+    const rankText  = r.crowdHigh >= 65 ? '#A32D2D' : r.crowdHigh >= 35 ? '#7A4200' : '#2A5C2A';
+
     h += `<div class="excard" style="${isTop?'':'opacity:.5;'}">
-      <div class="exrank" style="color:${isTop?'#ddd':'#eee'}">${i+1}</div>
+      <div class="exrank" style="background:${isTop?rankColor:'#f5f5f5'};color:${isTop?rankText:'#ccc'};border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0">${i+1}</div>
       <div class="exmain">
         <div class="exname">${r.dest.name}</div>
         <div class="exsub">${r.dest.sub}</div>
+        ${isTop ? `<div style="font-size:10px;color:#2A7050;margin-top:3px;font-weight:500">↓ Least crowded: ${r.bestDayName}</div>` : ''}
         ${isTop && affiliateActive() ? `<div style="display:flex;gap:5px;margin-top:5px;flex-wrap:wrap">
           <a href="${bookingLink(r.dest.name, r.dest.country)}" target="_blank" rel="noopener" class="aff-btn booking" style="font-size:10px">🏨 Hotels</a>
           <a href="${gygLink(r.dest.name)}" target="_blank" rel="noopener" class="aff-btn gyg" style="font-size:10px">🎟️ Tours</a>
