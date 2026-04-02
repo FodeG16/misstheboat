@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MissTheBoat — Avoid cruise ship crowds</title>
 <meta name="description" content="Plan your trip around cruise ship port calls and excursions. Color-coded crowd heatmap for every stop.">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 html{font-size:16px}
@@ -257,11 +258,146 @@ textarea:focus{border-color:#999;background:#fff}
 
   <!-- EXPLORE VIEW -->
   <div id="view-explore" style="display:none">
-    <div class="panel" style="padding-bottom:0">
-      <div style="font-size:12px;color:#888;margin-bottom:1rem;line-height:1.6">Destinations ranked by entertainment value relative to cruise crowd levels. Pick a region to find the best stops for your trip — or use AI to generate a full itinerary from a description.</div>
-      <div class="field-lbl">Choose a region</div>
-      <div id="region-pills" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:1.25rem"></div>
 
+    <!-- Mediterranean Map Selector -->
+    <div class="panel" style="padding-bottom:0">
+      <div style="font-size:12px;color:#888;margin-bottom:.875rem;line-height:1.6">Click a region on the map or browse by country below. Destinations are ranked by cultural value vs. cruise crowd levels.</div>
+
+      <!-- SVG Map -->
+      <div id="med-map-wrap" style="position:relative;background:#e8f4f8;border-radius:12px;border:1px solid #dce8f0;overflow:hidden;margin-bottom:1rem">
+        <svg id="med-map" viewBox="0 0 700 320" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;cursor:default">
+          <!-- Ocean -->
+          <rect width="700" height="320" fill="#d4eaf5"/>
+          <!-- Land masses (simplified Mediterranean basin) -->
+          <!-- Iberian Peninsula -->
+          <path d="M85,60 L175,50 L205,80 L220,120 L195,155 L175,175 L145,180 L110,170 L85,145 L75,110 Z" fill="#f0ece0" stroke="#d8d0b8" stroke-width="1"/>
+          <!-- France -->
+          <path d="M175,50 L270,35 L295,55 L285,90 L255,100 L220,120 L205,80 Z" fill="#f0ece0" stroke="#d8d0b8" stroke-width="1"/>
+          <!-- Italy boot -->
+          <path d="M270,55 L330,50 L360,70 L355,100 L335,130 L320,165 L310,195 L300,200 L295,185 L305,165 L310,140 L300,115 L285,90 L295,55 Z" fill="#f0ece0" stroke="#d8d0b8" stroke-width="1"/>
+          <!-- Sicily -->
+          <path d="M295,205 L330,200 L340,215 L320,225 L295,220 Z" fill="#f0ece0" stroke="#d8d0b8" stroke-width="1"/>
+          <!-- Sardinia -->
+          <path d="M255,155 L270,148 L278,165 L268,180 L252,178 Z" fill="#f0ece0" stroke="#d8d0b8" stroke-width="1"/>
+          <!-- Corsica -->
+          <path d="M258,115 L268,108 L272,122 L262,130 Z" fill="#f0ece0" stroke="#d8d0b8" stroke-width="1"/>
+          <!-- Balkans/Croatia -->
+          <path d="M330,50 L400,45 L420,70 L410,100 L390,120 L370,130 L355,100 L360,70 Z" fill="#f0ece0" stroke="#d8d0b8" stroke-width="1"/>
+          <!-- Greece -->
+          <path d="M370,130 L420,120 L450,130 L460,155 L445,175 L420,180 L395,165 L375,160 Z" fill="#f0ece0" stroke="#d8d0b8" stroke-width="1"/>
+          <!-- Turkey -->
+          <path d="M420,70 L560,60 L580,80 L570,110 L540,120 L500,125 L460,130 L450,110 L420,100 Z" fill="#f0ece0" stroke="#d8d0b8" stroke-width="1"/>
+          <!-- North Africa -->
+          <path d="M75,220 L450,215 L460,240 L440,270 L100,275 L75,250 Z" fill="#f0ece0" stroke="#d8d0b8" stroke-width="1"/>
+          <!-- Malta -->
+          <circle cx="308" cy="228" r="4" fill="#f0ece0" stroke="#d8d0b8" stroke-width="1"/>
+          <!-- Balearics -->
+          <ellipse cx="218" cy="125" rx="12" ry="6" fill="#f0ece0" stroke="#d8d0b8" stroke-width="1"/>
+          <!-- Greek islands cluster -->
+          <circle cx="460" cy="175" r="5" fill="#f0ece0" stroke="#d8d0b8" stroke-width="1"/>
+          <circle cx="475" cy="185" r="4" fill="#f0ece0" stroke="#d8d0b8" stroke-width="1"/>
+          <circle cx="450" cy="195" r="6" fill="#f0ece0" stroke="#d8d0b8" stroke-width="1"/>
+          <!-- Canary Islands (inset) -->
+          <rect x="10" y="260" width="60" height="35" rx="4" fill="#d4eaf5" stroke="#b8d8e8" stroke-width="0.5"/>
+          <text x="40" y="272" text-anchor="middle" font-size="7" fill="#8ab" font-family="sans-serif">Canary Is.</text>
+          <ellipse cx="25" cy="282" rx="7" ry="4" fill="#f0ece0" stroke="#d8d0b8" stroke-width="0.5"/>
+          <ellipse cx="45" cy="284" rx="6" ry="3" fill="#f0ece0" stroke="#d8d0b8" stroke-width="0.5"/>
+
+          <!-- REGION DOTS — positioned at geographic centers -->
+          <!-- Each dot: cx/cy=position, data-region=key -->
+          <!-- Tuscany ~43.3N 11E -->
+          <g class="rdot" data-region="tuscany" onclick="selectRegionMap('tuscany')" style="cursor:pointer">
+            <circle cx="298" cy="88" r="14" fill="#2A7050" fill-opacity="0.15" stroke="#2A7050" stroke-width="1.5" class="rdot-ring"/>
+            <circle cx="298" cy="88" r="7" fill="#2A7050" class="rdot-core"/>
+            <text x="298" y="108" text-anchor="middle" font-size="8.5" fill="#1a5035" font-family="sans-serif" font-weight="600" class="rdot-lbl">Tuscany</text>
+          </g>
+          <!-- Amalfi ~40.6N 14.5E -->
+          <g class="rdot" data-region="amalfi" onclick="selectRegionMap('amalfi')" style="cursor:pointer">
+            <circle cx="326" cy="125" r="14" fill="#2A7050" fill-opacity="0.15" stroke="#2A7050" stroke-width="1.5" class="rdot-ring"/>
+            <circle cx="326" cy="125" r="7" fill="#2A7050" class="rdot-core"/>
+            <text x="350" y="122" text-anchor="start" font-size="8.5" fill="#1a5035" font-family="sans-serif" font-weight="600" class="rdot-lbl">Amalfi</text>
+          </g>
+          <!-- Rome ~41.9N 12.5E -->
+          <g class="rdot" data-region="rome" onclick="selectRegionMap('rome')" style="cursor:pointer">
+            <circle cx="313" cy="105" r="13" fill="#2A7050" fill-opacity="0.15" stroke="#2A7050" stroke-width="1.5" class="rdot-ring"/>
+            <circle cx="313" cy="105" r="6" fill="#2A7050" class="rdot-core"/>
+            <text x="330" y="103" text-anchor="start" font-size="8.5" fill="#1a5035" font-family="sans-serif" font-weight="600" class="rdot-lbl">Rome</text>
+          </g>
+          <!-- Sicily ~37.5N 14E -->
+          <g class="rdot" data-region="sicily" onclick="selectRegionMap('sicily')" style="cursor:pointer">
+            <circle cx="318" cy="210" r="14" fill="#2A7050" fill-opacity="0.15" stroke="#2A7050" stroke-width="1.5" class="rdot-ring"/>
+            <circle cx="318" cy="210" r="7" fill="#2A7050" class="rdot-core"/>
+            <text x="318" y="227" text-anchor="middle" font-size="8.5" fill="#1a5035" font-family="sans-serif" font-weight="600" class="rdot-lbl">Sicily</text>
+          </g>
+          <!-- Venice ~45.4N 12.3E -->
+          <g class="rdot" data-region="venice" onclick="selectRegionMap('venice')" style="cursor:pointer">
+            <circle cx="310" cy="63" r="13" fill="#2A7050" fill-opacity="0.15" stroke="#2A7050" stroke-width="1.5" class="rdot-ring"/>
+            <circle cx="310" cy="63" r="6" fill="#2A7050" class="rdot-core"/>
+            <text x="310" y="53" text-anchor="middle" font-size="8.5" fill="#1a5035" font-family="sans-serif" font-weight="600" class="rdot-lbl">Venice</text>
+          </g>
+          <!-- Adriatic ~43.5N 16.5E -->
+          <g class="rdot" data-region="adriatic" onclick="selectRegionMap('adriatic')" style="cursor:pointer">
+            <circle cx="372" cy="88" r="14" fill="#2A7050" fill-opacity="0.15" stroke="#2A7050" stroke-width="1.5" class="rdot-ring"/>
+            <circle cx="372" cy="88" r="7" fill="#2A7050" class="rdot-core"/>
+            <text x="372" y="78" text-anchor="middle" font-size="8.5" fill="#1a5035" font-family="sans-serif" font-weight="600" class="rdot-lbl">Adriatic</text>
+          </g>
+          <!-- Greece ~38.5N 23E -->
+          <g class="rdot" data-region="greece" onclick="selectRegionMap('greece')" style="cursor:pointer">
+            <circle cx="432" cy="152" r="14" fill="#2A7050" fill-opacity="0.15" stroke="#2A7050" stroke-width="1.5" class="rdot-ring"/>
+            <circle cx="432" cy="152" r="7" fill="#2A7050" class="rdot-core"/>
+            <text x="432" y="142" text-anchor="middle" font-size="8.5" fill="#1a5035" font-family="sans-serif" font-weight="600" class="rdot-lbl">Greece</text>
+          </g>
+          <!-- French Riviera ~43.7N 7.3E -->
+          <g class="rdot" data-region="riviera" onclick="selectRegionMap('riviera')" style="cursor:pointer">
+            <circle cx="273" cy="82" r="13" fill="#2A7050" fill-opacity="0.15" stroke="#2A7050" stroke-width="1.5" class="rdot-ring"/>
+            <circle cx="273" cy="82" r="6" fill="#2A7050" class="rdot-core"/>
+            <text x="255" y="73" text-anchor="end" font-size="8.5" fill="#1a5035" font-family="sans-serif" font-weight="600" class="rdot-lbl">Riviera</text>
+          </g>
+          <!-- Spain/Barcelona ~41.4N 2.2E -->
+          <g class="rdot" data-region="spain" onclick="selectRegionMap('spain')" style="cursor:pointer">
+            <circle cx="220" cy="100" r="13" fill="#2A7050" fill-opacity="0.15" stroke="#2A7050" stroke-width="1.5" class="rdot-ring"/>
+            <circle cx="220" cy="100" r="6" fill="#2A7050" class="rdot-core"/>
+            <text x="205" y="93" text-anchor="end" font-size="8.5" fill="#1a5035" font-family="sans-serif" font-weight="600" class="rdot-lbl">Spain</text>
+          </g>
+          <!-- Andalusia ~37N -4.5E -->
+          <g class="rdot" data-region="andalusia" onclick="selectRegionMap('andalusia')" style="cursor:pointer">
+            <circle cx="160" cy="152" r="13" fill="#2A7050" fill-opacity="0.15" stroke="#2A7050" stroke-width="1.5" class="rdot-ring"/>
+            <circle cx="160" cy="152" r="6" fill="#2A7050" class="rdot-core"/>
+            <text x="160" y="168" text-anchor="middle" font-size="8.5" fill="#1a5035" font-family="sans-serif" font-weight="600" class="rdot-lbl">Andalusia</text>
+          </g>
+          <!-- Turkey ~38N 28E -->
+          <g class="rdot" data-region="turkey" onclick="selectRegionMap('turkey')" style="cursor:pointer">
+            <circle cx="504" cy="95" r="13" fill="#2A7050" fill-opacity="0.15" stroke="#2A7050" stroke-width="1.5" class="rdot-ring"/>
+            <circle cx="504" cy="95" r="6" fill="#2A7050" class="rdot-core"/>
+            <text x="504" y="85" text-anchor="middle" font-size="8.5" fill="#1a5035" font-family="sans-serif" font-weight="600" class="rdot-lbl">Turkey</text>
+          </g>
+          <!-- Morocco ~33N -7E -->
+          <g class="rdot" data-region="morocco" onclick="selectRegionMap('morocco')" style="cursor:pointer">
+            <circle cx="170" cy="232" r="13" fill="#2A7050" fill-opacity="0.15" stroke="#2A7050" stroke-width="1.5" class="rdot-ring"/>
+            <circle cx="170" cy="232" r="6" fill="#2A7050" class="rdot-core"/>
+            <text x="170" y="248" text-anchor="middle" font-size="8.5" fill="#1a5035" font-family="sans-serif" font-weight="600" class="rdot-lbl">Morocco</text>
+          </g>
+          <!-- Israel ~32N 35E -->
+          <g class="rdot" data-region="morocco" onclick="selectRegionMap('israel')" style="cursor:pointer" data-region="israel">
+            <circle cx="548" cy="178" r="12" fill="#2A7050" fill-opacity="0.15" stroke="#2A7050" stroke-width="1.5" class="rdot-ring"/>
+            <circle cx="548" cy="178" r="5" fill="#2A7050" class="rdot-core"/>
+            <text x="548" y="193" text-anchor="middle" font-size="8.5" fill="#1a5035" font-family="sans-serif" font-weight="600" class="rdot-lbl">Israel</text>
+          </g>
+          <!-- Canary Islands inset dot -->
+          <g class="rdot" data-region="canary" onclick="selectRegionMap('canary')" style="cursor:pointer">
+            <circle cx="35" cy="283" r="10" fill="#2A7050" fill-opacity="0.2" stroke="#2A7050" stroke-width="1.5" class="rdot-ring"/>
+            <circle cx="35" cy="283" r="5" fill="#2A7050" class="rdot-core"/>
+          </g>
+
+          <!-- Selected region label -->
+          <text id="map-hint" x="350" y="310" text-anchor="middle" font-size="10" fill="#8ab" font-family="sans-serif">Click a dot to explore a region</text>
+        </svg>
+      </div>
+
+      <!-- Country/Region grouped list (below map) -->
+      <div id="region-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:6px;margin-bottom:1.25rem"></div>
+
+      <!-- Trip settings -->
       <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:1.25rem">
         <div style="flex:1;min-width:140px">
           <div class="field-lbl" style="margin-bottom:6px">Trip length</div>
@@ -291,7 +427,16 @@ textarea:focus{border-color:#999;background:#fff}
       <div id="ai-gen-status" style="display:none;font-size:12px;color:#888;margin-top:6px"></div>
     </div>
 
-    <div id="explore-results" class="panel" style="padding-top:0"></div>
+    <!-- Results: ranked list + map side by side on desktop -->
+    <div id="explore-results-wrap" style="display:none">
+      <div style="display:flex;gap:1rem;align-items:flex-start;flex-wrap:wrap">
+        <div id="explore-results" class="panel" style="padding-top:0;flex:1;min-width:280px"></div>
+        <div id="explore-map-wrap" style="flex:0 0 280px;min-width:240px;padding:0 1.5rem 1.5rem">
+          <div class="field-lbl" style="margin-bottom:8px">Map</div>
+          <div id="explore-map" style="height:340px;border-radius:10px;border:1px solid #eee;overflow:hidden"></div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- RESULTS VIEW -->
@@ -340,6 +485,7 @@ textarea:focus{border-color:#999;background:#fff}
   </div>
 </div>
 
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 // ─────────────────────────────────────────────────────────
 // DATA: CRUISE PORT DATABASE
@@ -1707,6 +1853,16 @@ const REGIONS = {
     keys:['marrakech','casablanca'],
     port:'casablanca',
   },
+  israel: {
+    label:'Israel', emoji:'✡️',
+    keys:['jerusalem','haifa'],
+    port:'haifa',
+  },
+  canary: {
+    label:'Canary Islands', emoji:'🌋',
+    keys:['teide','santa cruz tenerife','las palmas','maspalomas'],
+    port:'santa cruz',
+  },
 };
 
 
@@ -2568,24 +2724,94 @@ let exploreRegion = null;
 let exploreLen = 5;
 let exploreSeason = 'spring';
 
+// Region grouping by country for the structured list
+const REGION_GROUPS = [
+  { country:'Italy', regions:['tuscany','venice','rome','amalfi','sicily'] },
+  { country:'Greece', regions:['greece'] },
+  { country:'Croatia & Montenegro', regions:['adriatic'] },
+  { country:'Spain', regions:['spain','andalusia','canary'] },
+  { country:'France', regions:['riviera'] },
+  { country:'Turkey', regions:['turkey'] },
+  { country:'Morocco', regions:['morocco'] },
+  { country:'Israel', regions:['israel'] },
+];
+
 function initExplore() {
-  // Build region pills
-  const pillsEl = document.getElementById('region-pills');
-  if (pillsEl && !pillsEl.dataset.built) {
-    pillsEl.dataset.built = '1';
-    Object.entries(REGIONS).forEach(([k,r]) => {
-      const b = document.createElement('button');
-      b.className = 'rpill';
-      b.textContent = r.emoji + ' ' + r.label;
-      b.onclick = () => {
-        document.querySelectorAll('.rpill').forEach(x=>x.classList.remove('on'));
-        b.classList.add('on');
-        exploreRegion = k;
-        renderExplore();
-      };
-      pillsEl.appendChild(b);
+  const listEl = document.getElementById('region-list');
+  if (listEl && !listEl.dataset.built) {
+    listEl.dataset.built = '1';
+
+    REGION_GROUPS.forEach(group => {
+      // Country header
+      const hdr = document.createElement('div');
+      hdr.style.cssText = 'grid-column:1/-1;font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:.07em;margin-top:8px;margin-bottom:2px;padding-left:2px';
+      hdr.textContent = group.country;
+      listEl.appendChild(hdr);
+
+      group.regions.forEach(k => {
+        const r = REGIONS[k];
+        if (!r) return;
+        const btn = document.createElement('button');
+        btn.id = `rlist-${k}`;
+        btn.style.cssText = 'padding:8px 12px;font-size:12px;font-weight:500;border:1px solid #eee;border-radius:8px;background:#fff;color:#555;cursor:pointer;text-align:left;transition:all .15s;display:flex;align-items:center;gap:6px';
+        btn.innerHTML = `<span style="font-size:15px">${r.emoji}</span><span>${r.label}</span>`;
+        btn.onmouseenter = () => { if (exploreRegion !== k) btn.style.background = '#f5f5f5'; };
+        btn.onmouseleave = () => { if (exploreRegion !== k) btn.style.background = '#fff'; };
+        btn.onclick = () => selectRegionMap(k);
+        listEl.appendChild(btn);
+      });
     });
   }
+
+  // Wire SVG map dot hovers
+  document.querySelectorAll('.rdot').forEach(g => {
+    const ring = g.querySelector('.rdot-ring');
+    g.addEventListener('mouseenter', () => {
+      if (!ring) return;
+      ring.setAttribute('fill-opacity','0.35');
+      ring.setAttribute('r', parseFloat(ring.getAttribute('r')) > 12 ? '16' : '15');
+    });
+    g.addEventListener('mouseleave', () => {
+      if (!ring) return;
+      const rk = g.dataset.region;
+      if (rk !== exploreRegion) {
+        ring.setAttribute('fill-opacity','0.15');
+        ring.setAttribute('r', parseFloat(ring.getAttribute('r')) > 14 ? '14' : '13');
+      }
+    });
+  });
+}
+
+function selectRegionMap(k) {
+  if (!REGIONS[k]) return;
+  exploreRegion = k;
+
+  // Update SVG dots
+  document.querySelectorAll('.rdot').forEach(g => {
+    const ring = g.querySelector('.rdot-ring');
+    const core = g.querySelector('.rdot-core');
+    const lbl  = g.querySelector('.rdot-lbl');
+    if (!ring) return;
+    const isSelected = g.dataset.region === k;
+    ring.setAttribute('fill', isSelected ? '#1a5035' : '#2A7050');
+    ring.setAttribute('fill-opacity', isSelected ? '0.3' : '0.15');
+    core.setAttribute('fill', isSelected ? '#1a1a1a' : '#2A7050');
+    if (lbl) lbl.setAttribute('fill', isSelected ? '#1a1a1a' : '#1a5035');
+  });
+
+  // Update list buttons
+  document.querySelectorAll('[id^="rlist-"]').forEach(btn => {
+    const isSelected = btn.id === `rlist-${k}`;
+    btn.style.background = isSelected ? '#1a1a1a' : '#fff';
+    btn.style.color = isSelected ? '#fff' : '#555';
+    btn.style.borderColor = isSelected ? '#1a1a1a' : '#eee';
+  });
+
+  // Update map hint text
+  const hint = document.getElementById('map-hint');
+  if (hint) hint.textContent = `Showing: ${REGIONS[k].label}`;
+
+  renderExplore();
 }
 
 function setLen(el, n) {
@@ -2621,14 +2847,17 @@ function crowdValueRank(key, season) {
 function renderExplore() {
   const region = REGIONS[exploreRegion];
   if (!region) return;
-  const el = document.getElementById('explore-results');
 
-  // Score and rank all destinations in region
+  const wrap = document.getElementById('explore-results-wrap');
+  const el = document.getElementById('explore-results');
+  wrap.style.display = 'block';
+
+  // Score and rank
   const ranked = region.keys
     .map(k => crowdValueRank(k, exploreSeason))
     .filter(Boolean)
     .sort((a,b) => b.ratio - a.ratio)
-    .slice(0, Math.min(exploreLen + 2, region.keys.length)); // show a few extras
+    .slice(0, region.keys.length);
 
   const topN = ranked.slice(0, exploreLen);
 
@@ -2638,10 +2867,10 @@ function renderExplore() {
     const isTop = i < exploreLen;
     const crowdColor = r.crowd >= 65 ? '#B83232' : r.crowd >= 35 ? '#B87820' : '#2A7050';
     const valColor = r.val >= 8 ? '#2A7050' : r.val >= 6 ? '#B87820' : '#999';
-    h += `<div class="excard" style="${isTop?'':'opacity:.55;'}">
-      <div class="exrank">${i+1}</div>
+    h += `<div class="excard" style="${isTop?'':'opacity:.5;'}">
+      <div class="exrank" style="color:${isTop?'#ddd':'#eee'}">${i+1}</div>
       <div class="exmain">
-        <div class="exname">${r.dest.name}${isTop?'':' <span style="font-size:10px;color:#ccc">optional</span>'}</div>
+        <div class="exname">${r.dest.name}</div>
         <div class="exsub">${r.dest.sub}</div>
       </div>
       <div class="exbars">
@@ -2660,21 +2889,87 @@ function renderExplore() {
     </div>`;
   });
 
-  // Button to load into planner
   h += `<button class="ex-use-btn" onclick="loadExploreItinerary()">Plan this itinerary →</button>`;
-
   h += `<div style="margin-top:1.25rem;padding:12px 14px;background:#fafaf8;border:1px solid #eee;border-radius:10px;font-size:11px;color:#aaa;line-height:1.7">
     <strong style="color:#888;font-size:11px">How these scores are calculated</strong><br>
-    <strong style="color:#999">Value (1–10):</strong> Starts as a manual baseline, then updated live using Wikipedia page views (12-month average) as a proxy for cultural significance — more global interest = higher score. UNESCO World Heritage Sites receive a +1 bonus. A ≈ symbol indicates a Wikipedia-sourced score; ★ indicates UNESCO status confirmed.<br>
-    <strong style="color:#999">Crowds (0–100):</strong> Weighted composite of city-wide tourist traffic (40%, estimated from Google Popular Times patterns) and cruise call volume at the nearest port (60%, estimated from historical deployment schedules). Seasonal weekly averages — not specific-date data.<br>
+    <strong style="color:#999">Value (1–10):</strong> Starts as a manual baseline, then updated live using Wikipedia page views (12-month average) as a proxy for cultural significance. UNESCO World Heritage Sites receive a +1 bonus. A ≈ symbol indicates a Wikipedia-sourced score; ★ indicates UNESCO status.<br>
+    <strong style="color:#999">Crowds (0–100):</strong> Weighted composite of city-wide tourist traffic (40%) and cruise call volume at the nearest port (60%). Seasonal weekly averages — not specific-date data.<br>
     <strong style="color:#999">Ranking:</strong> Sorted by value-to-crowd ratio. A hidden gem with low crowds ranks above a famous but overwhelmed city.
   </div>`;
 
   el.innerHTML = h;
   el._ranked = topN;
 
-  // Async: fetch live Wikipedia scores and update value bars
+  // Build Leaflet map
+  buildExploreMap(ranked, topN);
+
+  // Async Wikipedia value scores
   fetchLiveValueScores(ranked);
+}
+
+let exploreMapInstance = null;
+
+function buildExploreMap(ranked, topN) {
+  const mapEl = document.getElementById('explore-map');
+  if (!mapEl || typeof L === 'undefined') return;
+
+  // Destroy previous map instance
+  if (exploreMapInstance) {
+    exploreMapInstance.remove();
+    exploreMapInstance = null;
+  }
+  mapEl.innerHTML = '';
+
+  // Center on region
+  const region = REGIONS[exploreRegion];
+  const lats = topN.map(r => r.dest.lat).filter(Boolean);
+  const lngs = topN.map(r => r.dest.lng).filter(Boolean);
+  const centerLat = lats.reduce((a,b)=>a+b,0)/lats.length || 43;
+  const centerLng = lngs.reduce((a,b)=>a+b,0)/lngs.length || 12;
+
+  exploreMapInstance = L.map('explore-map', {
+    center: [centerLat, centerLng],
+    zoom: 7,
+    zoomControl: true,
+    attributionControl: true,
+  });
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap',
+    maxZoom: 18,
+  }).addTo(exploreMapInstance);
+
+  // Add ranked pins
+  ranked.forEach((r, i) => {
+    if (!r.dest.lat || !r.dest.lng) return;
+    const isTop = i < topN.length;
+    const crowdColor = r.crowd >= 65 ? '#B83232' : r.crowd >= 35 ? '#B87820' : '#2A7050';
+
+    const icon = L.divIcon({
+      className: '',
+      html: `<div style="
+        width:28px;height:28px;border-radius:50%;
+        background:${isTop ? crowdColor : '#ccc'};
+        border:2px solid #fff;
+        box-shadow:0 1px 4px rgba(0,0,0,.3);
+        display:flex;align-items:center;justify-content:center;
+        font-size:11px;font-weight:700;color:#fff;
+        font-family:sans-serif;
+      ">${i+1}</div>`,
+      iconSize: [28,28],
+      iconAnchor: [14,14],
+    });
+
+    L.marker([r.dest.lat, r.dest.lng], {icon})
+      .addTo(exploreMapInstance)
+      .bindPopup(`<strong>${r.dest.name}</strong><br>${r.dest.sub}<br>Value: ${r.val}/10 · Crowds: ${r.crowd}/100`);
+  });
+
+  // Fit bounds to top N
+  if (lats.length > 1) {
+    const bounds = L.latLngBounds(topN.filter(r=>r.dest.lat).map(r=>[r.dest.lat,r.dest.lng]));
+    exploreMapInstance.fitBounds(bounds, {padding:[20,20]});
+  }
 }
 
 const valueCache = {};
