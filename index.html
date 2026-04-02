@@ -1326,6 +1326,80 @@ const DESTS = {
     alt:null,
   },
 
+  // TUSCANY — FOOD & WINE DESTINATIONS
+  'montepulciano': {
+    name:'Montepulciano', country:'Italy', lat:43.099, lng:11.786,
+    nearPorts:['civitavecchia'],
+    cityByDay:[28,38,32,40,44,58,55],
+    sub:'Vino Nobile wine town',
+    note:'Home of Vino Nobile, one of Italy\'s greatest reds. Hilltop town with fewer cruise groups than Montalcino — the wine estates in the valley below are virtually crowd-free.',
+    shoulder:null,
+    alt:null,
+  },
+  'pienza': {
+    name:'Pienza', country:'Italy', lat:43.076, lng:11.679,
+    nearPorts:[],
+    cityByDay:[22,30,26,32,36,50,48],
+    sub:'Renaissance model city',
+    note:'UNESCO ideal city built in 15 years by Pope Pius II. Famous for Pecorino di Pienza cheese. Not on any cruise excursion menu. Tiny (3,000 residents) but worth every minute.',
+    shoulder:null,
+    alt:null,
+  },
+  'cortona': {
+    name:'Cortona', country:'Italy', lat:43.276, lng:11.985,
+    nearPorts:['civitavecchia','livorno'],
+    cityByDay:[35,45,40,48,52,65,62],
+    sub:'Etruscan hilltop town',
+    note:'Made internationally famous by "Under the Tuscan Sun." Occasional cruise excursion from Civitavecchia. The Etruscan Museum and views over the Val di Chiana are underrated.',
+    shoulder:'The upper town (above Piazza della Repubblica) sees far fewer visitors than the main drag.',
+    alt:null,
+  },
+  'greve in chianti': {
+    name:'Greve in Chianti', country:'Italy', lat:43.585, lng:11.312,
+    nearPorts:[],
+    cityByDay:[18,24,20,26,28,40,38],
+    sub:'Heart of Chianti wine country',
+    note:'Not on any cruise itinerary. Central piazza lined with loggia, weekly market, world-class butcher (Macelleria Falorni), and access to dozens of wine estates. The real Chianti.',
+    shoulder:null,
+    alt:null,
+  },
+  'pitigliano': {
+    name:'Pitigliano', country:'Italy', lat:42.634, lng:11.670,
+    nearPorts:[],
+    cityByDay:[14,18,16,20,22,32,30],
+    sub:'Little Jerusalem on tuff rock',
+    note:'Dramatically perched on volcanic tuff rock. Historic Jewish quarter earned it the nickname "Little Jerusalem." Almost no foreign tourists on weekdays. Extraordinary local food.',
+    shoulder:null,
+    alt:null,
+  },
+  'castelnuovo berardenga': {
+    name:'Castelnuovo Berardenga', country:'Italy', lat:43.349, lng:11.504,
+    nearPorts:[],
+    cityByDay:[12,16,14,18,20,28,25],
+    sub:'Southern Chianti wine village',
+    note:'Southern gateway to Chianti Classico. Wine estates (Fèlsina, San Felice) offer tastings without the Greve crowds. One of the least-touristed bases for Chianti exploration.',
+    shoulder:null,
+    alt:null,
+  },
+  'san quirico d orcia': {
+    name:'San Quirico d\'Orcia', country:'Italy', lat:43.056, lng:11.603,
+    nearPorts:[],
+    cityByDay:[10,14,12,16,18,26,24],
+    sub:'Val d\'Orcia gateway',
+    note:'Small medieval town at the heart of UNESCO Val d\'Orcia. Horti Leonini renaissance garden is free and almost always empty. Perfect base for the cypress-lined roads that define Tuscany.',
+    shoulder:null,
+    alt:null,
+  },
+  'montefalco': {
+    name:'Montefalco', country:'Italy', lat:42.893, lng:12.651,
+    nearPorts:['civitavecchia'],
+    cityByDay:[15,20,17,22,24,32,30],
+    sub:'Umbria wine town',
+    note:'Just over the Tuscany border in Umbria. Home of Sagrantino, one of Italy\'s most powerful red wines. Almost zero cruise traffic. Outstanding restaurants relative to visitor numbers.',
+    shoulder:null,
+    alt:null,
+  },
+
   // VENICE & VENETO
   'venice': {
     name:'Venice', country:'Italy', lat:45.441, lng:12.316,
@@ -1562,6 +1636,8 @@ const VALUE_SCORES = {
   'malaga':7,'granada':10,'ronda':8,'marbella':5,
   'cadiz':8,'seville':9,'jerez':7,
   'antalya':6,'aspendos':8,'side':7,'olympos':8,
+  'montepulciano':8,'pienza':8,'cortona':8,'greve in chianti':7,
+  'pitigliano':8,'castelnuovo berardenga':7,'san quirico d orcia':7,'montefalco':8,
 };
 
 // ─────────────────────────────────────────────────────────
@@ -1570,7 +1646,10 @@ const VALUE_SCORES = {
 const REGIONS = {
   tuscany: {
     label:'Tuscany & Liguria', emoji:'🍷',
-    keys:['florence','siena','san gimignano','volterra','lucca','montalcino','pisa','bolgheri','san miniato','cinque terre','portofino','camogli'],
+    keys:['florence','siena','san gimignano','volterra','lucca','montalcino','pisa',
+          'bolgheri','san miniato','cinque terre','portofino','camogli',
+          'montepulciano','pienza','cortona','greve in chianti','pitigliano',
+          'castelnuovo berardenga','san quirico d orcia'],
     port:'livorno',
   },
   amalfi: {
@@ -2568,8 +2647,9 @@ function renderExplore() {
       <div class="exbars">
         <div class="exbar-row">
           <span style="width:50px">Value</span>
-          <div class="exbar-track"><div class="exbar-fill" style="width:${r.val*10}%;background:${valColor}"></div></div>
-          <span style="width:18px;color:${valColor};font-weight:600">${r.val}</span>
+          <div class="exbar-track"><div class="exbar-fill" id="val-bar-${i}" style="width:${r.val*10}%;background:${valColor}"></div></div>
+          <span id="val-num-${i}" style="width:18px;color:${valColor};font-weight:600">${r.val}</span>
+          <span id="val-src-${i}" style="display:none;font-size:9px;color:#aaa;margin-left:4px"></span>
         </div>
         <div class="exbar-row">
           <span style="width:50px">Crowds</span>
@@ -2585,13 +2665,56 @@ function renderExplore() {
 
   h += `<div style="margin-top:1.25rem;padding:12px 14px;background:#fafaf8;border:1px solid #eee;border-radius:10px;font-size:11px;color:#aaa;line-height:1.7">
     <strong style="color:#888;font-size:11px">How these scores are calculated</strong><br>
-    <strong style="color:#999">Value (1–10):</strong> Editorial score for cultural significance, food, scenery, and things to do — independent of crowds. Assigned manually; not derived from an external data source.<br>
-    <strong style="color:#999">Crowds (0–100):</strong> Weighted composite of two seasonal weekly averages: city-wide tourist traffic (40%, estimated from Google Popular Times patterns) and cruise call volume at the nearest port (60%, estimated from historical deployment schedules). Both are averages across the week for the selected season — not specific-date data.<br>
-    <strong style="color:#999">Ranking:</strong> Destinations are sorted by value-to-crowd ratio, so a hidden gem with low crowds ranks above a famous but overwhelmed city. A minimum crowd floor prevents ghost towns from scoring artificially high.
+    <strong style="color:#999">Value (1–10):</strong> Starts as a manual baseline, then updated live using Wikipedia page views (12-month average) as a proxy for cultural significance — more global interest = higher score. UNESCO World Heritage Sites receive a +1 bonus. A ≈ symbol indicates a Wikipedia-sourced score; ★ indicates UNESCO status confirmed.<br>
+    <strong style="color:#999">Crowds (0–100):</strong> Weighted composite of city-wide tourist traffic (40%, estimated from Google Popular Times patterns) and cruise call volume at the nearest port (60%, estimated from historical deployment schedules). Seasonal weekly averages — not specific-date data.<br>
+    <strong style="color:#999">Ranking:</strong> Sorted by value-to-crowd ratio. A hidden gem with low crowds ranks above a famous but overwhelmed city.
   </div>`;
 
   el.innerHTML = h;
   el._ranked = topN;
+
+  // Async: fetch live Wikipedia scores and update value bars
+  fetchLiveValueScores(ranked);
+}
+
+const valueCache = {};
+
+async function fetchLiveValueScores(ranked) {
+  for (let i = 0; i < ranked.length; i++) {
+    const r = ranked[i];
+    const name = r.dest.name;
+    if (valueCache[name] !== undefined) {
+      updateValueBar(i, valueCache[name]);
+      continue;
+    }
+    try {
+      const resp = await fetch(`/api/value?name=${encodeURIComponent(name)}`);
+      if (!resp.ok) continue;
+      const data = await resp.json();
+      if (data.score && data.score !== r.val) {
+        valueCache[name] = data.score;
+        updateValueBar(i, data.score, data.isUnesco);
+      }
+    } catch(e) { /* silent fail — keep manual score */ }
+    // Small delay to avoid hammering Wikipedia API
+    await new Promise(res => setTimeout(res, 150));
+  }
+}
+
+function updateValueBar(idx, newScore, isUnesco) {
+  const barEl = document.getElementById(`val-bar-${idx}`);
+  const numEl = document.getElementById(`val-num-${idx}`);
+  const srcEl = document.getElementById(`val-src-${idx}`);
+  if (!barEl || !numEl) return;
+  const color = newScore >= 8 ? '#2A7050' : newScore >= 6 ? '#B87820' : '#999';
+  barEl.style.width = (newScore * 10) + '%';
+  barEl.style.background = color;
+  numEl.textContent = newScore;
+  numEl.style.color = color;
+  if (srcEl) {
+    srcEl.textContent = isUnesco ? '★ UNESCO' : '≈ Wikipedia';
+    srcEl.style.display = 'inline';
+  }
 }
 
 function loadExploreItinerary() {
@@ -2670,11 +2793,24 @@ async function generateAIItinerary() {
   status.style.display = 'block';
   status.textContent = '✦ Generating itinerary…';
 
+  // Build list of destination names we know about for this region
+  const region = REGIONS[exploreRegion];
+  const knownDests = region
+    ? region.keys.map(k => DESTS[k]?.name).filter(Boolean)
+    : Object.values(DESTS).map(d => d.name);
+
   try {
     const resp = await fetch('/api/parse', {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({text: prompt, mode: 'generate', season: exploreSeason, days: exploreLen}),
+      body: JSON.stringify({
+        text: prompt,
+        mode: 'generate',
+        season: exploreSeason,
+        days: exploreLen,
+        region: region ? region.label : null,
+        availableDestinations: knownDests,
+      }),
     });
     if (!resp.ok) throw new Error();
     const data = await resp.json();
@@ -2685,6 +2821,11 @@ async function generateAIItinerary() {
       const date = s.date ? new Date(s.date + 'T12:00:00') : null;
       return keys.length ? {key: keys[0], date} : null;
     }).filter(Boolean);
+
+    if (!stops.length) {
+      status.textContent = 'AI returned destinations not yet in our database. Try selecting a region manually above.';
+      return;
+    }
 
     status.textContent = `Generated ${stops.length} stops — loading…`;
     setTimeout(() => { renderResults(stops); showView('results'); }, 400);
