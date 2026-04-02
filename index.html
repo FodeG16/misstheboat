@@ -115,7 +115,7 @@ textarea:focus{border-color:#999;background:#fff}
 .traf-block{margin-bottom:12px}
 .traf-block:last-child{margin-bottom:0}
 .traf-ttl{font-size:10px;font-weight:600;color:#aaa;text-transform:uppercase;letter-spacing:.07em;margin-bottom:12px;display:block}
-.bar-chart{display:flex;gap:4px;align-items:flex-end;height:58px;margin-top:4px}
+.bar-chart{display:flex;gap:4px;align-items:flex-end;height:44px;margin-top:4px}
 .bc{display:flex;flex-direction:column;align-items:center;flex:1;min-width:0}
 .bbar{width:100%;border-radius:2px 2px 0 0;min-height:3px;background:#eee;transition:opacity .2s}
 .bbar.hi-r{background:#E24B4A}.bbar.hi-a{background:#EF9F27}.bbar.hi-g{background:#639922}
@@ -275,8 +275,14 @@ textarea:focus{border-color:#999;background:#fff}
         <div id="med-map" style="height:360px;width:100%"></div>
       </div>
 
-      <!-- Country/Region grouped list (below map) -->
-      <div id="region-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:6px;margin-bottom:1.25rem"></div>
+      <!-- Country/Region grouped list — collapsed by default -->
+      <div style="margin-bottom:1.25rem">
+        <button onclick="toggleRegionList(this)" style="display:flex;align-items:center;gap:6px;padding:0;font-size:12px;font-weight:500;color:#888;background:none;border:none;cursor:pointer">
+          <span>Browse by country</span>
+          <span id="region-list-chev" style="font-size:10px;transition:transform .2s">▾</span>
+        </button>
+        <div id="region-list" style="display:none;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:6px;margin-top:8px"></div>
+      </div>
 
       <!-- Trip settings -->
       <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:1.25rem">
@@ -2651,80 +2657,43 @@ let currentStops = [];
 // activeDay = 0-6 (Mon=0)
 // isCruise  = boolean (zero values shown differently)
 // ─────────────────────────────────────────────────────────
-function renderBars(vals, activeDay, isCruise, lowVals, highVals) {
-  const CHART_H = 44; // px total chart area
-  // Scale against the highest value across all three datasets
-  const allVals = [...vals, ...(lowVals||[]), ...(highVals||[])];
-  const maxV = Math.max(...allVals, 1);
-  const scale = v => Math.max(2, Math.round((v / maxV) * (CHART_H - 4)));
-
-  const hasRange = lowVals && highVals;
-
-  let h = `<div class="bar-chart" style="height:${CHART_H + 14}px;align-items:flex-end">`;
+function renderBars(vals, activeDay, isCruise) {
+  const max = Math.max(...vals, 1);
+  let h = '<div class="bar-chart">';
   for (let i = 0; i < 7; i++) {
-    const cur = vals[i];
-    const lo  = hasRange ? lowVals[i]  : Math.max(0, cur - 10);
-    const hi  = hasRange ? highVals[i] : Math.min(100, cur + 10);
+    const pct = vals[i] / max;
+    const px = Math.max(3, Math.round(pct * 40));
     const isAct = i === activeDay;
-
-    const curPx  = scale(cur);
-    const loPx   = scale(lo);
-    const hiPx   = scale(hi);
-    const rangePx = Math.max(1, hiPx - loPx);
-
-    // Color based on current value
-    const colorKey = cur >= 65 ? 'r' : cur >= 35 ? 'a' : 'g';
-    const colors = {
-      r: { main:'#E24B4A', range:'rgba(226,75,74,0.18)', dim:'#F7C1C1', tick:'#B83232' },
-      a: { main:'#EF9F27', range:'rgba(239,159,39,0.18)', dim:'#FAC775', tick:'#B87820' },
-      g: { main:'#639922', range:'rgba(99,153,34,0.18)', dim:'#C0DD97', tick:'#3B6D11' },
-    };
-    const zeroColor = 'rgba(0,0,0,0.06)';
-    const c = colors[colorKey];
-
-    if (!isAct && isCruise && cur === 0) {
-      // Zero cruise — small dash
-      h += `<div class="bc">
-        <div style="position:relative;width:100%;height:${CHART_H}px">
-          <div style="position:absolute;bottom:0;left:0;right:0;height:2px;background:${zeroColor};border-radius:1px"></div>
-        </div>
-        <div class="bdl">${DAYS[i]}</div>
-      </div>`;
-      continue;
-    }
-
+    let cls = '';
+    if (isAct) cls = vals[i] >= 65 ? 'hi-r' : vals[i] >= 35 ? 'hi-a' : 'hi-g';
+    else if (isCruise && vals[i] === 0) cls = 'lo-n';
+    else cls = vals[i] >= 65 ? 'lo-r' : vals[i] >= 35 ? 'lo-a' : 'lo-g';
     h += `<div class="bc">
-      <div style="position:relative;width:100%;height:${CHART_H}px">`;
-
-    if (hasRange && (hi > lo)) {
-      // Range whisker — thin centered line from lo to hi
-      h += `<div style="position:absolute;bottom:${loPx}px;left:50%;width:2px;height:${rangePx}px;
-              background:${isAct ? c.range : 'rgba(0,0,0,0.08)'};
-              border-radius:1px;transform:translateX(-50%)"></div>`;
-      // Range body caps
-      h += `<div style="position:absolute;bottom:${hiPx - 1}px;left:20%;width:60%;height:2px;
-              background:${isAct ? c.dim : 'rgba(0,0,0,0.1)'};border-radius:1px"></div>`;
-      h += `<div style="position:absolute;bottom:${loPx}px;left:20%;width:60%;height:2px;
-              background:${isAct ? c.dim : 'rgba(0,0,0,0.1)'};border-radius:1px"></div>`;
-    }
-
-    // Current value bar (the candlestick "body" — fills from 0 to curPx)
-    const barColor = isAct ? c.main : (isCruise && cur === 0 ? zeroColor : c.dim);
-    h += `<div style="position:absolute;bottom:0;left:0;right:0;height:${curPx}px;
-            background:${barColor};border-radius:2px 2px 0 0;
-            opacity:${isAct ? 1 : 0.65}"></div>`;
-
-    // Current value tick (horizontal line at curPx — the "close price")
-    if (hasRange && isAct) {
-      h += `<div style="position:absolute;bottom:${curPx - 1}px;left:0;right:0;height:2px;
-              background:${c.tick};border-radius:1px"></div>`;
-    }
-
-    h += `</div>
+      <div class="bbar ${cls}" style="height:${px}px"></div>
       <div class="bdl${isAct?' act':''}">${DAYS[i]}</div>
     </div>`;
   }
   return h + '</div>';
+}
+
+// Horizontal candlestick for Explore page
+// Shows seasonal range (fall=low, summer=high) with current season as a tick
+function renderHorizCandlestick(cur, lo, hi, label) {
+  const clamp = v => Math.max(0, Math.min(100, v));
+  cur = clamp(cur); lo = clamp(lo); hi = clamp(hi);
+  const color = cur >= 65 ? '#E24B4A' : cur >= 35 ? '#EF9F27' : '#639922';
+  const dimColor = cur >= 65 ? 'rgba(226,75,74,0.2)' : cur >= 35 ? 'rgba(239,159,39,0.2)' : 'rgba(99,153,34,0.2)';
+  const textColor = cur >= 65 ? '#A32D2D' : cur >= 35 ? '#854F0B' : '#3B6D11';
+  return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:1px">
+    <div style="font-size:10px;color:#aaa;width:44px;flex-shrink:0;text-align:right">${label}</div>
+    <div style="flex:1;position:relative;height:10px">
+      <div style="position:absolute;left:0;right:0;top:50%;height:2px;background:#f0f0f0;transform:translateY(-50%);border-radius:1px"></div>
+      <div style="position:absolute;left:${lo}%;width:${Math.max(1,hi-lo)}%;top:0;bottom:0;background:${dimColor};border-radius:3px"></div>
+      <div style="position:absolute;left:${lo}%;width:${Math.max(1,cur-lo)}%;top:0;bottom:0;background:${color};opacity:0.85;border-radius:3px 0 0 3px"></div>
+      <div style="position:absolute;left:${cur}%;top:-2px;bottom:-2px;width:2px;background:${color};border-radius:1px;transform:translateX(-50%)"></div>
+    </div>
+    <div style="font-size:11px;font-weight:600;color:${textColor};min-width:24px">${cur}</div>
+  </div>`;
 }
 
 function volToShipCount(vol) {
@@ -2803,26 +2772,15 @@ function renderCard(scored, idx) {
     </div>
     <div class="det" id="det-${idx}">
       <div class="traf-wrap">
-        <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;font-size:10px;color:#aaa">
-          <span style="display:flex;align-items:center;gap:4px"><span style="display:inline-block;width:10px;height:8px;background:#E24B4A;border-radius:1px;opacity:.9"></span>Current season</span>
-          <span style="display:flex;align-items:center;gap:4px"><span style="display:inline-block;width:1px;height:10px;background:#aaa;border-top:2px solid #888;border-bottom:2px solid #888;margin:0 4px"></span>Seasonal range (low–high)</span>
+        <div class="traf-block">
+          <div class="traf-ttl">City-wide traffic · ${scored.season.charAt(0).toUpperCase()+scored.season.slice(1)} avg</div>
+          ${renderBars(dest.cityByDay, dayIdx, false)}
         </div>
         <div class="traf-block">
-          <div class="traf-ttl">City-wide traffic · ${scored.season.charAt(0).toUpperCase()+scored.season.slice(1)} · bar=current, whisker=seasonal range</div>
-          ${renderBars(dest.cityByDay, dayIdx, false,
-            dest.cityByDay.map(v => Math.max(0, Math.round(v * 0.7))),
-            dest.cityByDay.map(v => Math.min(100, Math.round(v * 1.35)))
-          )}
-        </div>
-        <div class="traf-block">
-          <div class="traf-ttl">Cruise passenger volume · ${scored.season.charAt(0).toUpperCase()+scored.season.slice(1)} · bar=current, whisker=seasonal range</div>
+          <div class="traf-ttl">Cruise passenger volume · ${scored.season.charAt(0).toUpperCase()+scored.season.slice(1)} avg</div>
           ${allZeroCruise
             ? '<div class="no-cruise">✓ No cruise traffic on record for this destination.</div>'
-            : renderBars(
-                cruiseByDay, dayIdx, true,
-                primaryPort ? primaryPort.fall  || cruiseByDay.map(v=>Math.max(0,v-15)) : null,
-                primaryPort ? primaryPort.summer || cruiseByDay.map(v=>Math.min(100,v+15)) : null
-              )
+            : renderBars(cruiseByDay, dayIdx, true)
           }
         </div>
         ${isPortCity && !allZeroCruise ? `
@@ -3328,6 +3286,14 @@ const REGION_CENTERS = {
 let selectorMap = null;
 const selectorMarkers = {};
 
+function toggleRegionList(btn) {
+  const list = document.getElementById('region-list');
+  const chev = document.getElementById('region-list-chev');
+  const isOpen = list.style.display !== 'none';
+  list.style.display = isOpen ? 'none' : 'grid';
+  chev.style.transform = isOpen ? '' : 'rotate(180deg)';
+}
+
 function initExplore() {
   // Build country-grouped list
   const listEl = document.getElementById('region-list');
@@ -3485,6 +3451,22 @@ function renderExplore() {
     const isTop = i < exploreLen;
     const crowdColor = r.crowd >= 65 ? '#B83232' : r.crowd >= 35 ? '#B87820' : '#2A7050';
     const valColor = r.val >= 8 ? '#2A7050' : r.val >= 6 ? '#B87820' : '#999';
+
+    // Get seasonal range for cruise data
+    let cruiseLo = r.crowd, cruiseHi = r.crowd;
+    if (r.dest.nearPorts.length > 0) {
+      for (const pk of r.dest.nearPorts) {
+        const p = PORTS[pk];
+        if (p) {
+          cruiseLo = Math.min(cruiseLo, Math.round(Math.min(...p.fall)  * 0.35 + Math.min(...r.dest.cityByDay) * 0.35));
+          cruiseHi = Math.max(cruiseHi, Math.round(Math.max(...p.summer)* 0.65 + Math.max(...r.dest.cityByDay) * 0.35));
+        }
+      }
+    } else {
+      cruiseLo = Math.max(0, r.crowd - 15);
+      cruiseHi = Math.min(100, r.crowd + 8);
+    }
+
     h += `<div class="excard" style="${isTop?'':'opacity:.5;'}">
       <div class="exrank" style="color:${isTop?'#ddd':'#eee'}">${i+1}</div>
       <div class="exmain">
@@ -3497,16 +3479,15 @@ function renderExplore() {
       </div>
       <div class="exbars">
         <div class="exbar-row">
-          <span style="width:50px">Value</span>
+          <span style="width:40px">Value</span>
           <div class="exbar-track"><div class="exbar-fill" id="val-bar-${i}" style="width:${r.val*10}%;background:${valColor}"></div></div>
-          <span id="val-num-${i}" style="width:18px;color:${valColor};font-weight:600">${r.val}</span>
-          <span id="val-src-${i}" style="display:none;font-size:9px;color:#aaa;margin-left:4px"></span>
+          <span id="val-num-${i}" style="width:22px;color:${valColor};font-weight:600;font-size:11px">${r.val}</span>
+          <span id="val-src-${i}" style="display:none;font-size:9px;color:#aaa"></span>
         </div>
-        <div class="exbar-row">
-          <span style="width:50px">Crowds</span>
-          <div class="exbar-track"><div class="exbar-fill" style="width:${r.crowd}%;background:${crowdColor}"></div></div>
-          <span style="width:18px;color:${crowdColor};font-weight:600">${r.crowd}</span>
+        <div style="margin-top:2px">
+          ${renderHorizCandlestick(r.crowd, cruiseLo, cruiseHi, 'Crowds')}
         </div>
+        <div style="font-size:9px;color:#ccc;margin-top:3px;text-align:right">bar=${exploreSeason} · range=fall–summer</div>
       </div>
     </div>`;
   });
