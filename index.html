@@ -3029,7 +3029,7 @@ async function enrichCardWithLiveData(scored, idx) {
     const cityVol = scored.dest.cityByDay[scored.dayIdx];
     const liveScore = Math.round(cityVol * 0.20);
     const liveStatus = liveScore >= 55 ? 'red' : liveScore >= 30 ? 'amber' : 'green';
-    const liveLabel = liveStatus === 'red' ? 'AVOID' : liveStatus === 'amber' ? 'CAUTION' : 'FREE';
+    const liveLabel = liveStatus === 'red' ? 'AVOID' : liveStatus === 'amber' ? 'CAUTION' : 'CLEAR';
     updateCardStatus(idx, liveStatus, liveLabel);
     updateCrowdPills(idx, liveScore, scored.dest, scored.season, 0);
   } else {
@@ -3040,7 +3040,7 @@ async function enrichCardWithLiveData(scored, idx) {
     const liveStatus = (liveCruise >= 65 && scored.isExcursionDest) || liveScore >= 75 ? 'red'
       : liveScore >= 55 || (liveCruise >= 45 && scored.isExcursionDest) ? 'amber'
       : liveScore >= 35 ? 'amber' : 'green';
-    const liveLabel = liveStatus === 'red' ? 'AVOID' : liveStatus === 'amber' ? 'CAUTION' : 'FREE';
+    const liveLabel = liveStatus === 'red' ? 'AVOID' : liveStatus === 'amber' ? 'CAUTION' : 'CLEAR';
     updateCardStatus(idx, liveStatus, liveLabel);
     updateCrowdPills(idx, liveScore, scored.dest, scored.season, liveCruise);
   }
@@ -3231,7 +3231,7 @@ function renderShipCount(cruiseByDay, activeDay) {
 
 function renderCard(scored, idx) {
   const {key, date, dest, dayIdx, status, cityVol, maxCruise, cruiseByDay, primaryPort, isExcursionDest, crowdScore} = scored;
-  const bl = status === 'red' ? 'AVOID' : status === 'amber' ? 'CAUTION' : 'FREE';
+  const bl = status === 'red' ? 'AVOID' : status === 'amber' ? 'CAUTION' : 'CLEAR';
   const allZeroCruise = cruiseByDay.every(v => v === 0);
   const dateStr = date ? date.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'}) : '—';
 
@@ -3265,6 +3265,8 @@ function renderCard(scored, idx) {
     ? `Excursion from ${primaryPort.name}.`
     : primaryPort && maxCruise > 40
     ? `Near ${primaryPort.name}. Cruise spillover likely.`
+    : allZeroCruise && !isExcursionDest
+    ? `No known cruise excursions. Minimal cruise traffic expected.`
     : '';
 
   return `
@@ -3329,11 +3331,6 @@ function renderCard(scored, idx) {
       </div>
       <div class="wx-row" id="wx-${idx}" ${!scored.date ? 'style="display:none"' : ''}><span class="wx-loading"><span class="spinner"></span>Loading historical weather…</span></div>
       <div class="info-rows">
-        ${allZeroCruise && !isExcursionDest ? `
-        <div class="irow">
-          <div class="iico">✓</div>
-          <div class="ibody" style="color:#2A7050;font-weight:500">No known cruise excursions to this destination. Minimal cruise traffic expected.</div>
-        </div>` : ''}
         ${primaryPort && isExcursionDest ? `
         <div class="irow">
           <div class="iico">⚓</div>
