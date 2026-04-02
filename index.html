@@ -340,8 +340,8 @@ textarea:focus{border-color:#999;background:#fff}
     </div>
 
     <div class="action-row">
-      <button class="act-btn primary" onclick="openMinimize()">✦ Minimize crowds</button>
-      <button class="act-btn" onclick="openMinimize(true)">✦ Minimize + suggest alternatives</button>
+      <button class="act-btn primary" onclick="openMinimize(false)">Default Itinerary</button>
+      <button class="act-btn" onclick="openMinimize(true)">✦ Minimize Crowds + Suggest Alternatives</button>
     </div>
 
     <div class="legend">
@@ -365,7 +365,7 @@ textarea:focus{border-color:#999;background:#fff}
 <!-- Minimize modal -->
 <div class="modal-bg" id="minimize-modal" onclick="if(event.target===this)closeMinimize()">
   <div class="modal">
-    <h2>Minimize crowds</h2>
+    <h2 id="minimize-title">Default Itinerary</h2>
     <div class="msub" id="modal-sub">For each stop, the best and worst days to visit based on cruise patterns and city traffic. Green = lowest crowd day for that destination.</div>
     <div id="modal-content"></div>
     <button class="modal-close" onclick="closeMinimize()">Close</button>
@@ -1020,6 +1020,33 @@ const DESTS = {
     cityByDay:[28,35,30,36,38,50,45],
     sub:'Hilltop garden town',
     note:'Not on any cruise excursion menu despite proximity to the Amalfi Coast. Reachable only by a single winding road from Amalfi — buses don\'t run here.',
+    shoulder:null,
+    alt:null,
+  },
+  'praiano': {
+    name:'Praiano', country:'Italy', lat:40.614, lng:14.544,
+    nearPorts:['naples'],
+    cityByDay:[18,22,20,24,26,36,32],
+    sub:'Quiet Amalfi Coast village',
+    note:'Not on cruise excursion menus. Between Positano and Amalfi but consistently overlooked — the road through is narrow and there is no bus parking. Authentic fishing village character survives.',
+    shoulder:'The San Gennaro beach cove below the village is accessible only on foot — zero cruise groups ever.',
+    alt:null,
+  },
+  'cetara': {
+    name:'Cetara', country:'Italy', lat:40.648, lng:14.700,
+    nearPorts:[],
+    cityByDay:[12,16,14,17,20,28,25],
+    sub:'Fishing village',
+    note:'East of Amalfi, not reachable by cruise coaches. Famous for colatura di alici (anchovy sauce) — one of the best food destinations on the entire coast. Almost no tourists.',
+    shoulder:null,
+    alt:null,
+  },
+  'maiori': {
+    name:'Maiori', country:'Italy', lat:40.639, lng:14.636,
+    nearPorts:[],
+    cityByDay:[15,20,17,22,25,38,35],
+    sub:'Longest beach on the Amalfi Coast',
+    note:'Large beach town east of Amalfi, not on cruise itineraries. More residential than scenic but genuinely local.',
     shoulder:null,
     alt:null,
   },
@@ -2805,9 +2832,32 @@ function parsePastedItinerary(text) {
   return stops;
 }
 
+// ─────────────────────────────────────────────────────────
+// DESTINATION FALLBACK
+// Any city not in DESTS gets a neutral placeholder so it
+// still appears in results, on the map, and in the planner.
+// ─────────────────────────────────────────────────────────
+function getDestOrFallback(key) {
+  if (DESTS[key]) return DESTS[key];
+  const name = key.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+  return {
+    name,
+    country: 'Unknown',
+    lat: null,
+    lng: null,
+    nearPorts: [],
+    cityByDay: [25,30,27,30,33,40,38], // neutral — not a known crowd destination
+    sub: 'Not a known cruise excursion destination',
+    note: null,
+    shoulder: null,
+    alt: null,
+    tips: null,
+    isFallback: true,
+  };
+}
+
 function scoreStop(key, date) {
-  const dest = DESTS[key];
-  if (!dest) return null;
+  const dest = getDestOrFallback(key);
 
   const dayIdx = getDayIdx(date);
   const season = getSeason(date);
@@ -2835,10 +2885,11 @@ function scoreStop(key, date) {
   const crowdScore = Math.round(cityVol * 0.35 + maxCruise * 0.65);
 
   let status;
-  // Thresholds calibrated against real visit-day values (not averages)
-  if (maxCruise >= 65 && isExcursionDest) status = 'red';
-  else if (crowdScore >= 60 || (maxCruise >= 45 && isExcursionDest)) status = 'amber';
-  else if (crowdScore >= 40 || maxCruise >= 35) status = 'amber';
+  // Red: known cruise excursion dest with heavy port day OR extreme combined score
+  if ((maxCruise >= 65 && isExcursionDest) || crowdScore >= 75) status = 'red';
+  // Amber: moderate excursion pressure OR elevated combined score
+  else if (crowdScore >= 55 || (maxCruise >= 45 && isExcursionDest) || maxCruise >= 60) status = 'amber';
+  else if (crowdScore >= 35 || maxCruise >= 30) status = 'amber';
   else status = 'green';
 
   return {
@@ -3156,6 +3207,11 @@ function renderCard(scored, idx) {
           <div class="traf-ttl">Ships scheduled at ${dest.name} · ${scored.season.charAt(0).toUpperCase()+scored.season.slice(1)}</div>
           ${renderShipCount(cruiseByDay, dayIdx)}
         </div>` : ''}
+        ${!isPortCity && primaryPort && !allZeroCruise ? `
+        <div class="traf-block">
+          <div class="traf-ttl">Ships in port at <strong>${primaryPort.name}</strong> (nearest cruise port) · ${scored.season.charAt(0).toUpperCase()+scored.season.slice(1)}</div>
+          ${renderShipCount(cruiseByDay, dayIdx)}
+        </div>` : ''}
       </div>
       <div class="wx-row" id="wx-${idx}" ${!scored.date ? 'style="display:none"' : ''}><span class="wx-loading"><span class="spinner"></span>Loading historical weather…</span></div>
       <div class="info-rows">
@@ -3327,12 +3383,19 @@ function toggleCard(idx) {
 // ─────────────────────────────────────────────────────────
 // MINIMIZE CROWDS
 // ─────────────────────────────────────────────────────────
+// Per-stop alt toggle state (key → true=useAlt, false=useOriginal)
+let _altToggles = {};
+
 function openMinimize(withAlts) {
   const scored = currentStops.map(s => scoreStop(s.key, s.date)).filter(Boolean)
-    .filter(s => s.date); // only stops with dates
+    .filter(s => s.date);
   if (scored.length === 0) { alert('Add dates to your stops first.'); return; }
 
-  // For each stop, compute crowd score for every day of week
+  document.getElementById('minimize-title').textContent = withAlts
+    ? 'Minimize Crowds + Suggest Alternatives'
+    : 'Default Itinerary — Optimized Days';
+
+  // For each stop compute crowd score for every day of week
   const perStop = scored.map(s => {
     const {dest, dayIdx, season} = s;
     const scores = dest.cityByDay.map((city, i) => {
@@ -3345,8 +3408,7 @@ function openMinimize(withAlts) {
     return { s, scores, curScore: scores[dayIdx] };
   });
 
-  // Greedy rearrangement: for each stop, shift its date to lowest-score day of week
-  // within ±3 days of original date (keeps trip roughly intact)
+  // Best day within ±3 days of original
   const rearranged = perStop.map(({s, scores, curScore}) => {
     const orig = s.date;
     let bestOffset = 0, bestScore = curScore;
@@ -3354,95 +3416,120 @@ function openMinimize(withAlts) {
       const trial = new Date(orig);
       trial.setDate(trial.getDate() + offset);
       const dayI = getDayIdx(trial);
-      if (scores[dayI] < bestScore) {
-        bestScore = scores[dayI];
-        bestOffset = offset;
-      }
+      if (scores[dayI] < bestScore) { bestScore = scores[dayI]; bestOffset = offset; }
     }
     const newDate = new Date(orig);
     newDate.setDate(newDate.getDate() + bestOffset);
-    const saving = curScore - bestScore;
-    return { s, scores, curScore, bestScore, bestOffset, newDate, saving };
+    const hasAlt = !!s.dest.alt;
+    const needsAlt = s.status === 'red' || s.status === 'amber';
+    // Default: use alt if available and stop is crowded (withAlts mode only)
+    if (withAlts && hasAlt && needsAlt && _altToggles[s.key] === undefined) {
+      _altToggles[s.key] = true;
+    }
+    return { s, scores, curScore, bestScore, bestOffset, newDate, hasAlt, needsAlt };
   });
 
-  const totalOrig = rearranged.reduce((a, r) => a + r.curScore, 0);
-  const totalNew  = rearranged.reduce((a, r) => a + r.bestScore, 0);
-  const totalSaving = totalOrig - totalNew;
+  const totalOrig = rearranged.reduce((a,r) => a + r.curScore, 0);
+  const totalNew  = rearranged.reduce((a,r) => a + r.bestScore, 0);
+  const saving = totalOrig - totalNew;
   const anyImprovement = rearranged.some(r => r.bestOffset !== 0);
 
   let h = '';
 
   // Summary banner
-  if (anyImprovement) {
+  if (withAlts) {
+    const altCount = rearranged.filter(r => r.hasAlt && r.needsAlt && _altToggles[r.s.key]).length;
     h += `<div style="background:#EAF3DE;border-radius:8px;padding:10px 13px;margin-bottom:1rem;font-size:12px;color:#164030;">
-      <strong>Optimization found.</strong> Shifting ${rearranged.filter(r=>r.bestOffset!==0).length} stop${rearranged.filter(r=>r.bestOffset!==0).length!==1?'s':''} reduces your total crowd exposure by <strong>${Math.round((totalSaving/totalOrig)*100)}%</strong>.
-      <button onclick="applyRearrangement()" style="display:block;margin-top:8px;padding:6px 14px;font-size:12px;font-weight:600;background:#2A7050;color:#fff;border:none;border-radius:6px;cursor:pointer;">Apply suggested dates →</button>
+      <strong>Crowd-minimized itinerary.</strong> ${altCount} stop${altCount!==1?'s':''} replaced with lower-traffic alternatives.
+      ${anyImprovement ? `Visit days also optimized — crowd exposure reduced by <strong>${Math.round((saving/totalOrig)*100)}%</strong>.` : ''}
+      Toggle any stop below to switch between the alternative and original city.
     </div>`;
   } else {
-    h += `<div style="background:#fafaf8;border-radius:8px;padding:10px 13px;margin-bottom:1rem;font-size:12px;color:#888;">
-      Your current dates are already close to optimal within a ±3 day window.
-    </div>`;
+    h += anyImprovement
+      ? `<div style="background:#EAF3DE;border-radius:8px;padding:10px 13px;margin-bottom:1rem;font-size:12px;color:#164030;">
+          <strong>Days optimized.</strong> Shifting ${rearranged.filter(r=>r.bestOffset!==0).length} stop${rearranged.filter(r=>r.bestOffset!==0).length!==1?'s':''} reduces crowd exposure by <strong>${Math.round((saving/totalOrig)*100)}%</strong>.
+        </div>`
+      : `<div style="background:#fafaf8;border-radius:8px;padding:10px 13px;margin-bottom:1rem;font-size:12px;color:#888;">Your current dates are already close to optimal within a ±3 day window.</div>`;
   }
 
-  // Per-stop cards
   const fullDays = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
   rearranged.forEach((r, idx) => {
-    const {s, scores, curScore, bestScore, bestOffset, newDate} = r;
+    const {s, scores, curScore, bestScore, bestOffset, newDate, hasAlt, needsAlt} = r;
     const changed = bestOffset !== 0;
-    h += `<div class="modal-card" style="${changed?'border-color:#C0DD97;border-background:#f9fdf7;':''}">
-      <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:3px">
-        <div class="mc-name">${s.dest.name}</div>
-        ${changed ? `<span style="font-size:10px;font-weight:600;color:#2A7050;">Save ${curScore-bestScore} pts</span>` : ''}
-      </div>
-      <div class="mc-cur">
-        Current: ${s.date.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})} · score ${curScore}
-        ${changed ? `→ <strong style="color:#2A7050">${newDate.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})} · score ${bestScore}</strong>` : ' <span style="color:#aaa">(already optimal)</span>'}
-      </div>
-      <div class="mc-days" style="margin-top:8px">`;
+    const usingAlt = withAlts && hasAlt && needsAlt && _altToggles[s.key];
+    const altCity = hasAlt ? s.dest.alt.split('—')[0].trim() : null;
+    const displayCity = usingAlt ? altCity : s.dest.name;
+    const displayStatus = usingAlt ? '↗ Alternative' : (s.status === 'red' ? '⚠ AVOID' : s.status === 'amber' ? '⚠ CAUTION' : '✓ CLEAR');
+    const statusColor = usingAlt ? '#2A7050' : s.status === 'red' ? '#B83232' : s.status === 'amber' ? '#B87820' : '#2A7050';
 
-    for (let i = 0; i < 7; i++) {
-      const isBest = scores[i] === Math.min(...scores);
-      const isCur = i === getDayIdx(s.date);
-      const isNew = changed && i === getDayIdx(newDate);
-      let cls = 'mc-day';
-      if (isNew) cls += ' best';
-      else if (isCur && !isNew) cls += scores[i] > 60 ? ' worst' : '';
-      h += `<div class="${cls}" title="${fullDays[i]}: score ${scores[i]}/100" style="${isNew?'outline:2px solid #2A7050;':''}">${fullDays[i]} <strong>${scores[i]}</strong>${isCur?' ◉':''}</div>`;
-    }
-
-    h += `</div>`;
-    if (withAlts && s.dest.alt) {
-      const altCity = s.dest.alt.split('—')[0].trim();
-      h += `<div class="altbox" style="margin-top:8px;font-size:11px">
-        <strong>Lower-traffic alternative:</strong> ${s.dest.alt}
-        ${affiliateActive() ? `<div style="margin-top:5px;display:flex;gap:5px">
+    h += `<div class="modal-card" style="${changed?'border-color:#C0DD97;':''};${usingAlt?'background:#f8fdf5;':''}">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;gap:8px">
+        <div>
+          <div class="mc-name" style="color:${usingAlt?'#2A7050':'#1a1a1a'}">${displayCity}</div>
+          <div style="font-size:10px;color:${statusColor};font-weight:600;margin-top:1px">${displayStatus}</div>
+        </div>
+        ${withAlts && hasAlt && needsAlt ? `
+        <button onclick="toggleAlt('${s.key}', ${withAlts})" style="padding:4px 10px;font-size:10px;font-weight:600;border-radius:6px;border:1px solid ${usingAlt?'#2A7050':'#ddd'};background:${usingAlt?'#EAF3DE':'#fff'};color:${usingAlt?'#164030':'#888'};cursor:pointer;white-space:nowrap;flex-shrink:0">
+          ${usingAlt ? '✓ Using alternative' : 'Use alternative'}
+        </button>` : ''}
+      </div>
+      ${usingAlt ? `<div style="font-size:11px;color:#555;margin-bottom:6px;background:#fff;border-radius:5px;padding:5px 8px;border:1px solid #E0EDDA">
+        <span style="color:#2A7050;font-weight:600">Alt for ${s.dest.name}:</span> ${s.dest.alt}
+        ${affiliateActive() ? `<div style="margin-top:4px;display:flex;gap:5px">
           <a href="${bookingLink(altCity, s.dest.country)}" target="_blank" rel="noopener" class="aff-btn booking" style="font-size:10px">🏨 Hotels</a>
           <a href="${gygLink(altCity)}" target="_blank" rel="noopener" class="aff-btn gyg" style="font-size:10px">🎟️ Tours</a>
         </div>` : ''}
-      </div>`;
-    }
-    h += `</div>`;
+      </div>` : ''}
+      <div class="mc-cur">
+        ${usingAlt ? '' : `${s.date.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})} · crowd score ${curScore}
+        ${changed ? `→ <strong style="color:#2A7050">${newDate.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})} · score ${bestScore}</strong>` : ' <span style="color:#aaa">(already optimal day)</span>'}`}
+      </div>
+      ${!usingAlt ? `<div class="mc-days" style="margin-top:8px">
+        ${fullDays.map((d,i) => {
+          const isNew = changed && i === getDayIdx(newDate);
+          const isCur = i === getDayIdx(s.date);
+          let cls = 'mc-day';
+          if (isNew) cls += ' best';
+          return `<div class="${cls}" title="${d}: score ${scores[i]}/100" style="${isNew?'outline:2px solid #2A7050;':''}">${d} <strong>${scores[i]}</strong>${isCur?' ◉':''}</div>`;
+        }).join('')}
+      </div>` : ''}
+    </div>`;
   });
 
-  // Store rearrangement for apply button
+  // Apply button
+  h += `<button onclick="applyRearrangement(${withAlts})" style="width:100%;margin-top:1rem;padding:11px;font-size:13px;font-weight:600;border:none;border-radius:8px;background:#1a1a1a;color:#fff;cursor:pointer">Apply this itinerary →</button>`;
+
   window._pendingRearrangement = rearranged;
+  window._pendingWithAlts = withAlts;
 
   document.getElementById('modal-sub').textContent = withAlts
-    ? 'Suggested date shifts to minimize cruise and tourist crowds, with lower-traffic alternatives.'
-    : 'Suggested date shifts (±3 days) to minimize cruise and tourist crowds. ◉ = current date.';
+    ? 'Caution/Avoid stops replaced with lower-traffic alternatives by default. Toggle any stop to switch back to the original.'
+    : 'Days shifted (±3 days) to minimize crowds. ◉ = current date.';
   document.getElementById('modal-content').innerHTML = h;
   document.getElementById('minimize-modal').classList.add('open');
 }
 
-function applyRearrangement() {
+function toggleAlt(key, withAlts) {
+  _altToggles[key] = !_altToggles[key];
+  openMinimize(withAlts); // re-render
+}
+
+function applyRearrangement(withAlts) {
   if (!window._pendingRearrangement) return;
-  // Update currentStops with new dates
   window._pendingRearrangement.forEach(r => {
     const stop = currentStops.find(s => s.key === r.s.key);
-    if (stop && r.bestOffset !== 0) stop.date = r.newDate;
+    if (!stop) return;
+    // Apply day shift
+    if (r.bestOffset !== 0) stop.date = r.newDate;
+    // Apply alternative city if toggled on
+    if (withAlts && r.hasAlt && r.needsAlt && _altToggles[r.s.key]) {
+      const altCity = r.s.dest.alt.split('—')[0].trim().toLowerCase();
+      const altKeys = matchDestination(altCity);
+      if (altKeys.length) stop.key = altKeys[0];
+    }
   });
+  _altToggles = {}; // reset toggle state
   closeMinimize();
-  // Re-render with new dates
   renderResults(currentStops);
 }
 
