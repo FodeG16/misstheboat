@@ -115,8 +115,8 @@ textarea:focus{border-color:#999;background:#fff}
 .traf-block{margin-bottom:12px}
 .traf-block:last-child{margin-bottom:0}
 .traf-ttl{font-size:10px;font-weight:600;color:#aaa;text-transform:uppercase;letter-spacing:.07em;margin-bottom:12px;display:block}
-.bar-chart{display:flex;gap:4px;align-items:flex-end;height:44px;margin-top:4px}
-.bc{display:flex;flex-direction:column;align-items:center;flex:1}
+.bar-chart{display:flex;gap:4px;align-items:flex-end;height:58px;margin-top:4px}
+.bc{display:flex;flex-direction:column;align-items:center;flex:1;min-width:0}
 .bbar{width:100%;border-radius:2px 2px 0 0;min-height:3px;background:#eee;transition:opacity .2s}
 .bbar.hi-r{background:#E24B4A}.bbar.hi-a{background:#EF9F27}.bbar.hi-g{background:#639922}
 .bbar.lo-r{background:#F7C1C1}.bbar.lo-a{background:#FAC775}.bbar.lo-g{background:#C0DD97}
@@ -141,6 +141,10 @@ textarea:focus{border-color:#999;background:#fff}
 .pill{display:inline-block;font-size:10px;background:#f5f5f3;border:1px solid #eee;border-radius:6px;padding:2px 7px;margin:2px 2px 0 0;color:#888}
 .altbox{background:#EAF3DE;border-radius:8px;padding:8px 11px;margin-top:6px;color:#164030;line-height:1.6;font-size:12px}
 .altbox strong{color:#2A7050;font-weight:600}
+.aff-btn{display:inline-block;padding:3px 9px;border-radius:6px;font-size:11px;font-weight:500;text-decoration:none;transition:opacity .15s}
+.aff-btn:hover{opacity:.8}
+.aff-btn.booking{background:#003580;color:#fff}
+.aff-btn.gyg{background:#FF5533;color:#fff}
 .shldbox{background:#FDF3E0;border-radius:8px;padding:8px 11px;margin-top:6px;color:#7A4A08;line-height:1.6;font-size:12px}
 
 /* Share bar */
@@ -2297,6 +2301,33 @@ const REGIONS = {
   },
 };
 
+// ─────────────────────────────────────────────────────────
+// AFFILIATE LINKS
+// Replace YOUR_BOOKING_AID and YOUR_GYG_PID with real IDs
+// Booking.com: booking.com/affiliate-program (free, ~4% commission)
+// GetYourGuide: partner.getyourguide.com (free, 8% commission)
+// ─────────────────────────────────────────────────────────
+const AFFILIATE = {
+  bookingAid: 'YOUR_BOOKING_AID',  // e.g. '1234567'
+  gygPid:     'YOUR_GYG_PID',       // e.g. 'ABCD1234'
+};
+
+function bookingLink(cityName, countryName, checkin, checkout) {
+  const q = encodeURIComponent(`${cityName}, ${countryName || ''}`);
+  const base = `https://www.booking.com/searchresults.html`;
+  const params = `?aid=${AFFILIATE.bookingAid}&ss=${q}&lang=en-us`;
+  const dates = checkin ? `&checkin=${checkin}&checkout=${checkout || checkin}` : '';
+  return base + params + dates;
+}
+
+function gygLink(cityName) {
+  const q = encodeURIComponent(cityName);
+  return `https://www.getyourguide.com/s/?q=${q}&partner_id=${AFFILIATE.gygPid}`;
+}
+
+function affiliateActive() {
+  return AFFILIATE.bookingAid !== 'YOUR_BOOKING_AID';
+}
 
 const DAYS = ['M','T','W','T','F','S','S'];
 const MONTHS = {jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11,
@@ -2477,14 +2508,20 @@ function scoreStop(key, date) {
   }
 
   const cityVol = dest.cityByDay[dayIdx];
+
+  // Composite crowd score for this specific day (0-100)
+  const crowdScore = Math.round(cityVol * 0.35 + maxCruise * 0.65);
+
   let status;
+  // Thresholds calibrated against real visit-day values (not averages)
   if (maxCruise >= 65 && isExcursionDest) status = 'red';
-  else if (maxCruise >= 40 || cityVol >= 70) status = 'amber';
+  else if (crowdScore >= 60 || (maxCruise >= 45 && isExcursionDest)) status = 'amber';
+  else if (crowdScore >= 40 || maxCruise >= 35) status = 'amber';
   else status = 'green';
 
   return {
     key, date, dest, dayIdx, season,
-    status, cityVol, maxCruise, cruiseByDay,
+    status, cityVol, maxCruise, cruiseByDay, crowdScore,
     primaryPort, isExcursionDest,
   };
 }
@@ -2606,22 +2643,84 @@ function wxDesc(code, tempMax, precip) {
 // ─────────────────────────────────────────────────────────
 let currentStops = [];
 
-function renderBars(vals, activeDay, isCruise) {
-  const max = Math.max(...vals, 1);
-  let h = '<div class="bar-chart">';
+// ─────────────────────────────────────────────────────────
+// CANDLESTICK BAR CHART
+// vals     = current season Mon-Sun values (the "close")
+// lowVals  = fall/quiet season Mon-Sun values (the "low")
+// highVals = summer/peak season Mon-Sun values (the "high")
+// activeDay = 0-6 (Mon=0)
+// isCruise  = boolean (zero values shown differently)
+// ─────────────────────────────────────────────────────────
+function renderBars(vals, activeDay, isCruise, lowVals, highVals) {
+  const CHART_H = 44; // px total chart area
+  // Scale against the highest value across all three datasets
+  const allVals = [...vals, ...(lowVals||[]), ...(highVals||[])];
+  const maxV = Math.max(...allVals, 1);
+  const scale = v => Math.max(2, Math.round((v / maxV) * (CHART_H - 4)));
+
+  const hasRange = lowVals && highVals;
+
+  let h = `<div class="bar-chart" style="height:${CHART_H + 14}px;align-items:flex-end">`;
   for (let i = 0; i < 7; i++) {
-    const pct = vals[i] / max;
-    const px = Math.max(3, Math.round(pct * 40));
+    const cur = vals[i];
+    const lo  = hasRange ? lowVals[i]  : Math.max(0, cur - 10);
+    const hi  = hasRange ? highVals[i] : Math.min(100, cur + 10);
     const isAct = i === activeDay;
-    let cls = '';
-    if (isAct) {
-      cls = vals[i] >= 65 ? 'hi-r' : vals[i] >= 35 ? 'hi-a' : 'hi-g';
-    } else {
-      if (isCruise && vals[i] === 0) cls = 'lo-n';
-      else cls = vals[i] >= 65 ? 'lo-r' : vals[i] >= 35 ? 'lo-a' : 'lo-g';
+
+    const curPx  = scale(cur);
+    const loPx   = scale(lo);
+    const hiPx   = scale(hi);
+    const rangePx = Math.max(1, hiPx - loPx);
+
+    // Color based on current value
+    const colorKey = cur >= 65 ? 'r' : cur >= 35 ? 'a' : 'g';
+    const colors = {
+      r: { main:'#E24B4A', range:'rgba(226,75,74,0.18)', dim:'#F7C1C1', tick:'#B83232' },
+      a: { main:'#EF9F27', range:'rgba(239,159,39,0.18)', dim:'#FAC775', tick:'#B87820' },
+      g: { main:'#639922', range:'rgba(99,153,34,0.18)', dim:'#C0DD97', tick:'#3B6D11' },
+    };
+    const zeroColor = 'rgba(0,0,0,0.06)';
+    const c = colors[colorKey];
+
+    if (!isAct && isCruise && cur === 0) {
+      // Zero cruise — small dash
+      h += `<div class="bc">
+        <div style="position:relative;width:100%;height:${CHART_H}px">
+          <div style="position:absolute;bottom:0;left:0;right:0;height:2px;background:${zeroColor};border-radius:1px"></div>
+        </div>
+        <div class="bdl">${DAYS[i]}</div>
+      </div>`;
+      continue;
     }
+
     h += `<div class="bc">
-      <div class="bbar ${cls}" style="height:${px}px"></div>
+      <div style="position:relative;width:100%;height:${CHART_H}px">`;
+
+    if (hasRange && (hi > lo)) {
+      // Range whisker — thin centered line from lo to hi
+      h += `<div style="position:absolute;bottom:${loPx}px;left:50%;width:2px;height:${rangePx}px;
+              background:${isAct ? c.range : 'rgba(0,0,0,0.08)'};
+              border-radius:1px;transform:translateX(-50%)"></div>`;
+      // Range body caps
+      h += `<div style="position:absolute;bottom:${hiPx - 1}px;left:20%;width:60%;height:2px;
+              background:${isAct ? c.dim : 'rgba(0,0,0,0.1)'};border-radius:1px"></div>`;
+      h += `<div style="position:absolute;bottom:${loPx}px;left:20%;width:60%;height:2px;
+              background:${isAct ? c.dim : 'rgba(0,0,0,0.1)'};border-radius:1px"></div>`;
+    }
+
+    // Current value bar (the candlestick "body" — fills from 0 to curPx)
+    const barColor = isAct ? c.main : (isCruise && cur === 0 ? zeroColor : c.dim);
+    h += `<div style="position:absolute;bottom:0;left:0;right:0;height:${curPx}px;
+            background:${barColor};border-radius:2px 2px 0 0;
+            opacity:${isAct ? 1 : 0.65}"></div>`;
+
+    // Current value tick (horizontal line at curPx — the "close price")
+    if (hasRange && isAct) {
+      h += `<div style="position:absolute;bottom:${curPx - 1}px;left:0;right:0;height:2px;
+              background:${c.tick};border-radius:1px"></div>`;
+    }
+
+    h += `</div>
       <div class="bdl${isAct?' act':''}">${DAYS[i]}</div>
     </div>`;
   }
@@ -2704,15 +2803,26 @@ function renderCard(scored, idx) {
     </div>
     <div class="det" id="det-${idx}">
       <div class="traf-wrap">
-        <div class="traf-block">
-          <div class="traf-ttl">City-wide traffic · ${scored.season.charAt(0).toUpperCase()+scored.season.slice(1)} avg</div>
-          ${renderBars(dest.cityByDay, dayIdx, false)}
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;font-size:10px;color:#aaa">
+          <span style="display:flex;align-items:center;gap:4px"><span style="display:inline-block;width:10px;height:8px;background:#E24B4A;border-radius:1px;opacity:.9"></span>Current season</span>
+          <span style="display:flex;align-items:center;gap:4px"><span style="display:inline-block;width:1px;height:10px;background:#aaa;border-top:2px solid #888;border-bottom:2px solid #888;margin:0 4px"></span>Seasonal range (low–high)</span>
         </div>
         <div class="traf-block">
-          <div class="traf-ttl">Cruise passenger volume · ${scored.season.charAt(0).toUpperCase()+scored.season.slice(1)} avg</div>
+          <div class="traf-ttl">City-wide traffic · ${scored.season.charAt(0).toUpperCase()+scored.season.slice(1)} · bar=current, whisker=seasonal range</div>
+          ${renderBars(dest.cityByDay, dayIdx, false,
+            dest.cityByDay.map(v => Math.max(0, Math.round(v * 0.7))),
+            dest.cityByDay.map(v => Math.min(100, Math.round(v * 1.35)))
+          )}
+        </div>
+        <div class="traf-block">
+          <div class="traf-ttl">Cruise passenger volume · ${scored.season.charAt(0).toUpperCase()+scored.season.slice(1)} · bar=current, whisker=seasonal range</div>
           ${allZeroCruise
             ? '<div class="no-cruise">✓ No cruise traffic on record for this destination.</div>'
-            : renderBars(cruiseByDay, dayIdx, true)
+            : renderBars(
+                cruiseByDay, dayIdx, true,
+                primaryPort ? primaryPort.fall  || cruiseByDay.map(v=>Math.max(0,v-15)) : null,
+                primaryPort ? primaryPort.summer || cruiseByDay.map(v=>Math.min(100,v+15)) : null
+              )
           }
         </div>
         ${isPortCity && !allZeroCruise ? `
@@ -2741,7 +2851,16 @@ function renderCard(scored, idx) {
         ${dest.alt ? `
         <div class="irow">
           <div class="iico">↗</div>
-          <div class="ibody"><div class="altbox"><strong>Better option:</strong> ${dest.alt}</div></div>
+          <div class="ibody">
+            <div class="altbox">
+              <strong>Better option:</strong> ${dest.alt}
+              ${affiliateActive() ? `
+              <div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap">
+                <a href="${bookingLink(dest.alt.split('—')[0].trim(), dest.country)}" target="_blank" rel="noopener" class="aff-btn booking">🏨 Hotels</a>
+                <a href="${gygLink(dest.alt.split('—')[0].trim())}" target="_blank" rel="noopener" class="aff-btn gyg">🎟️ Activities</a>
+              </div>` : ''}
+            </div>
+          </div>
         </div>` : ''}
         ${!dest.note && !dest.shoulder && !dest.alt ? `
         <div class="irow">
@@ -2885,7 +3004,7 @@ function openMinimize(withAlts) {
       for (const pk of dest.nearPorts) {
         const p = PORTS[pk]; if (p) cruise = Math.max(cruise, p[season][i]);
       }
-      return Math.round(city * 0.4 + cruise * 0.6);
+      return Math.round(city * 0.35 + cruise * 0.65);
     });
     return { s, scores, curScore: scores[dayIdx] };
   });
@@ -2957,7 +3076,14 @@ function openMinimize(withAlts) {
 
     h += `</div>`;
     if (withAlts && s.dest.alt) {
-      h += `<div class="altbox" style="margin-top:8px;font-size:11px"><strong>Lower-traffic alternative:</strong> ${s.dest.alt}</div>`;
+      const altCity = s.dest.alt.split('—')[0].trim();
+      h += `<div class="altbox" style="margin-top:8px;font-size:11px">
+        <strong>Lower-traffic alternative:</strong> ${s.dest.alt}
+        ${affiliateActive() ? `<div style="margin-top:5px;display:flex;gap:5px">
+          <a href="${bookingLink(altCity, s.dest.country)}" target="_blank" rel="noopener" class="aff-btn booking" style="font-size:10px">🏨 Hotels</a>
+          <a href="${gygLink(altCity)}" target="_blank" rel="noopener" class="aff-btn gyg" style="font-size:10px">🎟️ Tours</a>
+        </div>` : ''}
+      </div>`;
     }
     h += `</div>`;
   });
@@ -3319,16 +3445,21 @@ function crowdValueRank(key, season) {
   const dest = DESTS[key];
   if (!dest) return null;
   const val = VALUE_SCORES[key] || 5;
-  let cruise = 0;
+
+  // Use PEAK day of season, not weekly average — produces meaningful spread
+  let peakCruise = 0;
   for (const pk of dest.nearPorts) {
     const p = PORTS[pk];
-    if (p) cruise = Math.max(cruise, Math.round(p[season].reduce((a,b)=>a+b,0)/7));
+    if (p) peakCruise = Math.max(peakCruise, Math.max(...p[season]));
   }
-  const city = Math.round(dest.cityByDay.reduce((a,b)=>a+b,0)/7);
-  const crowd = Math.round(city*0.4 + cruise*0.6);
-  // Ratio: entertainment per crowd unit. Ghost-town penalty: val<5 gets a boost to crowd
-  const ratio = (val * 10) / (crowd + 15);
-  return {key, dest, val, crowd, cruise:Math.round(cruise), ratio};
+  const peakCity = Math.max(...dest.cityByDay);
+
+  // Weight: cruise matters more for this app's purpose
+  const crowd = Math.round(peakCity * 0.35 + peakCruise * 0.65);
+
+  // Ratio: value per crowd unit. No artificial floor — let the spread show
+  const ratio = (val * 10) / (crowd + 5);
+  return {key, dest, val, crowd, cruise: Math.round(peakCruise), ratio};
 }
 
 function renderExplore() {
@@ -3359,6 +3490,10 @@ function renderExplore() {
       <div class="exmain">
         <div class="exname">${r.dest.name}</div>
         <div class="exsub">${r.dest.sub}</div>
+        ${isTop && affiliateActive() ? `<div style="display:flex;gap:5px;margin-top:5px;flex-wrap:wrap">
+          <a href="${bookingLink(r.dest.name, r.dest.country)}" target="_blank" rel="noopener" class="aff-btn booking" style="font-size:10px">🏨 Hotels</a>
+          <a href="${gygLink(r.dest.name)}" target="_blank" rel="noopener" class="aff-btn gyg" style="font-size:10px">🎟️ Tours</a>
+        </div>` : ''}
       </div>
       <div class="exbars">
         <div class="exbar-row">
