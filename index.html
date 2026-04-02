@@ -253,7 +253,14 @@ textarea:focus{border-color:#999;background:#fff}
         <div class="stop-row"><span class="sname">Volterra</span><span class="sdate">May 14, 2026</span><button class="stop-rem" onclick="this.parentElement.remove()">×</button></div>
       </div>
       <div class="add-row">
-        <input type="text" id="new-dest" class="idest" placeholder="Destination" />
+        <div style="flex:1;position:relative">
+          <input type="text" id="new-dest" class="idest" placeholder="Destination" autocomplete="off"
+            oninput="showDestSuggestions(this.value)"
+            onkeydown="handleDestKey(event)"
+            onfocus="showDestSuggestions(this.value)"
+            style="width:100%"/>
+          <div id="dest-dropdown" style="display:none;position:absolute;left:0;right:0;top:100%;z-index:100;background:#fff;border:1px solid #ddd;border-top:none;border-radius:0 0 8px 8px;box-shadow:0 4px 12px rgba(0,0,0,.1);max-height:200px;overflow-y:auto"></div>
+        </div>
         <input type="date" id="new-date" class="idate" />
         <button class="add-btn" onclick="addManualStop()">+ Add</button>
       </div>
@@ -340,7 +347,7 @@ textarea:focus{border-color:#999;background:#fff}
     </div>
 
     <div class="action-row">
-      <button class="act-btn primary" onclick="openMinimize(false)">Default Itinerary</button>
+      <button class="act-btn primary" onclick="openMinimize(false)">✦ Minimize Crowds</button>
       <button class="act-btn" onclick="openMinimize(true)">✦ Minimize Crowds + Suggest Alternatives</button>
     </div>
 
@@ -365,7 +372,7 @@ textarea:focus{border-color:#999;background:#fff}
 <!-- Minimize modal -->
 <div class="modal-bg" id="minimize-modal" onclick="if(event.target===this)closeMinimize()">
   <div class="modal">
-    <h2 id="minimize-title">Default Itinerary</h2>
+    <h2 id="minimize-title">Minimize Crowds</h2>
     <div class="msub" id="modal-sub">For each stop, the best and worst days to visit based on cruise patterns and city traffic. Green = lowest crowd day for that destination.</div>
     <div id="modal-content"></div>
     <button class="modal-close" onclick="closeMinimize()">Close</button>
@@ -2932,29 +2939,61 @@ async function enrichCardWithLiveData(scored, idx) {
   if (!portKey) return;
 
   const live = await fetchLiveSchedule(portKey, scored.date);
-  if (!live || live.ship_count === 0) return;
+  if (!live) return;
 
-  // Update the port info row with real data
+  // Update port info row with real ship names
   const portEl = document.getElementById(`port-info-${idx}`);
-  if (portEl) {
+  if (portEl && live.ship_count > 0) {
     const shipList = live.ships.slice(0,4).map(s => `<span class="pill">${s.name}</span>`).join('');
     const extra = live.ships.length > 4 ? `<span class="pill">+${live.ships.length-4} more</span>` : '';
-    portEl.innerHTML = `<strong>Ships in port (forecasted):</strong> ${live.ship_count} ship${live.ship_count!==1?'s':''} · ${live.total_passengers.toLocaleString()} passengers expected<br>${shipList}${extra}`;
+    const portLabel = scored.isExcursionDest ? `Excursion from ${scored.primaryPort.name}` : `Near ${scored.primaryPort.name}`;
+    portEl.innerHTML = `<strong>${portLabel} · Ships in port (live forecast):</strong> ${live.ship_count} ship${live.ship_count!==1?'s':''} · est. ${live.total_passengers.toLocaleString()} passengers<br><div style="margin-top:4px;display:flex;flex-wrap:wrap;gap:4px">${shipList}${extra}</div>`;
+  } else if (portEl && live.ship_count === 0) {
+    portEl.innerHTML = `<strong>${scored.primaryPort.name} (live):</strong> No ships scheduled on this date. ✓`;
   }
 
-  // Update badge and stripe if real data changes status
-  const realCruiseVol = Math.min(100, Math.round(live.total_passengers / 120));
-  if (realCruiseVol >= 65 && scored.isExcursionDest) {
-    updateCardStatus(idx, 'red', 'AVOID');
-  } else if (realCruiseVol >= 30) {
-    if (scored.status === 'green') updateCardStatus(idx, 'amber', 'CAUTION');
-  } else if (realCruiseVol === 0 && scored.status === 'red') {
-    updateCardStatus(idx, 'amber', 'CAUTION');
+  if (live.ship_count === 0) {
+    // No ships — recalculate with zero cruise volume
+    const cityVol = scored.dest.cityByDay[scored.dayIdx];
+    const liveScore = Math.round(cityVol * 0.20);
+    const liveStatus = liveScore >= 55 ? 'red' : liveScore >= 30 ? 'amber' : 'green';
+    const liveLabel = liveStatus === 'red' ? 'AVOID' : liveStatus === 'amber' ? 'CAUTION' : 'FREE';
+    updateCardStatus(idx, liveStatus, liveLabel);
+    updateCrowdPills(idx, liveScore, scored.dest, scored.season, 0);
+  } else {
+    // Live ships — normalize passenger count to 0–100 cruise index
+    const liveCruise = Math.min(100, Math.round(live.total_passengers / 100));
+    const cityVol = scored.dest.cityByDay[scored.dayIdx];
+    const liveScore = Math.round(cityVol * 0.20 + liveCruise * 0.80);
+    const liveStatus = (liveCruise >= 65 && scored.isExcursionDest) || liveScore >= 75 ? 'red'
+      : liveScore >= 55 || (liveCruise >= 45 && scored.isExcursionDest) ? 'amber'
+      : liveScore >= 35 ? 'amber' : 'green';
+    const liveLabel = liveStatus === 'red' ? 'AVOID' : liveStatus === 'amber' ? 'CAUTION' : 'FREE';
+    updateCardStatus(idx, liveStatus, liveLabel);
+    updateCrowdPills(idx, liveScore, scored.dest, scored.season, liveCruise);
   }
 
-  // Mark card as using live data
   const liveTag = document.getElementById(`live-tag-${idx}`);
-  if (liveTag) { liveTag.style.display = 'inline'; }
+  if (liveTag) liveTag.style.display = 'inline';
+}
+
+function updateCrowdPills(idx, liveAvg, dest, season, liveCruise) {
+  // Recompute weekly range using live cruise as the visit-day value
+  const dailyCrowd = dest.cityByDay.map((city, i) => {
+    let cruise = liveCruise; // use live value for every day as approximate
+    return Math.round(city * 0.20 + cruise * 0.80);
+  });
+  const weekLow  = Math.min(...dailyCrowd);
+  const weekHigh = Math.max(...dailyCrowd);
+  const weekAvg  = Math.round(dailyCrowd.reduce((a,b)=>a+b,0)/7);
+  const crowdColor = weekHigh >= 65 ? '#B83232' : weekHigh >= 35 ? '#B87820' : '#2A7050';
+
+  const lowEl  = document.getElementById(`pill-low-${idx}`);
+  const avgEl  = document.getElementById(`pill-avg-${idx}`);
+  const highEl = document.getElementById(`pill-high-${idx}`);
+  if (lowEl)  lowEl.textContent  = weekLow;
+  if (avgEl)  avgEl.textContent  = weekAvg;
+  if (highEl) { highEl.textContent = weekHigh; highEl.style.color = crowdColor; }
 }
 
 function updateCardStatus(idx, status, label) {
@@ -3168,19 +3207,22 @@ function renderCard(scored, idx) {
         <div class="cr">
           <div class="cdate">${dateStr}</div>
           <div style="display:flex;align-items:center;gap:6px">
-            <div style="display:flex;gap:1px;font-size:9px">
+            <div>
+              <div style="font-size:8px;color:#bbb;text-align:center;margin-bottom:2px;letter-spacing:.04em;text-transform:uppercase">Crowd Score</div>
+              <div style="display:flex;gap:1px;font-size:9px">
               <div style="text-align:center;padding:3px 6px;background:#f0faf5;border-radius:4px 0 0 4px;border:1px solid #c8e8d0">
                 <div style="color:#aaa;line-height:1;margin-bottom:1px">Low</div>
-                <div style="font-weight:700;color:#2A7050;line-height:1">${weekLow}</div>
+                <div id="pill-low-${idx}" style="font-weight:700;color:#2A7050;line-height:1">${weekLow}</div>
               </div>
               <div style="text-align:center;padding:3px 6px;background:#f8f8f6;border-top:1px solid #e0e0e0;border-bottom:1px solid #e0e0e0">
                 <div style="color:#aaa;line-height:1;margin-bottom:1px">Avg</div>
-                <div style="font-weight:700;color:#888;line-height:1">${weekAvg}</div>
+                <div id="pill-avg-${idx}" style="font-weight:700;color:#888;line-height:1">${weekAvg}</div>
               </div>
               <div style="text-align:center;padding:3px 6px;background:#fdf5f5;border-radius:0 4px 4px 0;border:1px solid #f0d0d0">
                 <div style="color:#aaa;line-height:1;margin-bottom:1px">High</div>
-                <div style="font-weight:700;color:${crowdColor};line-height:1">${weekHigh}</div>
+                <div id="pill-high-${idx}" style="font-weight:700;color:${crowdColor};line-height:1">${weekHigh}</div>
               </div>
+            </div>
             </div>
             <span class="badge b-${status[0]}" id="badge-${idx}">${bl}</span>
           </div>
@@ -3403,7 +3445,7 @@ function openMinimize(withAlts) {
 
   document.getElementById('minimize-title').textContent = withAlts
     ? 'Minimize Crowds + Suggest Alternatives'
-    : 'Default Itinerary — Optimized Days';
+    : 'Minimize Crowds — Optimized Days';
 
   // For each stop compute crowd score for every day of week
   const perStop = scored.map(s => {
@@ -3560,6 +3602,80 @@ function setMode(m) {
     b.classList.toggle('on', (i===0&&m==='paste')||(i===1&&m==='manual'));
   });
 }
+
+// ─────────────────────────────────────────────────────────
+// DESTINATION AUTOCOMPLETE
+// ─────────────────────────────────────────────────────────
+const ALL_DEST_NAMES = Object.entries(DESTS).map(([k, d]) => ({key: k, name: d.name}))
+  .sort((a,b) => a.name.localeCompare(b.name));
+
+let _acSelectedIdx = -1;
+
+function showDestSuggestions(val) {
+  const dd = document.getElementById('dest-dropdown');
+  const q = val.trim().toLowerCase();
+  if (!q || q.length < 1) { dd.style.display = 'none'; return; }
+
+  const matches = ALL_DEST_NAMES.filter(d =>
+    d.name.toLowerCase().startsWith(q) ||
+    d.name.toLowerCase().includes(' ' + q)
+  ).slice(0, 8);
+
+  if (!matches.length) { dd.style.display = 'none'; return; }
+
+  _acSelectedIdx = -1;
+  dd.innerHTML = matches.map((d, i) =>
+    `<div class="ac-item" data-key="${d.key}" data-name="${d.name}"
+      onmousedown="selectDestSuggestion('${d.name}')"
+      onmouseover="highlightAC(${i})"
+      style="padding:8px 12px;font-size:13px;cursor:pointer;border-bottom:1px solid #f5f5f5;color:#1a1a1a">
+      ${d.name}
+      <span style="font-size:10px;color:#aaa;margin-left:6px">${DESTS[d.key]?.country||''}</span>
+    </div>`
+  ).join('');
+  dd.style.display = 'block';
+}
+
+function highlightAC(idx) {
+  _acSelectedIdx = idx;
+  document.querySelectorAll('#dest-dropdown .ac-item').forEach((el, i) => {
+    el.style.background = i === idx ? '#f0faf5' : '';
+  });
+}
+
+function selectDestSuggestion(name) {
+  document.getElementById('new-dest').value = name;
+  document.getElementById('dest-dropdown').style.display = 'none';
+  document.getElementById('new-date').focus();
+}
+
+function handleDestKey(e) {
+  const dd = document.getElementById('dest-dropdown');
+  const items = dd.querySelectorAll('.ac-item');
+  if (!items.length || dd.style.display === 'none') return;
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    _acSelectedIdx = Math.min(_acSelectedIdx + 1, items.length - 1);
+    highlightAC(_acSelectedIdx);
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    _acSelectedIdx = Math.max(_acSelectedIdx - 1, 0);
+    highlightAC(_acSelectedIdx);
+  } else if (e.key === 'Enter' && _acSelectedIdx >= 0) {
+    e.preventDefault();
+    selectDestSuggestion(items[_acSelectedIdx].dataset.name);
+  } else if (e.key === 'Escape') {
+    dd.style.display = 'none';
+  }
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', e => {
+  if (!e.target.closest('#new-dest') && !e.target.closest('#dest-dropdown')) {
+    const dd = document.getElementById('dest-dropdown');
+    if (dd) dd.style.display = 'none';
+  }
+});
 
 function addManualStop() {
   const dest = document.getElementById('new-dest').value.trim();
