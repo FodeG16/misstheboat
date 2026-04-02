@@ -1064,6 +1064,57 @@ const DESTS = {
     note:'Civitavecchia is 80km from Rome. Most cruise excursions are full-day coach trips. Colosseum, Vatican, and Trevi Fountain are concentration points for cruise groups 10am–4pm.',
     shoulder:'Vatican Museums are best at opening (9am) or with evening access. Colosseum: first entry slot. Trevi Fountain: midnight visit is genuinely different.',
     alt:null,
+    tips:['Book Colosseum and Vatican Museums timed entry at least 3 weeks ahead — cruise groups fill morning slots','Trastevere and Testaccio neighborhoods are nearly cruise-free','Capitoline Museums rival the Vatican for art and have almost no queues','Campo de\' Fiori market before 10am, then explore Jewish Ghetto nearby','Aperol spritz at a bar away from piazzas — 2–3x cheaper than tourist spots'],
+  },
+  'pompeii': {
+    name:'Pompeii', country:'Italy', lat:40.751, lng:14.489,
+    nearPorts:['naples'],
+    cityByDay:[58,72,65,75,68,80,75],
+    sub:'Ancient Roman city',
+    note:'Naples cruise excursion staple. Coach convoys arrive from 10am — the main entrance and forum fill immediately. The site is large enough to escape groups if you move quickly past the obvious areas.',
+    shoulder:'First entry slot (9am) is dramatically less crowded. Head immediately to the Villa of the Mysteries and amphitheater — cruise groups rarely reach them before noon.',
+    alt:'Herculaneum — 15 min from Naples, smaller but better-preserved, a fraction of the visitors.',
+    tips:['Herculaneum 20 min away is better preserved and far less crowded','Head immediately to the Garden of the Fugitives — cruise groups almost never reach it','The thermopolium (ancient fast food bar) is newly excavated and rarely crowded','Pompeii Archaeological Museum in Naples has the best artifacts removed from the site'],
+  },
+  'amalfi': {
+    name:'Amalfi', country:'Italy', lat:40.634, lng:14.603,
+    nearPorts:['naples'],
+    cityByDay:[58,65,62,68,72,82,78],
+    sub:'Amalfi Coast town',
+    note:'Naples cruise excursion staple. The coastal road (SS163) becomes severely congested on port days — buses from Naples add 40–60 min each way.',
+    shoulder:'Early morning or after 5pm. The town is genuinely beautiful when the day-trippers leave.',
+    alt:'Ravello — 7km above Amalfi, no cruise buses, same coastline views, substantially better dining.',
+    tips:['Take the ferry rather than the road — avoids SS163 completely and adds a stunning coastal approach','Atrani (5 min walk from Amalfi) has one small piazza and almost no tourists','Villa Rufolo gardens in Ravello open at 9am — extraordinary views, minimal crowds before 10am','The Paper Museum (Museo della Carta) is free with a Campania Artecard and rarely visited'],
+  },
+  'positano': {
+    name:'Positano', country:'Italy', lat:40.628, lng:14.485,
+    nearPorts:['naples'],
+    cityByDay:[60,68,65,70,75,85,80],
+    sub:'Amalfi Coast town',
+    note:'Heavily photographed and heavily trafficked. Cruise excursion coaches from Naples and Salerno both route through. Access is bottlenecked by the single coastal road.',
+    shoulder:'Ferry from Naples or Amalfi avoids road congestion. Before 9am the staircase streets are walkable.',
+    alt:'Praiano — 10 min west by ferry, half the people, same dramatic clifftop views, no cruise buses.',
+    tips:['Spiaggia Grande beach is the most crowded — walk 10 min to Fornillo beach instead','Take the SITA bus from Amalfi rather than a tour coach — local bus, local experience','The church of Santa Maria Assunta is free and usually quiet even when the town is packed','Leave by 2pm or stay until 6pm — the 2–5pm window is the absolute worst for crowds'],
+  },
+  'sorrento': {
+    name:'Sorrento', country:'Italy', lat:40.626, lng:14.376,
+    nearPorts:['naples'],
+    cityByDay:[55,65,60,68,70,80,75],
+    sub:'Bay of Naples town',
+    note:'Major cruise excursion hub from Naples. Circumvesuviana train brings an additional wave of day-trippers independently of the port.',
+    shoulder:'Evening (after 6pm) is the best time — cruise groups are long gone and local aperitivo culture takes over.',
+    alt:null,
+    tips:['Limoncello tasting at a family-run producer, not a tourist shop — ask your hotel','Bagni della Regina Giovanna (free sea swimming off Roman ruins) — 3km from town, almost no tourists','Piazza Tasso at 7am before the coaches arrive is a completely different experience','Take the ferry to Naples rather than the train — better views, similar time'],
+  },
+  'capri': {
+    name:'Capri', country:'Italy', lat:40.550, lng:14.242,
+    nearPorts:['naples'],
+    cityByDay:[62,70,65,72,78,88,85],
+    sub:'Island',
+    note:'Peak-season Capri receives up to 10,000 day visitors when multiple cruise ships are in Naples. The funicular from Marina Grande has queues of 45+ min.',
+    shoulder:'Staying overnight lets you experience the island after the day-trippers leave on the last ferry. Or go early on a non-port day.',
+    alt:'Ischia — 45 min ferry from Naples, thermal baths, volcanic beaches, a fraction of Capri\'s visitors.',
+    tips:['Blue Grotto is cruise-group central — skip it and hire a rowing boat to the Green Grotto instead','Villa Jovis (Emperor Tiberius\' cliff-top palace) is a 45-min walk from town — rarely crowded','Anacapri on the island\'s other side sees far fewer day-trippers than Capri Town','Last ferry from Naples is 8pm — arriving after 5pm gives you the evening in a quieter town'],
   },
   'orvieto': {
     name:'Orvieto', country:'Italy', lat:42.718, lng:12.107,
@@ -1083,6 +1134,7 @@ const DESTS = {
     note:'Piraeus is 12km from central Athens. Cruise groups concentrate at the Acropolis — tickets have a timed-entry system but port days drive large group volumes.',
     shoulder:'Acropolis opens at 8am. First 30 min before tour buses arrive is dramatically less crowded.',
     alt:null,
+    tips:['Acropolis Museum is world-class and far less crowded than the site itself','Monastiraki Flea Market on Sunday morning — locals not tourists','National Archaeological Museum in Exarchia is extraordinary and almost empty','Anafiotika neighborhood above Monastiraki — tiny Cycladic village inside Athens, cruise groups never find it','Eat in Psiri or Gazi neighborhoods — better food, locals, lower prices than Plaka'],
   },
   'mykonos town': {
     name:'Mykonos Town', country:'Greece', lat:37.447, lng:25.329,
@@ -1092,6 +1144,7 @@ const DESTS = {
     note:'Small Cycladic town with very limited capacity. Multiple ships in port simultaneously (common in summer) produce genuinely unpleasant crowding in the narrow streets.',
     shoulder:'Before 10am or after 6pm. The port-side cafes are peaceful at breakfast.',
     alt:'Ano Mera — 8km inland, actual village, monastery, local tavernas. No cruise groups.',
+    tips:['Ano Mera village 8km away — monastery, local taverna, zero cruise presence','Fokos beach on the north coast: 15 min by scooter, no beach clubs, no cruise visitors','Little Venice at 7am for coffee with a view before the crowds arrive','Windmills area is manageable before 9am — after that, very crowded'],
   },
   'santorini': {
     name:'Santorini (Oia)', country:'Greece', lat:36.393, lng:25.461,
@@ -1101,6 +1154,7 @@ const DESTS = {
     note:'Santorini receives up to 15,000 cruise passengers per day at peak summer. Oia at sunset has become genuinely unnavigable — standing room only for an hour before sunset.',
     shoulder:'Fira (the capital) is less impacted than Oia. Pyrgos village for sunset is a well-kept local secret.',
     alt:'Pyrgos village — highest point on the island, panoramic sunset, no cruise buses, excellent wine.',
+    tips:['Pyrgos village for sunset — local restaurants, no crowds, better view than Oia','Akrotiri archaeological site (Minoan city) is extraordinary and rarely visited by cruise groups','Vlychada beach on the south — lunar landscape, no beach clubs, completely different Santorini','Assyrtiko wine tasting at a small winery in Megalochori — skip the tourist wineries in Oia','Watch the Oia sunset from the Kastro ruins not the main terrace — same view, fraction of the people'],
   },
   'delphi': {
     name:'Delphi', country:'Greece', lat:38.482, lng:22.501,
@@ -1110,6 +1164,7 @@ const DESTS = {
     note:'2.5-hour drive from Piraeus — occasional full-day cruise excursion. Manageable even on port days due to distance.',
     shoulder:null,
     alt:null,
+    tips:['The site opens at 8am — arrive at opening and you may have the Oracle\'s temple almost to yourself','Arachova village 10km away has better food and zero cruise groups','Delphi Museum holds the Charioteer of Delphi — one of the greatest bronzes surviving from antiquity'],
   },
   // CROATIA
   'dubrovnik old town': {
@@ -1120,6 +1175,7 @@ const DESTS = {
     note:'UNESCO site with a strict daily visitor cap, but cruise arrivals regularly push against the limit. The city walls walk is particularly congested 10am–2pm.',
     shoulder:'City walls at 8am (opening). Old Town after 6pm when cruise groups reboard.',
     alt:'Ston — 50 min north, 14th-century salt pans, Europe\'s second-longest walls, zero cruise traffic.',
+    tips:['Walk the city walls at 8am when they open — the difference vs. 11am is extraordinary','Lokrum island (10 min ferry) has peacocks, a botanical garden, and almost no day-trippers','Mt Srđ cable car for panoramic views — cruise groups rarely use it','Buža bar (cliff bar outside the walls) is accessible only through a hole in the wall — most tourists never find it','Cavtat 20 min south by ferry: beautiful and completely cruise-free'],
   },
   'split old town': {
     name:'Split (Diocletian\'s Palace)', country:'Croatia', lat:43.508, lng:16.440,
@@ -1129,6 +1185,7 @@ const DESTS = {
     note:'The palace district (still a functioning neighborhood) absorbs cruise groups during peak hours. The Riva promenade gets crowded quickly.',
     shoulder:'Early morning when locals are buying from the market inside the palace walls is the best time.',
     alt:null,
+    tips:['The basement halls of Diocletian\'s Palace are remarkable — cruise groups walk through quickly but you can linger','Market inside the palace walls at 7am is purely local life','Varoš neighborhood (above the palace) has zero cruise presence and excellent konobas','Klis Fortress 15 min away by bus — Game of Thrones filming location, almost no cruise visitors','Šolta island day trip — 1 hour ferry, local wine and olive oil, completely tourist-free'],
   },
   'hvar': {
     name:'Hvar Town', country:'Croatia', lat:43.172, lng:16.441,
@@ -1138,6 +1195,7 @@ const DESTS = {
     note:'Small-boat ferry tender stop for cruise ships. The main square and fortress stairs get genuinely crowded on port days. Capacity is limited.',
     shoulder:null,
     alt:'Vis — 1 hour ferry from Split, far fewer tourists, same island landscape, excellent seafood, no cruise calls.',
+    tips:['Spanjola fortress above town — 30-min hike, panoramic views, cruise groups rarely climb it','Rent a scooter to reach Dubovica beach — 15 min from town, no road access, minimal crowds','Stari Grad on the other side of the island is a UNESCO site and far quieter than Hvar Town','Pakleni Islands by boat taxi — clear water, naturist beaches, no cruise groups'],
   },
   'kotor old town': {
     name:'Kotor Old Town', country:'Montenegro', lat:42.424, lng:18.771,
@@ -1147,6 +1205,7 @@ const DESTS = {
     note:'One of the most dramatic cruise ship arrivals in the Adriatic. Ships anchor directly in the bay. The old town (small by any measure) can feel overwhelmed on heavy port days.',
     shoulder:'The city walls hike (1,350 steps to the fortress) filters out many cruise visitors by noon.',
     alt:'Perast — 15 min by boat, tiny fishing village, Our Lady of the Rocks, no cruise buses at all.',
+    tips:['St John\'s fortress hike (1,350 steps) — most cruise visitors don\'t attempt it, views are extraordinary','Perast village by taxi boat — tiny, no cruise buses, Our Lady of the Rocks island','Prčanj village 5 min by boat — local fish restaurant, waterfront tables, no tourists','Old Town at 7am before ships dock: empty streets, local bakeries open, completely different atmosphere'],
   },
   // SPAIN / FRANCE
   'barcelona': {
@@ -1157,6 +1216,7 @@ const DESTS = {
     note:'Large city that absorbs cruise groups reasonably well. Sagrada Familia and Park Güell require timed tickets. Las Ramblas and Barceloneta are the cruise concentration zones.',
     shoulder:'Sagrada Familia interior at first light (9am). Gothic Quarter before 10am.',
     alt:null,
+    tips:['Book Sagrada Familia and Park Güell online months ahead — cruise groups buy out morning slots','El Born neighborhood for lunch — better than Gothic Quarter, more local','Palau de la Música Catalana guided tour — world-class Art Nouveau, rarely crowded','Bunkers del Carmel for sunset views — no tourist buses, all locals, better views than most miradors','Barceloneta beach gets crowded — Bogatell or Mar Bella beaches 15 min north are quieter'],
   },
   'montserrat': {
     name:'Montserrat', country:'Spain', lat:41.594, lng:1.837,
@@ -1471,6 +1531,17 @@ const DESTS = {
     note:'Large city with significant capacity but Hagia Sophia, Blue Mosque, and Grand Bazaar are severe bottlenecks on cruise call days. Multiple ships can land 15,000+ passengers.',
     shoulder:'Hagia Sophia at 9am opening. Grand Bazaar before 10am. Galata and Karakoy neighborhoods are rarely on cruise itineraries.',
     alt:null,
+    tips:['Chora Church (Kariye Mosque) — Byzantine mosaics as good as Ravenna, almost zero tourists','Balık Ekmek (fish sandwich) at Eminönü waterfront — street food, local, 30 seconds from the tourist zone but ignored by groups','Karaköy and Beyoğlu for coffee and lunch — expat and local neighborhoods cruise groups never see','Süleymaniye Mosque — as impressive as Blue Mosque, a fraction of the visitors','Bosphorus ferry (public boat, not tourist cruise) — same views at a fraction of the price'],
+  },
+  'jerusalem': {
+    name:'Jerusalem Old City', country:'Israel', lat:31.778, lng:35.235,
+    nearPorts:['haifa'],
+    cityByDay:[58,65,62,68,72,75,30],
+    sub:'Holy city',
+    note:'2-hour drive from Haifa — full-day cruise excursion staple. Western Wall and Church of the Holy Sepulchre are extremely crowded on port days. Friday is quieter for general tourism but note Shabbat begins at sundown.',
+    shoulder:'Damascus Gate and the Muslim Quarter early morning (8–9am) before tour groups arrive.',
+    alt:null,
+    tips:['Ramparts Walk along the Old City walls — no cruise groups use it, extraordinary views','Mahane Yehuda Market on a Friday morning is one of the great urban food experiences in the world','Palestinian Quarter (Muslim Quarter) for lunch — Abu Shukri hummus, local prices, no tourist menus','Yad Vashem Holocaust Museum — book ahead, deeply moving, not on cruise excursion menus','Mount of Olives for the panoramic view of the Old City — usually quieter than inside the walls'],
   },
 
   // CANARY ISLANDS
@@ -1578,6 +1649,7 @@ const DESTS = {
     note:'Long cruise excursion from Casablanca (2.5hrs each way). Djemaa el-Fna square and souks are intense even without cruise groups — with them it\'s overwhelming midday.',
     shoulder:'Souks before 10am or after 5pm. The Saadian Tombs and Bahia Palace are less crowded than Djemaa el-Fna at any hour.',
     alt:null,
+    tips:['Bahia Palace at 8:30am opening — cruise groups don\'t reach it until 11am','Mellah (Jewish Quarter) for a quiet hour away from the souks frenzy','Café des Épices in the spice market has rooftop views with minimal tourist pressure','Jardin Majorelle (Yves Saint Laurent) requires advance booking — worth it, usually manageable','Dinner at a small riad restaurant not on a tourist menu — your riad will know the right places'],
   },
 
   // TUSCANY — FOOD & WINE DESTINATIONS
@@ -2043,12 +2115,14 @@ const DESTS = {
   },
   // VENICE & VENETO
   'venice': {
+    name:'Venice', country:'Italy', lat:45.441, lng:12.316,
     nearPorts:['venice'],
     cityByDay:[68,72,70,74,75,88,92],
     sub:'Lagoon city ⚓ PORT',
     note:'Venice is ground zero for cruise overcrowding — it\'s both the port AND the destination. On days when multiple ships dock, the sestieri of San Marco and Rialto become genuinely impassable. The city now charges a day-visitor entry fee (€5) on peak days.',
     shoulder:'Dorsoduro, Cannaregio, and Castello neighborhoods see a fraction of the cruise-area crowds. Arrive by 8am or stay after 7pm when day-trippers leave.',
     alt:'Chioggia — 45 min by vaporetto, authentic fishing port, same lagoon architecture, zero cruise passengers.',
+    tips:['Cannaregio sestiere for lunch — locals\' neighborhood, 1/3 the price of San Marco','San Giorgio Maggiore island by vaporetto — Palladio church, bell tower with best view of Venice, almost no visitors','Cicchetti bar-hop in Cannaregio or Dorsoduro — authentic Venice, not on any cruise itinerary','Rialto Market at 7:30am when it\'s purely local — the fish market is extraordinary','Book Doge\'s Palace and Ca\' d\'Oro independently online — skip the bundled cruise excursion queue'],
   },
   'murano': {
     name:'Murano', country:'Italy', lat:45.458, lng:12.354,
@@ -3603,9 +3677,17 @@ function setMode(m) {
 
 // ─────────────────────────────────────────────────────────
 // DESTINATION AUTOCOMPLETE
+// Lazy getter avoids TDZ — DESTS must be fully loaded first
 // ─────────────────────────────────────────────────────────
-const ALL_DEST_NAMES = Object.entries(DESTS).map(([k, d]) => ({key: k, name: d.name}))
-  .sort((a,b) => a.name.localeCompare(b.name));
+let _allDestNames = null;
+function getAllDestNames() {
+  if (!_allDestNames) {
+    _allDestNames = Object.entries(DESTS)
+      .map(([k, d]) => ({key: k, name: d.name}))
+      .sort((a,b) => a.name.localeCompare(b.name));
+  }
+  return _allDestNames;
+}
 
 let _acSelectedIdx = -1;
 
@@ -3614,7 +3696,7 @@ function showDestSuggestions(val) {
   const q = val.trim().toLowerCase();
   if (!q || q.length < 1) { dd.style.display = 'none'; return; }
 
-  const matches = ALL_DEST_NAMES.filter(d =>
+  const matches = getAllDestNames().filter(d =>
     d.name.toLowerCase().startsWith(q) ||
     d.name.toLowerCase().includes(' ' + q)
   ).slice(0, 8);
@@ -3925,6 +4007,9 @@ function initExplore() {
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© <a href="https://openstreetmap.org">OpenStreetMap</a>',
   }).addTo(selectorMap);
+
+  // Force Leaflet to recalculate size after container becomes visible
+  setTimeout(() => selectorMap.invalidateSize(), 50);
 
   // Add a marker for each region
   Object.entries(REGIONS).forEach(([k, r]) => {
