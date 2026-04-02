@@ -3,8 +3,24 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MissTheBoat — Avoid cruise ship crowds</title>
-<meta name="description" content="Plan your trip around cruise ship port calls and excursions. Color-coded crowd heatmap for every stop.">
+<title>MissTheBoat — Stop sharing Santorini with 15,000 cruise passengers</title>
+<meta name="description" content="Plan your Mediterranean trip around cruise ship port calls. See crowd scores, insider tips, and quieter alternatives for every destination.">
+
+<!-- Open Graph — controls how the link looks when shared on WhatsApp, iMessage, X, LinkedIn -->
+<meta property="og:title" content="MissTheBoat — Avoid cruise ship crowds">
+<meta property="og:description" content="See exactly when cruise ships hit your destinations. Color-coded crowd scores, insider tips, and quieter alternatives for every Mediterranean stop.">
+<meta property="og:image" content="https://misstheboat.vercel.app/og-image.png">
+<meta property="og:url" content="https://misstheboat.vercel.app">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="MissTheBoat — Avoid cruise ship crowds">
+<meta name="twitter:description" content="See exactly when cruise ships hit your destinations. Color-coded crowd scores, insider tips, and quieter alternatives for every Mediterranean stop.">
+<meta name="twitter:image" content="https://misstheboat.vercel.app/og-image.png">
+
+<!-- Favicon — emoji favicon works in all modern browsers, no image file needed -->
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⛵</text></svg>">
+
+<!-- Google Analytics: when ready, add GA4 script tags here with your G-XXXXXXXXXX Measurement ID -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -219,7 +235,7 @@ textarea:focus{border-color:#999;background:#fff}
 <div class="page">
   <header class="hdr">
     <div class="logo">Miss<span>TheBoat</span></div>
-    <div class="tagline">Plan your trip around cruise ship crowds · Mediterranean edition</div>
+    <div class="tagline">Stop sharing your destination with 15,000 cruise passengers · Mediterranean edition</div>
   </header>
 
   <nav class="nav">
@@ -1299,6 +1315,7 @@ const DESTS = {
     note:'Compact capital of a compact island. Multiple ships can produce genuine crowding on the main street (Republic Street) and at St. John\'s Co-Cathedral.',
     shoulder:'Upper Barrakka Gardens at opening (7am) for harbor views before the crowds arrive.',
     alt:null,
+    tips:['St. John\'s Co-Cathedral requires advance booking — the Caravaggio paintings are extraordinary','Strait Street (The Gut) — former sailors\' bar district, now independent cafés, zero cruise groups','Hypogeum of Ħal Saflieni: prehistoric underground burial site, strictly limited to 80 visitors/day — book months ahead','Lower Barrakka Gardens is quieter than Upper and has better views of Fort Ricasoli','Take the ferry to Birgu (Vittoriosa) across the Grand Harbour — medieval, authentic, no cruise buses'],
   },
   'mdina': {
     name:'Mdina', country:'Malta', lat:35.887, lng:14.403,
@@ -1308,6 +1325,7 @@ const DESTS = {
     note:'Standard cruise excursion from Valletta. Small population, narrow streets. Very crowded during ship call windows but quiet outside them.',
     shoulder:'Early morning or late afternoon after buses leave.',
     alt:null,
+    tips:['Mdina at 7am before the coaches arrive is as close to a medieval ghost town as Europe offers','Fontanella Tea Garden on the bastion walls — incredible views, locals know it but cruise groups rarely find it','Rabat village adjoining Mdina has the St. Paul\'s catacombs — almost no visitors even on port days'],
   },
   // SICILY
   'taormina': {
@@ -1318,6 +1336,7 @@ const DESTS = {
     note:'Top-ranked cruise excursion from Messina — only 50km. The Greek Theatre and Corso Umberto are the cruise concentration zones 10am–3pm. Town is small and capacity is limited.',
     shoulder:'Early morning for the Greek Theatre before tours arrive. Evening after 5pm when the day-trippers leave is dramatically quieter.',
     alt:'Savoca — 20 min inland, The Godfather filming location, virtually no tourists, extraordinary views.',
+    tips:['Greek Theatre at 9am opening — the view of Etna through the stage arch before the tour groups arrive is unmissable','Castelmola village 5km above Taormina — mule track or taxi, no cruise buses, almond wine','Villa Comunale gardens are free, flower-filled, and cruise groups rarely stop there','Savoca for lunch — Bar Vitelli from The Godfather, excellent arancini, zero tourists'],
   },
   'agrigento': {
     name:'Agrigento (Valley of Temples)', country:'Italy', lat:37.296, lng:13.586,
@@ -1327,6 +1346,7 @@ const DESTS = {
     note:'Long drive from Palermo (2hrs) limits cruise group size but they still fill the site. The Valley of Temples is vast enough to absorb crowds — the western temples are the least visited.',
     shoulder:'Site opens at 9am. Temple of Concordia before 10am is genuinely peaceful.',
     alt:null,
+    tips:['Temple of Hephaestus and the western temples are a 20-min walk beyond the main area — almost no one goes','The site at dusk is extraordinary and cruise groups are long gone','Regional Archaeological Museum in town has the Ephebe of Agrigento — as good as anything in Sicily, rarely crowded'],
   },
   'cefalu': {
     name:'Cefalù', country:'Italy', lat:38.039, lng:14.022,
@@ -1336,6 +1356,7 @@ const DESTS = {
     note:'Standard Palermo cruise excursion. The Norman cathedral and beach are the main stops. Beach gets extremely crowded when ships are in.',
     shoulder:'The Rocca (clifftop fortress above town) is rarely included in cruise tours and has spectacular views.',
     alt:null,
+    tips:['Rocca fortress hike (1hr) — cruise groups skip it, panoramic views, ancient megalithic temple at the top','The medieval wash houses (lavatoio) at the base of the Rocca are free and almost never visited','Lunch at a restaurant one block from the seafront — same food, half the price'],
   },
   'palermo': {
     name:'Palermo', country:'Italy', lat:38.115, lng:13.361,
@@ -1345,6 +1366,7 @@ const DESTS = {
     note:'Large city that absorbs cruise visitors well. The Ballarò and Capo markets are the most authentic experiences — cruise groups don\'t tend to find them.',
     shoulder:'The markets are best early morning (8–11am) on any day. Monreale Cathedral is quieter after 3pm.',
     alt:null,
+    tips:['Ballarò market at 8am — one of Italy\'s great street food markets, cruise groups rarely find it','Capuchin Catacombs: 8,000 mummified bodies in monks\' robes — disturbing, extraordinary, minimal queues','Oratorio del Rosario di San Domenico: Caravaggio\'s last painting, virtually unknown to tourists','Street food in Piazza Caracciolo — arancina, pani ca meusa (spleen sandwich), sfincione — authentic Palermo','Mondello beach 12km away is locals\' beach, no cruise excursion buses'],
   },
   // LIGURIAN COAST
   'santa margherita ligure': {
@@ -1495,6 +1517,7 @@ const DESTS = {
     note:'The single most visited ancient site in Turkey and one of the top Mediterranean cruise excursions from Kusadasi. The main street (Curetes Way) is completely dominated by cruise groups 10am–2pm.',
     shoulder:'Site opens at 8am. First 90 minutes before the cruise buses arrive is genuinely different. The Terrace Houses (ticketed separately) stay quieter throughout the day.',
     alt:'Priene — 45 min south, equally atmospheric Hellenistic ruins on a hillside, virtually no cruise groups.',
+    tips:['Enter via the upper gate (Magnesia Gate) not the lower — cruise groups enter via the lower gate, you\'ll walk against the flow into a quieter section','Terrace Houses require a separate ticket and many cruise tours skip them — the preserved frescoes are extraordinary','Temple of Artemis (one of the Seven Wonders) is 2km from the main site — almost always empty','Sirince village 8km away: hillside wine village, no cruise buses, fruit wines, excellent lunch'],
   },
   'kusadasi': {
     name:'Kusadasi', country:'Turkey', lat:37.858, lng:27.260,
@@ -2235,6 +2258,27 @@ const DESTS = {
     note:'Top cruise excursion from Málaga (1.5hr drive). The Alhambra has a strict ticket quota — cruise groups book in advance and take the first morning entry slots. Without a pre-booked ticket you cannot enter.',
     shoulder:'Alhambra Generalife gardens (separate ticket, easier to access) and the Albaicín neighborhood are less impacted. Sacromonte at dusk is excellent.',
     alt:'Ronda — 1hr west of Málaga, dramatic cliff-top setting, bullring, much lower cruise traffic.',
+    tips:['Book Alhambra Nasrid Palaces 60+ days ahead at alhambra-patronato.es — cruise groups buy out all morning slots','Albaicín neighborhood on foot — whitewashed Moorish quarter, free, cruise groups rarely walk this far','Mirador de San Nicolás for the Alhambra view — arrive at 7am, dramatically different from the midday circus','Sacromonte cave flamenco at night — the real version, not the tourist tablao in the center','Bodegas Castañeda for tapas — free tapa with every drink, genuinely local bar'],
+  },
+  'seville': {
+    name:'Seville', country:'Spain', lat:37.389, lng:-5.984,
+    nearPorts:['cadiz'],
+    cityByDay:[62,70,66,72,75,80,78],
+    sub:'Andalusian capital',
+    note:'Top cruise excursion from Cádiz (1.5hr drive). Alcázar, cathedral, and Barrio de Santa Cruz are the cruise concentration zones 10am–3pm. The Alcázar has timed entry but cruise groups fill slots.',
+    shoulder:'Real Alcázar at opening (9:30am). Triana neighborhood across the river sees almost no cruise groups.',
+    alt:null,
+    tips:['Triana neighborhood across the river — tiles, flamenco, locals, no cruise buses','Book Real Alcázar online 2 weeks ahead — first 9:30am slot is significantly less crowded','Metropol Parasol (Las Setas) rooftop at sunset — cruise groups don\'t know about it','El Rinconcillo bar (oldest bar in Spain, 1670) — genuinely local, cheap tapas, no tourist menu','Flamenco at Casa de la Memoria or La Casa del Flamenco — intimate venue, real performance, not a stadium show'],
+  },
+  'cadiz': {
+    name:'Cádiz', country:'Spain', lat:36.527, lng:-6.288,
+    nearPorts:['cadiz'],
+    cityByDay:[42,50,46,52,55,60,58],
+    sub:'Atlantic port city ⚓ PORT',
+    note:'One of Europe\'s oldest cities and a beautifully underrated cruise port. The old town peninsula is compact and walkable. Cruise groups concentrate at the cathedral and central market.',
+    shoulder:'The Barrio del Pópulo and La Viña neighborhoods are the most authentic and least cruise-trafficked.',
+    alt:null,
+    tips:['Torre Tavira (camera obscura tower) — cruise groups walk past it, extraordinary live projection of the city','Mercado Central for breakfast — locals buying fish, no tourist market stalls','La Caleta beach is walkable from the old town and gets far fewer cruise visitors than the main beach','El Faro restaurant in the La Viña neighborhood — best seafood in Cádiz, no tourist pricing'],
   },
   'ronda': {
     name:'Ronda', country:'Spain', lat:36.746, lng:-5.161,
@@ -2256,24 +2300,6 @@ const DESTS = {
   },
 
   // SPAIN — CADIZ PORT
-  'cadiz': {
-    name:'Cádiz', country:'Spain', lat:36.527, lng:-6.288,
-    nearPorts:['cadiz'],
-    cityByDay:[42,50,46,52,55,60,58],
-    sub:'Atlantic port city ⚓ PORT',
-    note:'One of Europe\'s oldest cities and a beautifully underrated cruise port. The old town peninsula is compact and walkable. Cruise groups concentrate at the cathedral and central market.',
-    shoulder:'The Barrio del Pópulo and La Viña neighborhoods are the most authentic and least cruise-trafficked.',
-    alt:null,
-  },
-  'seville': {
-    name:'Seville', country:'Spain', lat:37.389, lng:-5.984,
-    nearPorts:['cadiz'],
-    cityByDay:[62,70,66,72,75,80,78],
-    sub:'Andalusian capital',
-    note:'Top cruise excursion from Cádiz (1.5hr drive). Alcázar, cathedral, and Barrio de Santa Cruz are the cruise concentration zones 10am–3pm. The Alcázar has timed entry but cruise groups fill slots.',
-    shoulder:'Real Alcázar at opening (9:30am). Triana neighborhood across the river sees almost no cruise groups.',
-    alt:null,
-  },
   'jerez': {
     name:'Jerez de la Frontera', country:'Spain', lat:36.687, lng:-6.136,
     nearPorts:['cadiz'],
