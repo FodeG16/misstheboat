@@ -873,15 +873,7 @@ const DESTS = {
     note:'Appears on most Livorno and Civitavecchia cruise excursion menus. City is large enough to absorb groups, but cruise crowds concentrate at the Uffizi, Duomo, and Ponte Vecchio 10am–3pm.',
     shoulder:'Uffizi and Accademia require timed entry. Oltrarno neighborhood before 9am is a different city entirely.',
     alt:null,
-  },
-  'pisa': {
-    name:'Pisa', country:'Italy', lat:43.723, lng:10.401,
-    nearPorts:['livorno'],
-    cityByDay:[55,80,62,75,72,88,82],
-    sub:'Port-adjacent city',
-    note:'Field of Miracles is the default cruise stop from Livorno — only 20km. Cruise groups cluster 10am–3pm. Saturday adds a heavy independent tourist wave on top of cruise traffic.',
-    shoulder:'Before 8am the piazza is genuinely quiet. Late afternoon (after 4:30pm) also clears out significantly.',
-    alt:'Lucca — 20 min east, no cruise traffic on any known excursion menu, fully walkable walled city, substantially better restaurants.',
+    tips:['Book Uffizi and Accademia timed entry at least 2 weeks ahead','San Miniato al Monte church — free, fewer crowds, panoramic views','Mercato Centrale (upper floor) for lunch — locals only, no cruise menus','Boboli Gardens opens at 8am — arrive first thing','Fiesole by bus 7 — hilltop village above Florence, zero cruise groups'],
   },
   'siena': {
     name:'Siena', country:'Italy', lat:43.318, lng:11.330,
@@ -891,6 +883,7 @@ const DESTS = {
     note:'Secondary excursion from Livorno and Civitavecchia. Lower frequency than Florence or Pisa but consistent cruise presence on peak port days.',
     shoulder:'Piazza del Campo before 9am or after 5pm is a different experience. Palio weeks (July, August) are extreme — avoid.',
     alt:null,
+    tips:['Museo Civico in the Palazzo Pubblico for frescoes — less crowded than the Duomo','Cripta delle Statue — medieval frescoes discovered in 1999, rarely visited','Enoteca Italiana in the Medici fortress — free entry, excellent wine tasting','Walk the medieval streets of Terzo di Camollia — locals\' neighborhood'],
   },
   'san gimignano': {
     name:'San Gimignano', country:'Italy', lat:43.468, lng:11.043,
@@ -900,6 +893,7 @@ const DESTS = {
     note:'Appears on 14 of 17 major cruise lines\' Livorno shore excursion menus. Peak bus arrival 10am–2pm. Town population effectively doubles on Livorno port days.',
     shoulder:'Before 9am or after 4:30pm the crowds thin substantially.',
     alt:'Volterra — 30 min away, same medieval hilltop character, Etruscan museum, alabaster workshops, and zero presence on cruise excursion menus.',
+    tips:['Rocca di Montestaffoli — free, panoramic views, almost no visitors even on busy days','Vernaccia di San Gimignano wine tasting at Cantina del Vecchio — local winery not on tour routes','Walk the Via Francigena pilgrim trail south of town — empty even in summer','Museo della Tortura is tourist-trap — skip it'],
   },
   'volterra': {
     name:'Volterra', country:'Italy', lat:43.401, lng:10.860,
@@ -909,6 +903,7 @@ const DESTS = {
     note:'Not on any major cruise excursion menu. No port within practical excursion range. One of the least-touristed walled hill towns in Tuscany.',
     shoulder:null,
     alt:null,
+    tips:['Museo Etrusco Guarnacci — one of Italy\'s great Etruscan collections, rarely crowded','Alabaster workshops on Via Porta all\'Arco — family workshops open to visitors','Balze (eroded cliffs) at sunset — 10-min walk from the walls, almost no tourists','Osteria dei Poeti for lunch — known only to locals'],
   },
   'lucca': {
     name:'Lucca', country:'Italy', lat:43.843, lng:10.508,
@@ -2228,44 +2223,258 @@ const DESTS = {
 // Factors: cultural/historical significance, food, scenery, things to do
 // Deliberately avoids penalizing "too touristy" (crowds are separate)
 // ─────────────────────────────────────────────────────────
-const VALUE_SCORES = {
-  'florence':9,'pisa':6,'siena':8,'san gimignano':7,'volterra':8,'lucca':8,
-  'montalcino':7,'bolgheri':6,'san miniato':5,'cinque terre':8,'portofino':7,
-  'camogli':7,'santa margherita ligure':6,'livorno':5,'rome':10,'orvieto':8,
-  'assisi':7,'amalfi':8,'positano':8,'ravello':9,'sorrento':7,'capri':8,
-  'pompeii':9,'herculaneum':8,'ischia':7,'taormina':8,'agrigento':9,
-  'cefalu':7,'palermo':7,'athens':9,'mykonos town':7,'santorini':9,
-  'delphi':8,'dubrovnik old town':9,'split old town':8,'hvar':7,'ston':6,
-  'trogir':7,'kotor old town':8,'perast':7,'budva':6,'rhodes old town':8,
-  'lindos':7,'knossos':8,'chania':8,'rethymno':7,'corfu':7,'zakynthos':8,
-  'skiathos':7,'barcelona':9,'montserrat':8,'sitges':6,'tarragona':7,
-  'palma de mallorca':7,'valldemossa':7,'soller':6,'nice':8,'monaco':7,
-  'eze':7,'antibes':7,'saint-paul-de-vence':7,'menton':7,'marseille':7,
-  'avignon':8,'valletta':8,'mdina':7,'ephesus':9,'kusadasi':5,'pamukkale':8,
-  'bodrum':6,'istanbul':10,'las palmas':6,'maspalomas':5,'santa cruz tenerife':5,
-  'teide':8,'haifa':6,'jerusalem':10,'casablanca':6,'marrakech':9,
-  'venice':10,'murano':7,'burano':8,'verona':9,'padua':8,'vicenza':7,
-  'catania':7,'etna':9,'syracuse':9,'noto':8,'ragusa':8,
-  'malaga':7,'granada':10,'ronda':8,'marbella':5,
-  'cadiz':8,'seville':9,'jerez':7,
-  'antalya':6,'aspendos':8,'side':7,'olympos':8,
-  'kefalonia':8,'melissani cave':7,
-  'tel aviv':8,'masada':9,'dead sea':8,
-  'nicosia':7,
-  'essaouira':8,'taroudant':7,
-  'timanfaya':8,'corralejo':6,'betancuria':6,
-  'hyeres islands':8,
-  'montepulciano':8,'pienza':8,'cortona':8,'greve in chianti':7,
-  'pitigliano':8,'castelnuovo berardenga':7,'san quirico d orcia':7,'montefalco':8,
-  'spoleto':8,'todi':8,'spello':7,
-  'les baux de provence':8,'cassis':7,'gordes':8,
-  'olympia':9,'kos town':7,'meteora':10,'thessaloniki':8,'patmos town':9,
-  'pergamon':8,'izmir city':6,'dalyan':7,'datca':6,
-  'valencia city':7,'cartagena city':7,'gibraltar rock':6,
-  'bonifacio':8,'corte':6,
-  'paphos':8,'troodos':7,
-  'chefchaouen':8,'asilah':7,
+// ─────────────────────────────────────────────────────────
+// CULINARY DATA
+// michelin: {stars, bibs} — approximate counts within/near the city
+//   stars: Michelin starred restaurants
+//   bibs:  Bib Gourmand (excellent value) listings
+//   (will be refined with actual Michelin scrape)
+// foodCulture: 0–3
+//   0 = no distinct food identity
+//   1 = good food, not the main draw
+//   2 = strong regional food scene
+//   3 = legendary — destination-worthy food culture
+// hasProducer: true if wine estates / artisan food producers / markets nearby
+// legendaryBonus: manual override -3 to +3 added to combined score
+// ─────────────────────────────────────────────────────────
+const CULINARY_DATA = {
+  // TUSCANY
+  'florence':          { michelin:{stars:3,bibs:8},  foodCulture:2, hasProducer:true  },
+  'siena':             { michelin:{stars:1,bibs:3},  foodCulture:2, hasProducer:false },
+  'san gimignano':     { michelin:{stars:1,bibs:1},  foodCulture:1, hasProducer:true,  legendaryBonus:0 },
+  'volterra':          { michelin:{stars:0,bibs:1},  foodCulture:2, hasProducer:false },
+  'lucca':             { michelin:{stars:1,bibs:3},  foodCulture:2, hasProducer:false },
+  'montalcino':        { michelin:{stars:1,bibs:2},  foodCulture:3, hasProducer:true,  legendaryBonus:1 }, // Brunello
+  'bolgheri':          { michelin:{stars:0,bibs:1},  foodCulture:3, hasProducer:true,  legendaryBonus:1 }, // Sassicaia/Ornellaia
+  'san miniato':       { michelin:{stars:0,bibs:1},  foodCulture:3, hasProducer:true,  legendaryBonus:1 }, // White truffles
+  'pisa':              { michelin:{stars:1,bibs:2},  foodCulture:1, hasProducer:false },
+  'cinque terre':      { michelin:{stars:0,bibs:0},  foodCulture:1, hasProducer:true  }, // Sciacchetrà wine
+  'portofino':         { michelin:{stars:1,bibs:1},  foodCulture:1, hasProducer:false },
+  'camogli':           { michelin:{stars:0,bibs:1},  foodCulture:2, hasProducer:false },
+  'montepulciano':     { michelin:{stars:0,bibs:1},  foodCulture:3, hasProducer:true,  legendaryBonus:1 }, // Vino Nobile
+  'pienza':            { michelin:{stars:0,bibs:0},  foodCulture:3, hasProducer:true,  legendaryBonus:1 }, // Pecorino
+  'cortona':           { michelin:{stars:1,bibs:1},  foodCulture:2, hasProducer:true  },
+  'greve in chianti':  { michelin:{stars:0,bibs:1},  foodCulture:3, hasProducer:true,  legendaryBonus:1 }, // Chianti Classico
+  'pitigliano':        { michelin:{stars:0,bibs:0},  foodCulture:2, hasProducer:false, legendaryBonus:1 }, // legendary local food
+  'castelnuovo berardenga': { michelin:{stars:1,bibs:1}, foodCulture:2, hasProducer:true },
+  'san quirico d orcia': { michelin:{stars:0,bibs:0}, foodCulture:2, hasProducer:true },
+  // ROME & UMBRIA
+  'rome':              { michelin:{stars:10,bibs:22}, foodCulture:3, hasProducer:false },
+  'orvieto':           { michelin:{stars:0,bibs:2},  foodCulture:2, hasProducer:true  }, // Orvieto Classico
+  'assisi':            { michelin:{stars:0,bibs:2},  foodCulture:2, hasProducer:false },
+  'spoleto':           { michelin:{stars:0,bibs:1},  foodCulture:2, hasProducer:false },
+  'todi':              { michelin:{stars:0,bibs:1},  foodCulture:1, hasProducer:false },
+  'spello':            { michelin:{stars:0,bibs:0},  foodCulture:2, hasProducer:false },
+  'montefalco':        { michelin:{stars:0,bibs:1},  foodCulture:3, hasProducer:true,  legendaryBonus:1 }, // Sagrantino
+  // AMALFI & NAPLES
+  'amalfi':            { michelin:{stars:1,bibs:2},  foodCulture:3, hasProducer:true  },
+  'ravello':           { michelin:{stars:2,bibs:1},  foodCulture:2, hasProducer:false },
+  'positano':          { michelin:{stars:1,bibs:2},  foodCulture:2, hasProducer:false },
+  'sorrento':          { michelin:{stars:1,bibs:3},  foodCulture:2, hasProducer:true  }, // limoncello
+  'capri':             { michelin:{stars:2,bibs:2},  foodCulture:2, hasProducer:false },
+  'ischia':            { michelin:{stars:1,bibs:2},  foodCulture:2, hasProducer:true  },
+  'pompeii':           { michelin:{stars:0,bibs:0},  foodCulture:1, hasProducer:false },
+  'herculaneum':       { michelin:{stars:0,bibs:0},  foodCulture:1, hasProducer:false },
+  // SICILY
+  'palermo':           { michelin:{stars:1,bibs:5},  foodCulture:3, hasProducer:true,  legendaryBonus:1 }, // street food capital
+  'catania':           { michelin:{stars:1,bibs:4},  foodCulture:3, hasProducer:true,  legendaryBonus:1 }, // arancini, pescheria
+  'taormina':          { michelin:{stars:2,bibs:3},  foodCulture:2, hasProducer:false },
+  'agrigento':         { michelin:{stars:0,bibs:1},  foodCulture:1, hasProducer:false },
+  'cefalu':            { michelin:{stars:0,bibs:1},  foodCulture:1, hasProducer:false },
+  'syracuse':          { michelin:{stars:1,bibs:2},  foodCulture:2, hasProducer:false },
+  'noto':              { michelin:{stars:0,bibs:1},  foodCulture:2, hasProducer:true  }, // almonds, chocolate
+  'ragusa':            { michelin:{stars:1,bibs:2},  foodCulture:2, hasProducer:true  },
+  // PUGLIA
+  'matera':            { michelin:{stars:1,bibs:2},  foodCulture:2, hasProducer:false },
+  'alberobello':       { michelin:{stars:0,bibs:1},  foodCulture:2, hasProducer:true  },
+  'lecce':             { michelin:{stars:1,bibs:3},  foodCulture:2, hasProducer:false },
+  'ostuni':            { michelin:{stars:0,bibs:2},  foodCulture:2, hasProducer:true  },
+  'polignano a mare':  { michelin:{stars:0,bibs:1},  foodCulture:1, hasProducer:false },
+  // VENICE & VENETO
+  'venice':            { michelin:{stars:3,bibs:6},  foodCulture:2, hasProducer:false, legendaryBonus:0 }, // cicchetti good, tourist traps rampant
+  'verona':            { michelin:{stars:3,bibs:5},  foodCulture:2, hasProducer:true  }, // Valpolicella, Amarone
+  'padua':             { michelin:{stars:1,bibs:4},  foodCulture:2, hasProducer:false },
+  'vicenza':           { michelin:{stars:1,bibs:2},  foodCulture:2, hasProducer:false },
+  'murano':            { michelin:{stars:0,bibs:0},  foodCulture:1, hasProducer:false },
+  'burano':            { michelin:{stars:0,bibs:1},  foodCulture:1, hasProducer:false },
+  // FRANCE — RIVIERA & PROVENCE
+  'nice':              { michelin:{stars:4,bibs:8},  foodCulture:3, hasProducer:false, legendaryBonus:1 }, // socca, niçoise
+  'monaco':            { michelin:{stars:3,bibs:2},  foodCulture:2, hasProducer:false },
+  'marseille':         { michelin:{stars:2,bibs:5},  foodCulture:3, hasProducer:false, legendaryBonus:1 }, // bouillabaisse
+  'avignon':           { michelin:{stars:2,bibs:4},  foodCulture:2, hasProducer:true  }, // Rhône wines
+  'menton':            { michelin:{stars:1,bibs:2},  foodCulture:2, hasProducer:true  }, // lemons
+  'antibes':           { michelin:{stars:1,bibs:3},  foodCulture:2, hasProducer:false },
+  'eze':               { michelin:{stars:1,bibs:1},  foodCulture:1, hasProducer:false },
+  'cassis':            { michelin:{stars:1,bibs:2},  foodCulture:2, hasProducer:true  },
+  'les baux de provence': { michelin:{stars:2,bibs:1}, foodCulture:2, hasProducer:true },
+  'gordes':            { michelin:{stars:1,bibs:2},  foodCulture:2, hasProducer:true  }, // Luberon wine, lavender
+  'saint-paul-de-vence': { michelin:{stars:1,bibs:1}, foodCulture:1, hasProducer:false },
+  // CORSICA
+  'ajaccio':           { michelin:{stars:0,bibs:2},  foodCulture:2, hasProducer:true  }, // charcuterie, brocciu
+  'bonifacio':         { michelin:{stars:0,bibs:1},  foodCulture:1, hasProducer:false },
+  'corte':             { michelin:{stars:0,bibs:0},  foodCulture:2, hasProducer:true  },
+  // MALTA
+  'valletta':          { michelin:{stars:1,bibs:2},  foodCulture:2, hasProducer:false },
+  'mdina':             { michelin:{stars:0,bibs:1},  foodCulture:1, hasProducer:false },
+  // SPAIN — BARCELONA & MALLORCA
+  'barcelona':         { michelin:{stars:22,bibs:32}, foodCulture:3, hasProducer:false, legendaryBonus:2 }, // world's best food city argument
+  'palma de mallorca': { michelin:{stars:4,bibs:8},  foodCulture:2, hasProducer:true  },
+  'valldemossa':       { michelin:{stars:0,bibs:1},  foodCulture:1, hasProducer:false },
+  'soller':            { michelin:{stars:0,bibs:1},  foodCulture:2, hasProducer:true  }, // oranges, olive oil
+  'montserrat':        { michelin:{stars:0,bibs:0},  foodCulture:1, hasProducer:false },
+  'tarragona':         { michelin:{stars:1,bibs:2},  foodCulture:1, hasProducer:false },
+  'sitges':            { michelin:{stars:0,bibs:2},  foodCulture:1, hasProducer:false },
+  // SPAIN — ANDALUSIA
+  'seville':           { michelin:{stars:3,bibs:8},  foodCulture:3, hasProducer:false, legendaryBonus:1 }, // tapas culture
+  'granada':           { michelin:{stars:1,bibs:3},  foodCulture:2, hasProducer:false }, // free tapas tradition
+  'cadiz':             { michelin:{stars:1,bibs:2},  foodCulture:2, hasProducer:true  },
+  'malaga':            { michelin:{stars:2,bibs:4},  foodCulture:2, hasProducer:false },
+  'ronda':             { michelin:{stars:0,bibs:1},  foodCulture:1, hasProducer:false },
+  'jerez':             { michelin:{stars:1,bibs:2},  foodCulture:3, hasProducer:true,  legendaryBonus:1 }, // sherry
+  'marbella':          { michelin:{stars:1,bibs:2},  foodCulture:1, hasProducer:false },
+  // SPAIN — CANARY ISLANDS
+  'las palmas':        { michelin:{stars:0,bibs:2},  foodCulture:1, hasProducer:false },
+  'santa cruz tenerife':{ michelin:{stars:1,bibs:2}, foodCulture:1, hasProducer:false },
+  'timanfaya':         { michelin:{stars:0,bibs:0},  foodCulture:1, hasProducer:false },
+  'corralejo':         { michelin:{stars:0,bibs:1},  foodCulture:1, hasProducer:false },
+  // SPAIN — VALENCIA & CARTAGENA
+  'valencia city':     { michelin:{stars:5,bibs:12}, foodCulture:3, hasProducer:false, legendaryBonus:2 }, // paella homeland
+  'cartagena city':    { michelin:{stars:1,bibs:2},  foodCulture:1, hasProducer:false },
+  'gibraltar rock':    { michelin:{stars:0,bibs:0},  foodCulture:1, hasProducer:false },
+  // CROATIA & MONTENEGRO
+  'dubrovnik old town':{ michelin:{stars:0,bibs:2},  foodCulture:2, hasProducer:false, legendaryBonus:1 }, // seafood tradition, world-famous city
+  'split old town':    { michelin:{stars:0,bibs:2},  foodCulture:2, hasProducer:false },
+  'hvar':              { michelin:{stars:0,bibs:1},  foodCulture:1, hasProducer:true  },
+  'trogir':            { michelin:{stars:0,bibs:1},  foodCulture:1, hasProducer:false },
+  'ston':              { michelin:{stars:0,bibs:1},  foodCulture:2, hasProducer:true,  legendaryBonus:1 }, // best oysters in Adriatic
+  'kotor old town':    { michelin:{stars:0,bibs:1},  foodCulture:1, hasProducer:false },
+  // GREECE
+  'athens':            { michelin:{stars:3,bibs:5},  foodCulture:2, hasProducer:false },
+  'santorini':         { michelin:{stars:1,bibs:2},  foodCulture:2, hasProducer:true  }, // assyrtiko wine
+  'mykonos town':      { michelin:{stars:0,bibs:2},  foodCulture:1, hasProducer:false },
+  'rhodes old town':   { michelin:{stars:0,bibs:2},  foodCulture:1, hasProducer:false },
+  'chania':            { michelin:{stars:0,bibs:2},  foodCulture:3, hasProducer:true,  legendaryBonus:1 }, // Cretan diet, best in Greece
+  'rethymno':          { michelin:{stars:0,bibs:1},  foodCulture:2, hasProducer:true  },
+  'knossos':           { michelin:{stars:0,bibs:0},  foodCulture:1, hasProducer:false },
+  'delphi':            { michelin:{stars:0,bibs:0},  foodCulture:1, hasProducer:false },
+  'corfu':             { michelin:{stars:0,bibs:1},  foodCulture:2, hasProducer:false }, // pastitsada
+  'zakynthos':         { michelin:{stars:0,bibs:1},  foodCulture:1, hasProducer:false },
+  'skiathos':          { michelin:{stars:0,bibs:1},  foodCulture:1, hasProducer:false },
+  'thessaloniki':      { michelin:{stars:0,bibs:3},  foodCulture:3, hasProducer:false, legendaryBonus:1 }, // best food city in Greece
+  'kos town':          { michelin:{stars:0,bibs:1},  foodCulture:1, hasProducer:false },
+  'olympia':           { michelin:{stars:0,bibs:0},  foodCulture:1, hasProducer:false },
+  'meteora':           { michelin:{stars:0,bibs:0},  foodCulture:1, hasProducer:false },
+  'kefalonia':         { michelin:{stars:0,bibs:1},  foodCulture:2, hasProducer:true  }, // robola wine
+  // TURKEY
+  'istanbul':          { michelin:{stars:2,bibs:5},  foodCulture:3, hasProducer:false, legendaryBonus:2 }, // legendary food city
+  'ephesus':           { michelin:{stars:0,bibs:0},  foodCulture:1, hasProducer:false },
+  'kusadasi':          { michelin:{stars:0,bibs:1},  foodCulture:1, hasProducer:false },
+  'pamukkale':         { michelin:{stars:0,bibs:0},  foodCulture:1, hasProducer:false },
+  'bodrum':            { michelin:{stars:1,bibs:2},  foodCulture:1, hasProducer:false },
+  'antalya':           { michelin:{stars:0,bibs:2},  foodCulture:2, hasProducer:false },
+  'aspendos':          { michelin:{stars:0,bibs:0},  foodCulture:1, hasProducer:false },
+  'side':              { michelin:{stars:0,bibs:0},  foodCulture:1, hasProducer:false },
+  'pergamon':          { michelin:{stars:0,bibs:0},  foodCulture:1, hasProducer:false },
+  'dalyan':            { michelin:{stars:0,bibs:1},  foodCulture:1, hasProducer:false },
+  // MOROCCO
+  'marrakech':         { michelin:{stars:0,bibs:0},  foodCulture:3, hasProducer:false, legendaryBonus:2 }, // tagine, couscous, spice culture
+  'casablanca':        { michelin:{stars:0,bibs:0},  foodCulture:2, hasProducer:false },
+  'chefchaouen':       { michelin:{stars:0,bibs:0},  foodCulture:2, hasProducer:false },
+  'essaouira':         { michelin:{stars:0,bibs:0},  foodCulture:2, hasProducer:false },
+  'tangier':           { michelin:{stars:0,bibs:0},  foodCulture:2, hasProducer:false },
+  'taroudant':         { michelin:{stars:0,bibs:0},  foodCulture:2, hasProducer:false },
+  'asilah':            { michelin:{stars:0,bibs:0},  foodCulture:1, hasProducer:false },
+  // ISRAEL
+  'jerusalem':         { michelin:{stars:0,bibs:0},  foodCulture:3, hasProducer:false, legendaryBonus:2 }, // hummus wars, Palestinian-Israeli fusion
+  'haifa':             { michelin:{stars:0,bibs:0},  foodCulture:2, hasProducer:false },
+  'tel aviv':          { michelin:{stars:0,bibs:0},  foodCulture:3, hasProducer:false, legendaryBonus:2 }, // among top food cities globally
+  'masada':            { michelin:{stars:0,bibs:0},  foodCulture:1, hasProducer:false },
+  'dead sea':          { michelin:{stars:0,bibs:0},  foodCulture:1, hasProducer:false },
+  // CYPRUS
+  'paphos':            { michelin:{stars:0,bibs:1},  foodCulture:1, hasProducer:false },
+  'troodos':           { michelin:{stars:0,bibs:0},  foodCulture:2, hasProducer:true  },
+  'nicosia':           { michelin:{stars:0,bibs:2},  foodCulture:2, hasProducer:false },
 };
+
+// ─────────────────────────────────────────────────────────
+// CULTURAL DATA
+// heritage: 0–3 (UNESCO sites, ancient history, art museums)
+// artScene: 0–3 (contemporary art, architecture, live performance)
+// ─────────────────────────────────────────────────────────
+const CULTURAL_DATA = {
+  'florence':     {heritage:3,artScene:3}, 'rome':         {heritage:3,artScene:3},
+  'venice':       {heritage:3,artScene:2}, 'siena':        {heritage:3,artScene:1},
+  'pisa':         {heritage:2,artScene:1}, 'lucca':        {heritage:2,artScene:2},
+  'montalcino':   {heritage:1,artScene:1}, 'san gimignano':{heritage:3,artScene:1},
+  'volterra':     {heritage:3,artScene:1}, 'cortona':      {heritage:2,artScene:1},
+  'montepulciano':{heritage:2,artScene:1}, 'pienza':       {heritage:3,artScene:1},
+  'pitigliano':   {heritage:2,artScene:1}, 'orvieto':      {heritage:3,artScene:1},
+  'assisi':       {heritage:3,artScene:1}, 'spoleto':      {heritage:2,artScene:2},
+  'montefalco':   {heritage:2,artScene:1}, 'pompeii':      {heritage:3,artScene:1},
+  'herculaneum':  {heritage:3,artScene:1}, 'amalfi':       {heritage:3,artScene:1},
+  'ravello':      {heritage:2,artScene:2}, 'capri':        {heritage:1,artScene:1},
+  'palermo':      {heritage:3,artScene:2}, 'agrigento':    {heritage:3,artScene:1},
+  'catania':      {heritage:2,artScene:2}, 'taormina':     {heritage:2,artScene:2},
+  'syracuse':     {heritage:3,artScene:1}, 'noto':         {heritage:3,artScene:1},
+  'ragusa':       {heritage:3,artScene:1}, 'athens':       {heritage:3,artScene:2},
+  'santorini':    {heritage:1,artScene:1}, 'rhodes old town':{heritage:3,artScene:1},
+  'chania':       {heritage:2,artScene:1}, 'delphi':       {heritage:3,artScene:1},
+  'thessaloniki': {heritage:3,artScene:2}, 'meteora':      {heritage:3,artScene:1},
+  'dubrovnik old town':{heritage:3,artScene:1},'split old town':{heritage:3,artScene:1},
+  'kotor old town':{heritage:3,artScene:1},'valletta':     {heritage:3,artScene:2},
+  'mdina':        {heritage:3,artScene:1}, 'istanbul':     {heritage:3,artScene:3},
+  'ephesus':      {heritage:3,artScene:1}, 'pamukkale':    {heritage:3,artScene:1},
+  'pergamon':     {heritage:3,artScene:1}, 'barcelona':    {heritage:2,artScene:3},
+  'seville':      {heritage:3,artScene:2}, 'granada':      {heritage:3,artScene:2},
+  'valencia city':{heritage:2,artScene:3}, 'cadiz':        {heritage:2,artScene:1},
+  'marrakech':    {heritage:3,artScene:2}, 'jerusalem':    {heritage:3,artScene:2},
+  'tel aviv':     {heritage:1,artScene:3}, 'nice':         {heritage:2,artScene:3},
+  'marseille':    {heritage:2,artScene:2}, 'avignon':      {heritage:3,artScene:2},
+  'matera':       {heritage:3,artScene:1}, 'alberobello':  {heritage:3,artScene:1},
+  'verona':       {heritage:3,artScene:2},
+};
+
+// ─────────────────────────────────────────────────────────
+// VALUE COMPUTATION
+// Returns {culinary, cultural, combined} each 1–10
+// ─────────────────────────────────────────────────────────
+function computeValue(key) {
+  const cd = CULINARY_DATA[key];
+  const ct = CULTURAL_DATA[key];
+
+  // CULINARY SCORE
+  let culinary = 4; // default
+  if (cd) {
+    const m = cd.michelin || {stars:0,bibs:0};
+    // Michelin density: stars worth 1.5 pts each, bibs 0.3 pts, capped at 6
+    const michelinPts = Math.min(6, m.stars * 1.5 + m.bibs * 0.3);
+    // Food culture: 0=0, 1=2, 2=4, 3=6 pts
+    const culturePts = (cd.foodCulture || 0) * 2;
+    // Producer bonus: up to 1 pt
+    const producerPts = cd.hasProducer ? 1 : 0;
+    culinary = Math.max(1, Math.min(10, Math.round(1 + michelinPts + culturePts * 0.4 + producerPts)));
+    if (cd.legendaryBonus) culinary = Math.max(1, Math.min(10, culinary + cd.legendaryBonus));
+  }
+
+  // CULTURAL SCORE
+  let cultural = 4; // default
+  if (ct) {
+    // Heritage: 0=0, 1=2, 2=5, 3=7 pts
+    const heritagePts = [0,2,5,7][ct.heritage || 0];
+    // Art scene: 0=0, 1=1, 2=2, 3=3 pts
+    const artPts = [0,1,2,3][ct.artScene || 0];
+    cultural = Math.max(1, Math.min(10, Math.round(heritagePts + artPts)));
+  }
+
+  // COMBINED: weighted average
+  const combined = Math.max(1, Math.min(10, Math.round(culinary * 0.45 + cultural * 0.55)));
+  return {culinary, cultural, combined};
+}
+
+// Legacy shim — used by anything still referencing VALUE_SCORES[key]
+const VALUE_SCORES = new Proxy({}, {
+  get(_, key) { return computeValue(key).combined; }
+});
 
 // ─────────────────────────────────────────────────────────
 // REGIONS — destination keys grouped for the Explore tab
@@ -2859,10 +3068,25 @@ function renderShipCount(cruiseByDay, activeDay) {
 }
 
 function renderCard(scored, idx) {
-  const {key, date, dest, dayIdx, status, cityVol, maxCruise, cruiseByDay, primaryPort, isExcursionDest} = scored;
+  const {key, date, dest, dayIdx, status, cityVol, maxCruise, cruiseByDay, primaryPort, isExcursionDest, crowdScore} = scored;
   const bl = status === 'red' ? 'AVOID' : status === 'amber' ? 'CAUTION' : 'FREE';
   const allZeroCruise = cruiseByDay.every(v => v === 0);
   const dateStr = date ? date.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'}) : '—';
+
+  // Compute Low/Avg/High crowd for the week in this season
+  const season = scored.season;
+  const dailyCrowd = dest.cityByDay.map((city, i) => {
+    let cruise = 0;
+    for (const pk of dest.nearPorts) {
+      const p = PORTS[pk];
+      if (p && p[season]) cruise = Math.max(cruise, p[season][i]);
+    }
+    return Math.round(city * 0.35 + cruise * 0.65);
+  });
+  const weekLow  = Math.min(...dailyCrowd);
+  const weekHigh = Math.max(...dailyCrowd);
+  const weekAvg  = Math.round(dailyCrowd.reduce((a,b)=>a+b,0)/7);
+  const crowdColor = weekHigh >= 65 ? '#B83232' : weekHigh >= 35 ? '#B87820' : '#2A7050';
 
   // Port city detection — destination is itself a cruise port
   const PORT_CITY_KEYS = new Set(['livorno','civitavecchia','naples','venice','dubrovnik old town',
@@ -2892,7 +3116,23 @@ function renderCard(scored, idx) {
         </div>
         <div class="cr">
           <div class="cdate">${dateStr}</div>
-          <span class="badge b-${status[0]}" id="badge-${idx}">${bl}</span>
+          <div style="display:flex;align-items:center;gap:6px">
+            <div style="display:flex;gap:1px;font-size:9px">
+              <div style="text-align:center;padding:3px 6px;background:#f0faf5;border-radius:4px 0 0 4px;border:1px solid #c8e8d0">
+                <div style="color:#aaa;line-height:1;margin-bottom:1px">Low</div>
+                <div style="font-weight:700;color:#2A7050;line-height:1">${weekLow}</div>
+              </div>
+              <div style="text-align:center;padding:3px 6px;background:#f8f8f6;border-top:1px solid #e0e0e0;border-bottom:1px solid #e0e0e0">
+                <div style="color:#aaa;line-height:1;margin-bottom:1px">Avg</div>
+                <div style="font-weight:700;color:#888;line-height:1">${weekAvg}</div>
+              </div>
+              <div style="text-align:center;padding:3px 6px;background:#fdf5f5;border-radius:0 4px 4px 0;border:1px solid #f0d0d0">
+                <div style="color:#aaa;line-height:1;margin-bottom:1px">High</div>
+                <div style="font-weight:700;color:${crowdColor};line-height:1">${weekHigh}</div>
+              </div>
+            </div>
+            <span class="badge b-${status[0]}" id="badge-${idx}">${bl}</span>
+          </div>
           <span id="live-tag-${idx}" style="display:none;font-size:9px;color:#2A7050;font-weight:600;letter-spacing:.05em">LIVE</span>
         </div>
         <span class="chev" id="chev-${idx}">▾</span>
@@ -2946,6 +3186,16 @@ function renderCard(scored, idx) {
                 <a href="${gygLink(dest.alt.split('—')[0].trim())}" target="_blank" rel="noopener" class="aff-btn gyg">🎟️ Activities</a>
               </div>` : ''}
             </div>
+          </div>
+        </div>` : ''}
+        ${dest.tips && dest.tips.length ? `
+        <div class="irow">
+          <div class="iico">★</div>
+          <div class="ibody">
+            <div style="font-size:11px;font-weight:600;color:#1a1a1a;margin-bottom:5px">Insider tips</div>
+            <ul style="margin:0;padding-left:14px;list-style:disc;display:flex;flex-direction:column;gap:4px">
+              ${dest.tips.map(t => `<li style="font-size:11px;color:#555;line-height:1.5">${t}</li>`).join('')}
+            </ul>
           </div>
         </div>` : ''}
         ${!dest.note && !dest.shoulder && !dest.alt ? `
@@ -3369,6 +3619,7 @@ function init() {
 let exploreRegion = null;
 let exploreLen = 5;
 let exploreSeason = 'spring';
+let exploreSort = 'ratio-desc'; // ratio-desc | crowd-asc | crowd-desc | val-desc | val-asc
 
 // Region grouping by country for the structured list
 const REGION_GROUPS = [
@@ -3521,6 +3772,11 @@ function selectRegionMap(k) {
   renderExplore();
 }
 
+function setExploreSort(s) {
+  exploreSort = s;
+  if (exploreRegion) renderExplore();
+}
+
 function setLen(el, n) {
   document.querySelectorAll('.lpill[data-n]').forEach(x=>x.classList.remove('on'));
   el.classList.add('on');
@@ -3538,9 +3794,8 @@ function setSeason(el, s) {
 function crowdValueRank(key, season) {
   const dest = DESTS[key];
   if (!dest) return null;
-  const val = VALUE_SCORES[key] || 5;
+  const {culinary, cultural, combined: val} = computeValue(key);
 
-  // Compute composite score for each day of the week in this season
   const dailyScores = dest.cityByDay.map((city, i) => {
     let cruise = 0;
     for (const pk of dest.nearPorts) {
@@ -3553,12 +3808,11 @@ function crowdValueRank(key, season) {
   const crowdHigh = Math.max(...dailyScores);
   const crowdLow  = Math.min(...dailyScores);
   const crowdAvg  = Math.round(dailyScores.reduce((a,b) => a+b, 0) / 7);
-
-  const bestDayIdx   = dailyScores.indexOf(Math.min(...dailyScores));
-  const bestDayName  = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'][bestDayIdx];
+  const bestDayIdx  = dailyScores.indexOf(Math.min(...dailyScores));
+  const bestDayName = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'][bestDayIdx];
 
   const ratio = (val * 10) / (crowdHigh + 5);
-  return {key, dest, val, crowd: crowdHigh, crowdLow, crowdAvg, crowdHigh, bestDayName, ratio};
+  return {key, dest, val, culinary, cultural, crowd: crowdHigh, crowdLow, crowdAvg, crowdHigh, bestDayName, ratio};
 }
 
 function renderExplore() {
@@ -3569,28 +3823,43 @@ function renderExplore() {
   const el = document.getElementById('explore-results');
   wrap.style.display = 'block';
 
-  // Score and rank
+  // Base ranked list — all destinations in region scored for this season
   const ranked = region.keys
     .map(k => crowdValueRank(k, exploreSeason))
-    .filter(Boolean)
-    .sort((a,b) => b.ratio - a.ratio)
-    .slice(0, region.keys.length);
+    .filter(Boolean);
 
-  const topN = ranked.slice(0, exploreLen);
+  // Sort
+  const SORTS = {
+    'ratio-desc': { label:'Best value/crowd',  fn: (a,b) => b.ratio - a.ratio },
+    'crowd-asc':  { label:'Least crowded',     fn: (a,b) => a.crowdAvg - b.crowdAvg },
+    'crowd-desc': { label:'Most crowded',      fn: (a,b) => b.crowdAvg - a.crowdAvg },
+    'food-desc':  { label:'Best food',         fn: (a,b) => b.culinary - a.culinary },
+    'culture-desc':{ label:'Most cultural',   fn: (a,b) => b.cultural - a.cultural },
+    'val-desc':   { label:'Highest value',     fn: (a,b) => b.val - a.val },
+  };
+  const sorted = [...ranked].sort(SORTS[exploreSort].fn);
+  const topN = sorted.slice(0, exploreLen);
 
-  let h = `<div class="sec-lbl" style="margin-bottom:10px">${region.label} · Best ${exploreLen} stops · ${exploreSeason.charAt(0).toUpperCase()+exploreSeason.slice(1)} — ranked by value vs. crowds</div>`;
+  const sortPills = Object.entries(SORTS).map(([k,v]) =>
+    `<button onclick="setExploreSort('${k}')" style="padding:4px 10px;font-size:11px;font-weight:500;border-radius:20px;border:1px solid ${exploreSort===k?'#1a1a1a':'#ddd'};background:${exploreSort===k?'#1a1a1a':'#fff'};color:${exploreSort===k?'#fff':'#888'};cursor:pointer;white-space:nowrap">${v.label}</button>`
+  ).join('');
 
-  ranked.forEach((r, i) => {
+  let h = `<div style="margin-bottom:10px">
+    <div class="sec-lbl" style="margin-bottom:8px">${region.label} · ${exploreSeason.charAt(0).toUpperCase()+exploreSeason.slice(1)} · showing ${exploreLen} stops</div>
+    <div style="display:flex;gap:5px;flex-wrap:wrap">${sortPills}</div>
+  </div>`;
+
+  sorted.forEach((r, i) => {
     const isTop = i < exploreLen;
     const crowdColor = r.crowdHigh >= 65 ? '#B83232' : r.crowdHigh >= 35 ? '#B87820' : '#2A7050';
     const valColor = r.val >= 8 ? '#2A7050' : r.val >= 6 ? '#B87820' : '#999';
 
 
-    const rankColor = r.crowdHigh >= 65 ? '#E8C4C4' : r.crowdHigh >= 35 ? '#FAE3B0' : '#C8E6C9';
-    const rankText  = r.crowdHigh >= 65 ? '#A32D2D' : r.crowdHigh >= 35 ? '#7A4200' : '#2A5C2A';
+    const rankBg   = r.crowdHigh >= 65 ? '#F5D0D0' : r.crowdHigh >= 35 ? '#FDE8B0' : '#C8E8D0';
+    const rankText = r.crowdHigh >= 65 ? '#8B1A1A' : r.crowdHigh >= 35 ? '#6B3500' : '#1A5C2A';
 
     h += `<div class="excard" style="${isTop?'':'opacity:.5;'}">
-      <div class="exrank" style="background:${isTop?rankColor:'#f5f5f5'};color:${isTop?rankText:'#ccc'};border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0">${i+1}</div>
+      <div style="width:28px;height:28px;border-radius:50%;background:${isTop?rankBg:'#f0f0f0'};color:${isTop?rankText:'#bbb'};display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0;border:1.5px solid ${isTop?(rankText+'33'):'#e0e0e0'}">${i+1}</div>
       <div class="exmain">
         <div class="exname">${r.dest.name}</div>
         <div class="exsub">${r.dest.sub}</div>
@@ -3601,25 +3870,31 @@ function renderExplore() {
         </div>` : ''}
       </div>
       <div class="exbars">
-        <!-- Value -->
-        <div style="display:flex;align-items:center;gap:6px;font-size:10px;color:#aaa;margin-bottom:8px">
-          <span style="width:40px">Value</span>
-          <div class="exbar-track"><div class="exbar-fill" id="val-bar-${i}" style="width:${r.val*10}%;background:${valColor}"></div></div>
-          <span id="val-num-${i}" style="color:${valColor};font-weight:700;font-size:12px">${r.val}<span style="font-weight:400;font-size:9px;color:#ccc">/10</span></span>
+        <!-- Culinary score -->
+        <div style="display:flex;align-items:center;gap:6px;font-size:10px;color:#aaa;margin-bottom:4px">
+          <span style="width:44px;text-align:right;flex-shrink:0">🍽️ Food</span>
+          <div class="exbar-track" style="flex:1"><div class="exbar-fill" id="cul-bar-${i}" style="width:${r.culinary*10}%;background:${r.culinary>=8?'#2A7050':r.culinary>=6?'#B87820':'#999'}"></div></div>
+          <span style="min-width:22px;font-weight:700;font-size:11px;color:${r.culinary>=8?'#2A7050':r.culinary>=6?'#B87820':'#999'}">${r.culinary}</span>
         </div>
-        <!-- Crowds: Low / Avg / High for the week in selected season -->
+        <!-- Cultural score -->
+        <div style="display:flex;align-items:center;gap:6px;font-size:10px;color:#aaa;margin-bottom:8px">
+          <span style="width:44px;text-align:right;flex-shrink:0">🏛️ Culture</span>
+          <div class="exbar-track" style="flex:1"><div class="exbar-fill" id="val-bar-${i}" style="width:${r.cultural*10}%;background:${r.cultural>=8?'#4A6FA5':r.cultural>=6?'#7A5FA5':'#999'}"></div></div>
+          <span id="val-num-${i}" style="min-width:22px;font-weight:700;font-size:11px;color:${r.cultural>=8?'#4A6FA5':r.cultural>=6?'#7A5FA5':'#999'}">${r.cultural}</span>
+        </div>
+        <!-- Crowds: Low / Avg / High for the week -->
         <div style="display:flex;align-items:center;gap:6px;font-size:10px;color:#aaa">
-          <span style="width:40px">Crowds</span>
+          <span style="width:44px;text-align:right;flex-shrink:0">Crowds</span>
           <div style="display:flex;gap:2px">
-            <div style="text-align:center;padding:4px 8px;background:#f0faf5;border-radius:5px 0 0 5px;border:1px solid #d4edd9">
+            <div style="text-align:center;padding:4px 7px;background:#f0faf5;border-radius:4px 0 0 4px;border:1px solid #c8e8d0">
               <div style="font-size:8px;color:#aaa;line-height:1;margin-bottom:2px">Low</div>
               <div style="font-size:11px;font-weight:700;color:#2A7050;line-height:1">${r.crowdLow}</div>
             </div>
-            <div style="text-align:center;padding:4px 8px;background:#f5f5f3;border-top:1px solid #e0e0e0;border-bottom:1px solid #e0e0e0">
+            <div style="text-align:center;padding:4px 7px;background:#f8f8f6;border-top:1px solid #e0e0e0;border-bottom:1px solid #e0e0e0">
               <div style="font-size:8px;color:#aaa;line-height:1;margin-bottom:2px">Avg</div>
               <div style="font-size:11px;font-weight:700;color:#888;line-height:1">${r.crowdAvg}</div>
             </div>
-            <div style="text-align:center;padding:4px 8px;background:#fdf5f5;border-radius:0 5px 5px 0;border:1px solid #f0d0d0">
+            <div style="text-align:center;padding:4px 7px;background:#fdf5f5;border-radius:0 4px 4px 0;border:1px solid #f0d0d0">
               <div style="font-size:8px;color:#aaa;line-height:1;margin-bottom:2px">High</div>
               <div style="font-size:11px;font-weight:700;color:${crowdColor};line-height:1">${r.crowdHigh}</div>
             </div>
@@ -3631,20 +3906,21 @@ function renderExplore() {
 
   h += `<button class="ex-use-btn" onclick="loadExploreItinerary()">Plan this itinerary →</button>`;
   h += `<div style="margin-top:1.25rem;padding:12px 14px;background:#fafaf8;border:1px solid #eee;border-radius:10px;font-size:11px;color:#aaa;line-height:1.7">
-    <strong style="color:#888;font-size:11px">How these scores are calculated</strong><br>
-    <strong style="color:#999">Value (1–10):</strong> Baseline score updated live from Wikipedia page views. UNESCO World Heritage Sites get a +1 bonus. Source shown under the number.<br>
-    <strong style="color:#999">Crowds (Low / Season / High):</strong> Low = fall off-season, High = summer peak, middle = selected season. Based on cruise port call volume (60%) and city-wide traffic patterns (40%).<br>
-    <strong style="color:#999">Ranking:</strong> Sorted by value-to-crowd ratio for the selected season.
+    <strong style="color:#888;font-size:11px">How scores are calculated</strong><br>
+    <strong style="color:#999">🍽️ Food (1–10):</strong> Michelin stars + Bib Gourmands per city, weighted by regional food culture (0–3) and presence of artisan producers, wine estates, or markets. Manual <em>legendary bonus</em> applied to cities with exceptional culinary identity (Istanbul, Valencia, Marrakech etc.).<br>
+    <strong style="color:#999">🏛️ Culture (1–10):</strong> UNESCO heritage depth (0–3) plus contemporary art and architecture scene (0–3).<br>
+    <strong style="color:#999">Crowds (Low / Avg / High):</strong> Worst, average, and best day of the week in the selected season. Based on cruise port volume (65%) and city traffic patterns (35%).<br>
+    <strong style="color:#999">Michelin data:</strong> Approximate — will be updated when we complete a full Michelin guide scrape.
   </div>`;
 
   el.innerHTML = h;
   el._ranked = topN;
 
-  // Build Leaflet map
-  buildExploreMap(ranked, topN);
+  // Build Leaflet map with sorted top N
+  buildExploreMap(sorted, topN);
 
   // Async Wikipedia value scores
-  fetchLiveValueScores(ranked);
+  fetchLiveValueScores(sorted);
 }
 
 let exploreMapInstance = null;
