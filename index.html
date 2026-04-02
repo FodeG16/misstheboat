@@ -3433,20 +3433,23 @@ function crowdValueRank(key, season) {
   if (!dest) return null;
   const val = VALUE_SCORES[key] || 5;
 
-  // Use PEAK day of season, not weekly average — produces meaningful spread
-  let peakCruise = 0;
-  for (const pk of dest.nearPorts) {
-    const p = PORTS[pk];
-    if (p) peakCruise = Math.max(peakCruise, Math.max(...p[season]));
-  }
-  const peakCity = Math.max(...dest.cityByDay);
+  // Compute composite score for each day of the week in this season
+  const dailyScores = dest.cityByDay.map((city, i) => {
+    let cruise = 0;
+    for (const pk of dest.nearPorts) {
+      const p = PORTS[pk];
+      if (p && p[season]) cruise = Math.max(cruise, p[season][i]);
+    }
+    return Math.round(city * 0.35 + cruise * 0.65);
+  });
 
-  // Weight: cruise matters more for this app's purpose
-  const crowd = Math.round(peakCity * 0.35 + peakCruise * 0.65);
+  const crowdHigh = Math.max(...dailyScores);
+  const crowdLow  = Math.min(...dailyScores);
+  const crowdAvg  = Math.round(dailyScores.reduce((a,b) => a+b, 0) / 7);
 
-  // Ratio: value per crowd unit. No artificial floor — let the spread show
-  const ratio = (val * 10) / (crowd + 5);
-  return {key, dest, val, crowd, cruise: Math.round(peakCruise), ratio};
+  // Rank on peak crowd so worst-case destinations sort correctly
+  const ratio = (val * 10) / (crowdHigh + 5);
+  return {key, dest, val, crowd: crowdHigh, crowdLow, crowdAvg, crowdHigh, ratio};
 }
 
 function renderExplore() {
@@ -3470,23 +3473,9 @@ function renderExplore() {
 
   ranked.forEach((r, i) => {
     const isTop = i < exploreLen;
-    const crowdColor = r.crowd >= 65 ? '#B83232' : r.crowd >= 35 ? '#B87820' : '#2A7050';
+    const crowdColor = r.crowdHigh >= 65 ? '#B83232' : r.crowdHigh >= 35 ? '#B87820' : '#2A7050';
     const valColor = r.val >= 8 ? '#2A7050' : r.val >= 6 ? '#B87820' : '#999';
 
-    // Get seasonal range for cruise data
-    let cruiseLo = r.crowd, cruiseHi = r.crowd;
-    if (r.dest.nearPorts.length > 0) {
-      for (const pk of r.dest.nearPorts) {
-        const p = PORTS[pk];
-        if (p) {
-          cruiseLo = Math.min(cruiseLo, Math.round(Math.min(...p.fall)  * 0.35 + Math.min(...r.dest.cityByDay) * 0.35));
-          cruiseHi = Math.max(cruiseHi, Math.round(Math.max(...p.summer)* 0.65 + Math.max(...r.dest.cityByDay) * 0.35));
-        }
-      }
-    } else {
-      cruiseLo = Math.max(0, r.crowd - 15);
-      cruiseHi = Math.min(100, r.crowd + 8);
-    }
 
     h += `<div class="excard" style="${isTop?'':'opacity:.5;'}">
       <div class="exrank" style="color:${isTop?'#ddd':'#eee'}">${i+1}</div>
@@ -3499,14 +3488,29 @@ function renderExplore() {
         </div>` : ''}
       </div>
       <div class="exbars">
-        <div class="exbar-row">
+        <!-- Value -->
+        <div style="display:flex;align-items:center;gap:6px;font-size:10px;color:#aaa;margin-bottom:8px">
           <span style="width:40px">Value</span>
           <div class="exbar-track"><div class="exbar-fill" id="val-bar-${i}" style="width:${r.val*10}%;background:${valColor}"></div></div>
-          <span id="val-num-${i}" style="width:22px;color:${valColor};font-weight:600;font-size:11px">${r.val}</span>
-          <span id="val-src-${i}" style="display:none;font-size:9px;color:#aaa"></span>
+          <span id="val-num-${i}" style="color:${valColor};font-weight:700;font-size:12px">${r.val}<span style="font-weight:400;font-size:9px;color:#ccc">/10</span></span>
         </div>
-        <div style="margin-top:6px">
-          ${renderHorizCandlestick(r.crowd, cruiseLo, cruiseHi, 'Crowds', exploreSeason)}
+        <!-- Crowds: Low / Avg / High for the week in selected season -->
+        <div style="display:flex;align-items:center;gap:6px;font-size:10px;color:#aaa">
+          <span style="width:40px">Crowds</span>
+          <div style="display:flex;gap:2px">
+            <div style="text-align:center;padding:4px 8px;background:#f0faf5;border-radius:5px 0 0 5px;border:1px solid #d4edd9">
+              <div style="font-size:8px;color:#aaa;line-height:1;margin-bottom:2px">Low</div>
+              <div style="font-size:11px;font-weight:700;color:#2A7050;line-height:1">${r.crowdLow}</div>
+            </div>
+            <div style="text-align:center;padding:4px 8px;background:#f5f5f3;border-top:1px solid #e0e0e0;border-bottom:1px solid #e0e0e0">
+              <div style="font-size:8px;color:#aaa;line-height:1;margin-bottom:2px">Avg</div>
+              <div style="font-size:11px;font-weight:700;color:#888;line-height:1">${r.crowdAvg}</div>
+            </div>
+            <div style="text-align:center;padding:4px 8px;background:#fdf5f5;border-radius:0 5px 5px 0;border:1px solid #f0d0d0">
+              <div style="font-size:8px;color:#aaa;line-height:1;margin-bottom:2px">High</div>
+              <div style="font-size:11px;font-weight:700;color:${crowdColor};line-height:1">${r.crowdHigh}</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>`;
@@ -3515,9 +3519,9 @@ function renderExplore() {
   h += `<button class="ex-use-btn" onclick="loadExploreItinerary()">Plan this itinerary →</button>`;
   h += `<div style="margin-top:1.25rem;padding:12px 14px;background:#fafaf8;border:1px solid #eee;border-radius:10px;font-size:11px;color:#aaa;line-height:1.7">
     <strong style="color:#888;font-size:11px">How these scores are calculated</strong><br>
-    <strong style="color:#999">Value (1–10):</strong> Starts as a manual baseline, then updated live using Wikipedia page views (12-month average) as a proxy for cultural significance. UNESCO World Heritage Sites receive a +1 bonus. A ≈ symbol indicates a Wikipedia-sourced score; ★ indicates UNESCO status.<br>
-    <strong style="color:#999">Crowds (0–100):</strong> Weighted composite of city-wide tourist traffic (40%) and cruise call volume at the nearest port (60%). Seasonal weekly averages — not specific-date data.<br>
-    <strong style="color:#999">Ranking:</strong> Sorted by value-to-crowd ratio. A hidden gem with low crowds ranks above a famous but overwhelmed city.
+    <strong style="color:#999">Value (1–10):</strong> Baseline score updated live from Wikipedia page views. UNESCO World Heritage Sites get a +1 bonus. Source shown under the number.<br>
+    <strong style="color:#999">Crowds (Low / Season / High):</strong> Low = fall off-season, High = summer peak, middle = selected season. Based on cruise port call volume (60%) and city-wide traffic patterns (40%).<br>
+    <strong style="color:#999">Ranking:</strong> Sorted by value-to-crowd ratio for the selected season.
   </div>`;
 
   el.innerHTML = h;
@@ -3566,7 +3570,7 @@ function buildExploreMap(ranked, topN) {
   ranked.forEach((r, i) => {
     if (!r.dest.lat || !r.dest.lng) return;
     const isTop = i < topN.length;
-    const crowdColor = r.crowd >= 65 ? '#B83232' : r.crowd >= 35 ? '#B87820' : '#2A7050';
+    const crowdColor = r.crowdHigh >= 65 ? '#B83232' : r.crowdHigh >= 35 ? '#B87820' : '#2A7050';
 
     const icon = L.divIcon({
       className: '',
