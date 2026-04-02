@@ -2677,22 +2677,43 @@ function renderBars(vals, activeDay, isCruise) {
 }
 
 // Horizontal candlestick for Explore page
-// Shows seasonal range (fall=low, summer=high) with current season as a tick
-function renderHorizCandlestick(cur, lo, hi, label) {
+// lo = fall (quiet season), hi = summer (peak), cur = selected season
+function renderHorizCandlestick(cur, lo, hi, label, seasonLabel) {
   const clamp = v => Math.max(0, Math.min(100, v));
   cur = clamp(cur); lo = clamp(lo); hi = clamp(hi);
-  const color = cur >= 65 ? '#E24B4A' : cur >= 35 ? '#EF9F27' : '#639922';
-  const dimColor = cur >= 65 ? 'rgba(226,75,74,0.2)' : cur >= 35 ? 'rgba(239,159,39,0.2)' : 'rgba(99,153,34,0.2)';
-  const textColor = cur >= 65 ? '#A32D2D' : cur >= 35 ? '#854F0B' : '#3B6D11';
-  return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:1px">
-    <div style="font-size:10px;color:#aaa;width:44px;flex-shrink:0;text-align:right">${label}</div>
-    <div style="flex:1;position:relative;height:10px">
-      <div style="position:absolute;left:0;right:0;top:50%;height:2px;background:#f0f0f0;transform:translateY(-50%);border-radius:1px"></div>
-      <div style="position:absolute;left:${lo}%;width:${Math.max(1,hi-lo)}%;top:0;bottom:0;background:${dimColor};border-radius:3px"></div>
-      <div style="position:absolute;left:${lo}%;width:${Math.max(1,cur-lo)}%;top:0;bottom:0;background:${color};opacity:0.85;border-radius:3px 0 0 3px"></div>
-      <div style="position:absolute;left:${cur}%;top:-2px;bottom:-2px;width:2px;background:${color};border-radius:1px;transform:translateX(-50%)"></div>
+  const color    = cur >= 65 ? '#E24B4A' : cur >= 35 ? '#EF9F27' : '#639922';
+  const dimColor = cur >= 65 ? 'rgba(226,75,74,0.15)' : cur >= 35 ? 'rgba(239,159,39,0.15)' : 'rgba(99,153,34,0.15)';
+  const txtColor = cur >= 65 ? '#A32D2D' : cur >= 35 ? '#854F0B' : '#2A7050';
+  const sLbl = seasonLabel || 'now';
+
+  // Position of tick label — flip to left if too close to right edge
+  const tickFlip = cur > 75;
+
+  return `<div style="margin-bottom:1px">
+    <div style="display:flex;align-items:center;gap:8px">
+      <div style="font-size:10px;color:#aaa;width:44px;flex-shrink:0;text-align:right">${label}</div>
+      <div style="flex:1;position:relative;height:8px;margin:6px 0 4px">
+        <!-- Base track -->
+        <div style="position:absolute;left:0;right:0;top:0;bottom:0;background:#f0f0f0;border-radius:4px"></div>
+        <!-- Seasonal range body (lo → hi) -->
+        <div style="position:absolute;left:${lo}%;width:${Math.max(1,hi-lo)}%;top:0;bottom:0;background:${dimColor};border-radius:3px"></div>
+        <!-- Range end caps (whiskers) -->
+        <div style="position:absolute;left:${lo}%;top:-2px;bottom:-2px;width:2px;background:${color};opacity:0.4;border-radius:1px;transform:translateX(-50%)"></div>
+        <div style="position:absolute;left:${hi}%;top:-2px;bottom:-2px;width:2px;background:${color};opacity:0.4;border-radius:1px;transform:translateX(-50%)"></div>
+        <!-- Fill from 0 to current -->
+        <div style="position:absolute;left:0;width:${cur}%;top:1px;bottom:1px;background:${color};opacity:0.75;border-radius:4px"></div>
+        <!-- Current season tick -->
+        <div style="position:absolute;left:${cur}%;top:-3px;bottom:-3px;width:2.5px;background:${color};border-radius:1px;transform:translateX(-50%);box-shadow:0 0 0 1px #fff"></div>
+        <!-- Season label above tick -->
+        <div style="position:absolute;left:${cur}%;top:-16px;transform:translateX(${tickFlip?'-100%':'-50%'});font-size:8.5px;font-weight:600;color:${txtColor};white-space:nowrap;background:rgba(255,255,255,0.9);padding:0 2px;border-radius:2px">${cur} · ${sLbl}</div>
+      </div>
+      <div style="font-size:11px;font-weight:700;color:${txtColor};min-width:20px;text-align:right">${cur}</div>
     </div>
-    <div style="font-size:11px;font-weight:600;color:${textColor};min-width:24px">${cur}</div>
+    <!-- Axis labels -->
+    <div style="display:flex;padding-left:52px;padding-right:28px;font-size:9px;color:#ccc;justify-content:space-between;margin-top:1px">
+      <span>Low</span>
+      <span>High</span>
+    </div>
   </div>`;
 }
 
@@ -3484,10 +3505,9 @@ function renderExplore() {
           <span id="val-num-${i}" style="width:22px;color:${valColor};font-weight:600;font-size:11px">${r.val}</span>
           <span id="val-src-${i}" style="display:none;font-size:9px;color:#aaa"></span>
         </div>
-        <div style="margin-top:2px">
-          ${renderHorizCandlestick(r.crowd, cruiseLo, cruiseHi, 'Crowds')}
+        <div style="margin-top:6px">
+          ${renderHorizCandlestick(r.crowd, cruiseLo, cruiseHi, 'Crowds', exploreSeason)}
         </div>
-        <div style="font-size:9px;color:#ccc;margin-top:3px;text-align:right">bar=${exploreSeason} · range=fall–summer</div>
       </div>
     </div>`;
   });
