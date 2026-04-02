@@ -3192,15 +3192,13 @@ function renderCard(scored, idx) {
     <div class="det" id="det-${idx}">
       <div class="traf-wrap">
         <div class="traf-block">
-          <div class="traf-ttl">🏙️ City-wide tourist traffic · ${scored.season.charAt(0).toUpperCase()+scored.season.slice(1)} avg</div>
+          <div class="traf-ttl">🏙️ City traffic score (0–100) · ${scored.season.charAt(0).toUpperCase()+scored.season.slice(1)}</div>
           ${renderBars(dest.cityByDay, dayIdx, false)}
         </div>
         <div class="traf-block">
-          <div class="traf-ttl">🚢 Cruise passenger volume · ${scored.season.charAt(0).toUpperCase()+scored.season.slice(1)} avg</div>
-          ${allZeroCruise && !isExcursionDest
-            ? `<div class="no-cruise" style="color:#2A7050;font-weight:500">✓ No known cruise excursion traffic for this destination.</div>`
-            : allZeroCruise
-            ? `<div class="no-cruise">No cruise port call data on record.</div>`
+          <div class="traf-ttl">🚢 Cruise traffic score (0–100) · ${scored.season.charAt(0).toUpperCase()+scored.season.slice(1)}</div>
+          ${allZeroCruise
+            ? '<div style="height:44px;display:flex;align-items:center"><span style="font-size:11px;color:#aaa">—</span></div>'
             : renderBars(cruiseByDay, dayIdx, true)
           }
         </div>
@@ -3217,10 +3215,20 @@ function renderCard(scored, idx) {
       </div>
       <div class="wx-row" id="wx-${idx}" ${!scored.date ? 'style="display:none"' : ''}><span class="wx-loading"><span class="spinner"></span>Loading historical weather…</span></div>
       <div class="info-rows">
+        ${allZeroCruise && !isExcursionDest ? `
+        <div class="irow">
+          <div class="iico">✓</div>
+          <div class="ibody" style="color:#2A7050;font-weight:500">No known cruise excursions to this destination. Minimal cruise traffic expected.</div>
+        </div>` : ''}
         ${primaryPort && isExcursionDest ? `
         <div class="irow">
           <div class="iico">⚓</div>
-          <div class="ibody" id="port-info-${idx}"><strong>Port:</strong> ${primaryPort.name} · Est. cruise call volume ${maxCruise}% of season peak on ${DAYS[dayIdx]}s.</div>
+          <div class="ibody" id="port-info-${idx}"><strong>Excursion from ${primaryPort.name}.</strong> Est. cruise call volume ${maxCruise}/100 on ${['Mon','Tue','Wed','Thu','Fri','Sat','Sun'][dayIdx]}s this ${scored.season}.</div>
+        </div>` : ''}
+        ${primaryPort && !isExcursionDest && !allZeroCruise ? `
+        <div class="irow">
+          <div class="iico">⚓</div>
+          <div class="ibody" id="port-info-${idx}"><strong>Near ${primaryPort.name}.</strong> Cruise spillover likely — port call volume ${maxCruise}/100 on ${['Mon','Tue','Wed','Thu','Fri','Sat','Sun'][dayIdx]}s this ${scored.season}.</div>
         </div>` : ''}
         ${dest.note ? `
         <div class="irow">
