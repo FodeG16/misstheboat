@@ -159,6 +159,8 @@ textarea:focus{border-color:#999;background:#fff}
 .rpill{padding:7px 14px;font-size:12px;font-weight:500;border:1px solid #ddd;border-radius:20px;background:#fff;color:#555;cursor:pointer;transition:all .15s}
 .rpill:hover{background:#f5f5f5}
 .rpill.on{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
+.region-tooltip{background:#fff;border:1px solid #ddd;border-radius:6px;font-size:11px;font-weight:600;color:#1a1a1a;padding:3px 7px;box-shadow:0 1px 4px rgba(0,0,0,.12);white-space:nowrap}
+.region-tooltip::before{display:none}
 .excard{background:#fff;border:1px solid #eee;border-radius:12px;margin-bottom:8px;padding:13px 14px;display:flex;align-items:center;gap:12px}
 .excard:hover{box-shadow:0 2px 8px rgba(0,0,0,.06)}
 .exrank{font-size:18px;font-weight:700;color:#ddd;width:28px;flex-shrink:0;text-align:center}
@@ -264,134 +266,9 @@ textarea:focus{border-color:#999;background:#fff}
       <div style="font-size:12px;color:#888;margin-bottom:.875rem;line-height:1.6">Click a region on the map or browse by country below. Destinations are ranked by cultural value vs. cruise crowd levels.</div>
 
       <!-- SVG Map -->
-      <div id="med-map-wrap" style="position:relative;background:#e8f4f8;border-radius:12px;border:1px solid #dce8f0;overflow:hidden;margin-bottom:1rem">
-        <svg id="med-map" viewBox="0 0 700 320" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;cursor:default">
-          <!-- Ocean -->
-          <rect width="700" height="320" fill="#d4eaf5"/>
-          <!-- Land masses (simplified Mediterranean basin) -->
-          <!-- Iberian Peninsula -->
-          <path d="M85,60 L175,50 L205,80 L220,120 L195,155 L175,175 L145,180 L110,170 L85,145 L75,110 Z" fill="#f0ece0" stroke="#d8d0b8" stroke-width="1"/>
-          <!-- France -->
-          <path d="M175,50 L270,35 L295,55 L285,90 L255,100 L220,120 L205,80 Z" fill="#f0ece0" stroke="#d8d0b8" stroke-width="1"/>
-          <!-- Italy boot -->
-          <path d="M270,55 L330,50 L360,70 L355,100 L335,130 L320,165 L310,195 L300,200 L295,185 L305,165 L310,140 L300,115 L285,90 L295,55 Z" fill="#f0ece0" stroke="#d8d0b8" stroke-width="1"/>
-          <!-- Sicily -->
-          <path d="M295,205 L330,200 L340,215 L320,225 L295,220 Z" fill="#f0ece0" stroke="#d8d0b8" stroke-width="1"/>
-          <!-- Sardinia -->
-          <path d="M255,155 L270,148 L278,165 L268,180 L252,178 Z" fill="#f0ece0" stroke="#d8d0b8" stroke-width="1"/>
-          <!-- Corsica -->
-          <path d="M258,115 L268,108 L272,122 L262,130 Z" fill="#f0ece0" stroke="#d8d0b8" stroke-width="1"/>
-          <!-- Balkans/Croatia -->
-          <path d="M330,50 L400,45 L420,70 L410,100 L390,120 L370,130 L355,100 L360,70 Z" fill="#f0ece0" stroke="#d8d0b8" stroke-width="1"/>
-          <!-- Greece -->
-          <path d="M370,130 L420,120 L450,130 L460,155 L445,175 L420,180 L395,165 L375,160 Z" fill="#f0ece0" stroke="#d8d0b8" stroke-width="1"/>
-          <!-- Turkey -->
-          <path d="M420,70 L560,60 L580,80 L570,110 L540,120 L500,125 L460,130 L450,110 L420,100 Z" fill="#f0ece0" stroke="#d8d0b8" stroke-width="1"/>
-          <!-- North Africa -->
-          <path d="M75,220 L450,215 L460,240 L440,270 L100,275 L75,250 Z" fill="#f0ece0" stroke="#d8d0b8" stroke-width="1"/>
-          <!-- Malta -->
-          <circle cx="308" cy="228" r="4" fill="#f0ece0" stroke="#d8d0b8" stroke-width="1"/>
-          <!-- Balearics -->
-          <ellipse cx="218" cy="125" rx="12" ry="6" fill="#f0ece0" stroke="#d8d0b8" stroke-width="1"/>
-          <!-- Greek islands cluster -->
-          <circle cx="460" cy="175" r="5" fill="#f0ece0" stroke="#d8d0b8" stroke-width="1"/>
-          <circle cx="475" cy="185" r="4" fill="#f0ece0" stroke="#d8d0b8" stroke-width="1"/>
-          <circle cx="450" cy="195" r="6" fill="#f0ece0" stroke="#d8d0b8" stroke-width="1"/>
-          <!-- Canary Islands (inset) -->
-          <rect x="10" y="260" width="60" height="35" rx="4" fill="#d4eaf5" stroke="#b8d8e8" stroke-width="0.5"/>
-          <text x="40" y="272" text-anchor="middle" font-size="7" fill="#8ab" font-family="sans-serif">Canary Is.</text>
-          <ellipse cx="25" cy="282" rx="7" ry="4" fill="#f0ece0" stroke="#d8d0b8" stroke-width="0.5"/>
-          <ellipse cx="45" cy="284" rx="6" ry="3" fill="#f0ece0" stroke="#d8d0b8" stroke-width="0.5"/>
-
-          <!-- REGION DOTS — positioned at geographic centers -->
-          <!-- Each dot: cx/cy=position, data-region=key -->
-          <!-- Tuscany ~43.3N 11E -->
-          <g class="rdot" data-region="tuscany" onclick="selectRegionMap('tuscany')" style="cursor:pointer">
-            <circle cx="298" cy="88" r="14" fill="#2A7050" fill-opacity="0.15" stroke="#2A7050" stroke-width="1.5" class="rdot-ring"/>
-            <circle cx="298" cy="88" r="7" fill="#2A7050" class="rdot-core"/>
-            <text x="298" y="108" text-anchor="middle" font-size="8.5" fill="#1a5035" font-family="sans-serif" font-weight="600" class="rdot-lbl">Tuscany</text>
-          </g>
-          <!-- Amalfi ~40.6N 14.5E -->
-          <g class="rdot" data-region="amalfi" onclick="selectRegionMap('amalfi')" style="cursor:pointer">
-            <circle cx="326" cy="125" r="14" fill="#2A7050" fill-opacity="0.15" stroke="#2A7050" stroke-width="1.5" class="rdot-ring"/>
-            <circle cx="326" cy="125" r="7" fill="#2A7050" class="rdot-core"/>
-            <text x="350" y="122" text-anchor="start" font-size="8.5" fill="#1a5035" font-family="sans-serif" font-weight="600" class="rdot-lbl">Amalfi</text>
-          </g>
-          <!-- Rome ~41.9N 12.5E -->
-          <g class="rdot" data-region="rome" onclick="selectRegionMap('rome')" style="cursor:pointer">
-            <circle cx="313" cy="105" r="13" fill="#2A7050" fill-opacity="0.15" stroke="#2A7050" stroke-width="1.5" class="rdot-ring"/>
-            <circle cx="313" cy="105" r="6" fill="#2A7050" class="rdot-core"/>
-            <text x="330" y="103" text-anchor="start" font-size="8.5" fill="#1a5035" font-family="sans-serif" font-weight="600" class="rdot-lbl">Rome</text>
-          </g>
-          <!-- Sicily ~37.5N 14E -->
-          <g class="rdot" data-region="sicily" onclick="selectRegionMap('sicily')" style="cursor:pointer">
-            <circle cx="318" cy="210" r="14" fill="#2A7050" fill-opacity="0.15" stroke="#2A7050" stroke-width="1.5" class="rdot-ring"/>
-            <circle cx="318" cy="210" r="7" fill="#2A7050" class="rdot-core"/>
-            <text x="318" y="227" text-anchor="middle" font-size="8.5" fill="#1a5035" font-family="sans-serif" font-weight="600" class="rdot-lbl">Sicily</text>
-          </g>
-          <!-- Venice ~45.4N 12.3E -->
-          <g class="rdot" data-region="venice" onclick="selectRegionMap('venice')" style="cursor:pointer">
-            <circle cx="310" cy="63" r="13" fill="#2A7050" fill-opacity="0.15" stroke="#2A7050" stroke-width="1.5" class="rdot-ring"/>
-            <circle cx="310" cy="63" r="6" fill="#2A7050" class="rdot-core"/>
-            <text x="310" y="53" text-anchor="middle" font-size="8.5" fill="#1a5035" font-family="sans-serif" font-weight="600" class="rdot-lbl">Venice</text>
-          </g>
-          <!-- Adriatic ~43.5N 16.5E -->
-          <g class="rdot" data-region="adriatic" onclick="selectRegionMap('adriatic')" style="cursor:pointer">
-            <circle cx="372" cy="88" r="14" fill="#2A7050" fill-opacity="0.15" stroke="#2A7050" stroke-width="1.5" class="rdot-ring"/>
-            <circle cx="372" cy="88" r="7" fill="#2A7050" class="rdot-core"/>
-            <text x="372" y="78" text-anchor="middle" font-size="8.5" fill="#1a5035" font-family="sans-serif" font-weight="600" class="rdot-lbl">Adriatic</text>
-          </g>
-          <!-- Greece ~38.5N 23E -->
-          <g class="rdot" data-region="greece" onclick="selectRegionMap('greece')" style="cursor:pointer">
-            <circle cx="432" cy="152" r="14" fill="#2A7050" fill-opacity="0.15" stroke="#2A7050" stroke-width="1.5" class="rdot-ring"/>
-            <circle cx="432" cy="152" r="7" fill="#2A7050" class="rdot-core"/>
-            <text x="432" y="142" text-anchor="middle" font-size="8.5" fill="#1a5035" font-family="sans-serif" font-weight="600" class="rdot-lbl">Greece</text>
-          </g>
-          <!-- French Riviera ~43.7N 7.3E -->
-          <g class="rdot" data-region="riviera" onclick="selectRegionMap('riviera')" style="cursor:pointer">
-            <circle cx="273" cy="82" r="13" fill="#2A7050" fill-opacity="0.15" stroke="#2A7050" stroke-width="1.5" class="rdot-ring"/>
-            <circle cx="273" cy="82" r="6" fill="#2A7050" class="rdot-core"/>
-            <text x="255" y="73" text-anchor="end" font-size="8.5" fill="#1a5035" font-family="sans-serif" font-weight="600" class="rdot-lbl">Riviera</text>
-          </g>
-          <!-- Spain/Barcelona ~41.4N 2.2E -->
-          <g class="rdot" data-region="spain" onclick="selectRegionMap('spain')" style="cursor:pointer">
-            <circle cx="220" cy="100" r="13" fill="#2A7050" fill-opacity="0.15" stroke="#2A7050" stroke-width="1.5" class="rdot-ring"/>
-            <circle cx="220" cy="100" r="6" fill="#2A7050" class="rdot-core"/>
-            <text x="205" y="93" text-anchor="end" font-size="8.5" fill="#1a5035" font-family="sans-serif" font-weight="600" class="rdot-lbl">Spain</text>
-          </g>
-          <!-- Andalusia ~37N -4.5E -->
-          <g class="rdot" data-region="andalusia" onclick="selectRegionMap('andalusia')" style="cursor:pointer">
-            <circle cx="160" cy="152" r="13" fill="#2A7050" fill-opacity="0.15" stroke="#2A7050" stroke-width="1.5" class="rdot-ring"/>
-            <circle cx="160" cy="152" r="6" fill="#2A7050" class="rdot-core"/>
-            <text x="160" y="168" text-anchor="middle" font-size="8.5" fill="#1a5035" font-family="sans-serif" font-weight="600" class="rdot-lbl">Andalusia</text>
-          </g>
-          <!-- Turkey ~38N 28E -->
-          <g class="rdot" data-region="turkey" onclick="selectRegionMap('turkey')" style="cursor:pointer">
-            <circle cx="504" cy="95" r="13" fill="#2A7050" fill-opacity="0.15" stroke="#2A7050" stroke-width="1.5" class="rdot-ring"/>
-            <circle cx="504" cy="95" r="6" fill="#2A7050" class="rdot-core"/>
-            <text x="504" y="85" text-anchor="middle" font-size="8.5" fill="#1a5035" font-family="sans-serif" font-weight="600" class="rdot-lbl">Turkey</text>
-          </g>
-          <!-- Morocco ~33N -7E -->
-          <g class="rdot" data-region="morocco" onclick="selectRegionMap('morocco')" style="cursor:pointer">
-            <circle cx="170" cy="232" r="13" fill="#2A7050" fill-opacity="0.15" stroke="#2A7050" stroke-width="1.5" class="rdot-ring"/>
-            <circle cx="170" cy="232" r="6" fill="#2A7050" class="rdot-core"/>
-            <text x="170" y="248" text-anchor="middle" font-size="8.5" fill="#1a5035" font-family="sans-serif" font-weight="600" class="rdot-lbl">Morocco</text>
-          </g>
-          <!-- Israel ~32N 35E -->
-          <g class="rdot" data-region="morocco" onclick="selectRegionMap('israel')" style="cursor:pointer" data-region="israel">
-            <circle cx="548" cy="178" r="12" fill="#2A7050" fill-opacity="0.15" stroke="#2A7050" stroke-width="1.5" class="rdot-ring"/>
-            <circle cx="548" cy="178" r="5" fill="#2A7050" class="rdot-core"/>
-            <text x="548" y="193" text-anchor="middle" font-size="8.5" fill="#1a5035" font-family="sans-serif" font-weight="600" class="rdot-lbl">Israel</text>
-          </g>
-          <!-- Canary Islands inset dot -->
-          <g class="rdot" data-region="canary" onclick="selectRegionMap('canary')" style="cursor:pointer">
-            <circle cx="35" cy="283" r="10" fill="#2A7050" fill-opacity="0.2" stroke="#2A7050" stroke-width="1.5" class="rdot-ring"/>
-            <circle cx="35" cy="283" r="5" fill="#2A7050" class="rdot-core"/>
-          </g>
-
-          <!-- Selected region label -->
-          <text id="map-hint" x="350" y="310" text-anchor="middle" font-size="10" fill="#8ab" font-family="sans-serif">Click a dot to explore a region</text>
-        </svg>
+      <!-- Real Leaflet map replacing the SVG -->
+      <div id="med-map-wrap" style="border-radius:12px;overflow:hidden;margin-bottom:1rem;border:1px solid #dce8f0">
+        <div id="med-map" style="height:360px;width:100%"></div>
       </div>
 
       <!-- Country/Region grouped list (below map) -->
@@ -773,6 +650,200 @@ const PORTS = {
     fall:   [42,50,45,52,55,60,48],
     excursions: ['casablanca','marrakech','rabat','fes','meknes'],
     notExcursions: ['chefchaouen','essaouira','ouarzazate','azemmour'],
+  },
+  // ── NEWLY ADDED PORTS ──────────────────────────────────
+  savona: {
+    name: 'Savona', country: 'Italy', lat: 44.307, lng: 8.481,
+    spring: [38,50,44,55,52,40,32],
+    summer: [50,65,58,68,65,52,44],
+    fall:   [30,42,36,46,44,32,26],
+    excursions: ['genoa','cinque terre','portofino','sanremo'],
+    notExcursions: ['finale ligure','noli','spotorno','varigotti'],
+  },
+  'la spezia': {
+    name: 'La Spezia', country: 'Italy', lat: 44.103, lng: 9.824,
+    spring: [45,58,50,60,62,52,44],
+    summer: [60,75,68,78,75,62,55],
+    fall:   [35,48,42,52,50,40,34],
+    excursions: ['cinque terre','portofino','lucca','pisa'],
+    notExcursions: ['lerici','tellaro','portovenere','montemarcello'],
+  },
+  trieste: {
+    name: 'Trieste', country: 'Italy', lat: 45.649, lng: 13.777,
+    spring: [35,45,40,48,50,42,36],
+    summer: [48,60,55,62,65,55,48],
+    fall:   [28,38,32,40,42,35,30],
+    excursions: ['trieste','piran','portoroz','venice','postojna'],
+    notExcursions: ['muggia','grignano','opicina','aquileia'],
+  },
+  bari: {
+    name: 'Bari', country: 'Italy', lat: 41.117, lng: 16.872,
+    spring: [42,52,46,55,58,50,44],
+    summer: [55,68,62,72,75,65,58],
+    fall:   [35,44,38,48,50,42,36],
+    excursions: ['bari','matera','alberobello','lecce','ostuni'],
+    notExcursions: ['polignano a mare','locorotondo','cisternino','martina franca'],
+  },
+  zadar: {
+    name: 'Zadar', country: 'Croatia', lat: 44.119, lng: 15.231,
+    spring: [42,52,46,55,58,48,42],
+    summer: [58,72,65,75,78,65,58],
+    fall:   [32,42,36,46,48,38,32],
+    excursions: ['zadar','plitvice lakes','sibenik','krka','split old town'],
+    notExcursions: ['nin','paklenica','telascica','kornati islands'],
+  },
+  katakolon: {
+    name: 'Katakolon', country: 'Greece', lat: 37.639, lng: 21.323,
+    spring: [40,52,45,55,58,48,42],
+    summer: [55,70,62,72,75,62,55],
+    fall:   [30,42,36,46,48,38,32],
+    excursions: ['olympia','bassae','katakolon'],
+    notExcursions: ['pyrgos','andritsaina'],
+  },
+  kos: {
+    name: 'Kos', country: 'Greece', lat: 36.893, lng: 27.288,
+    spring: [42,52,46,55,58,65,68],
+    summer: [62,75,68,78,80,85,82],
+    fall:   [32,42,36,46,48,58,62],
+    excursions: ['kos town','bodrum','nisyros','patmos'],
+    notExcursions: ['kefalos','antimacheia','kardamena'],
+  },
+  thessaloniki: {
+    name: 'Thessaloniki', country: 'Greece', lat: 40.629, lng: 22.952,
+    spring: [38,48,42,50,52,58,55],
+    summer: [50,62,55,65,68,72,70],
+    fall:   [30,40,34,42,45,50,48],
+    excursions: ['thessaloniki','vergina','meteora','mount olympus','kavala'],
+    notExcursions: ['chalkidiki','stageira','dion','pella'],
+  },
+  patmos: {
+    name: 'Patmos', country: 'Greece', lat: 37.321, lng: 26.543,
+    spring: [35,45,40,48,50,58,62],
+    summer: [52,65,58,68,72,78,75],
+    fall:   [25,35,30,38,40,50,55],
+    excursions: ['patmos','monastery of st john','holy cave','leros'],
+    notExcursions: ['grikos','kampos','lampi'],
+  },
+  izmir: {
+    name: 'Izmir (Çeşme)', country: 'Turkey', lat: 38.418, lng: 27.128,
+    spring: [45,58,50,60,62,55,48],
+    summer: [60,75,68,78,80,70,62],
+    fall:   [35,48,42,52,54,45,38],
+    excursions: ['ephesus','pergamon','izmir','sardis','pamukkale'],
+    notExcursions: ['alacati','sigacik','sirince','teos','claros'],
+  },
+  marmaris: {
+    name: 'Marmaris', country: 'Turkey', lat: 36.856, lng: 28.272,
+    spring: [38,50,44,55,58,62,60],
+    summer: [55,70,62,75,78,82,80],
+    fall:   [28,40,34,45,48,55,52],
+    excursions: ['marmaris','dalyan','datca','rhodes old town','knidos'],
+    notExcursions: ['bozburun','selimiye','hisaronu','orhaniye'],
+  },
+  valencia: {
+    name: 'Valencia', country: 'Spain', lat: 39.470, lng: -0.376,
+    spring: [50,60,55,62,65,70,68],
+    summer: [62,75,68,78,80,82,80],
+    fall:   [42,52,46,55,58,62,60],
+    excursions: ['valencia','xativa','peniscola','albufera'],
+    notExcursions: ['bocairent','morella','forcall','chelva'],
+  },
+  cartagena: {
+    name: 'Cartagena', country: 'Spain', lat: 37.606, lng: -0.986,
+    spring: [35,45,40,48,52,55,52],
+    summer: [48,60,55,65,68,72,70],
+    fall:   [28,38,32,40,44,48,46],
+    excursions: ['cartagena','murcia','lorca','mazarron'],
+    notExcursions: ['calblanque','cabo cope','puntas de calnegre'],
+  },
+  gibraltar: {
+    name: 'Gibraltar', country: 'UK', lat: 36.140, lng: -5.353,
+    spring: [45,55,50,58,60,55,50],
+    summer: [55,68,62,72,75,68,62],
+    fall:   [38,48,42,52,55,50,44],
+    excursions: ['gibraltar','tarifa','tangier','algeciras','jerez'],
+    notExcursions: ['vejer de la frontera','bolonia','barbate','conil'],
+  },
+  ajaccio: {
+    name: 'Ajaccio', country: 'France', lat: 41.919, lng: 8.738,
+    spring: [38,48,42,52,55,58,55],
+    summer: [52,65,58,68,72,75,72],
+    fall:   [28,38,32,42,45,48,46],
+    excursions: ['ajaccio','bonifacio','porto','corte','calanche'],
+    notExcursions: ['sartene','propriano','zonza','bavella'],
+  },
+  limassol: {
+    name: 'Limassol', country: 'Cyprus', lat: 34.679, lng: 33.044,
+    spring: [45,55,50,58,62,65,62],
+    summer: [58,72,65,75,78,80,78],
+    fall:   [38,48,42,52,55,58,56],
+    excursions: ['limassol','paphos','nicosia','troodos','kyrenia'],
+    notExcursions: ['lefkara','omodos','lania','pissouri'],
+  },
+  tangier: {
+    name: 'Tangier', country: 'Morocco', lat: 35.759, lng: -5.834,
+    spring: [40,52,46,55,58,55,50],
+    summer: [52,65,58,68,72,68,62],
+    fall:   [32,44,38,48,52,48,44],
+    excursions: ['tangier','chefchaouen','tetouan','asilah','ceuta'],
+    notExcursions: ['cap spartel','grottes d hercule','souk el had','ksar el kebir'],
+  },
+  // ── FINAL REMAINING PORTS ─────────────────────────────
+  argostoli: {
+    name: 'Argostoli (Kefalonia)', country: 'Greece', lat: 38.172, lng: 20.491,
+    spring: [30,42,36,45,48,55,58],
+    summer: [48,62,55,65,68,72,70],
+    fall:   [22,34,28,37,40,48,52],
+    excursions: ['argostoli','myrtos beach','melissani cave','fiskardo'],
+    notExcursions: ['assos','agia efimia','skala kefalonia','poros kefalonia'],
+  },
+  ashdod: {
+    name: 'Ashdod', country: 'Israel', lat: 31.792, lng: 34.650,
+    spring: [42,52,46,55,58,62,35],
+    summer: [50,62,55,65,68,72,38],
+    fall:   [38,48,42,52,55,58,30],
+    excursions: ['jerusalem','tel aviv','bethlehem','masada','dead sea'],
+    notExcursions: ['jaffa old city','caesarea','beit guvrin','ashkelon'],
+  },
+  larnaca: {
+    name: 'Larnaca', country: 'Cyprus', lat: 34.900, lng: 33.622,
+    spring: [38,48,42,52,55,58,56],
+    summer: [50,62,56,68,70,72,70],
+    fall:   [30,40,34,44,48,52,50],
+    excursions: ['larnaca','paphos','nicosia','troodos','limassol'],
+    notExcursions: ['lefkara','choirokoitia','stavrovouni','kiti'],
+  },
+  agadir: {
+    name: 'Agadir', country: 'Morocco', lat: 30.421, lng: -9.598,
+    spring: [35,45,40,48,52,55,52],
+    summer: [42,55,48,58,62,65,62],
+    fall:   [28,38,32,40,44,48,46],
+    excursions: ['agadir','essaouira','taroudant','paradise valley'],
+    notExcursions: ['tiznit','sidi ifni','immouzer','tafraout'],
+  },
+  arrecife: {
+    name: 'Arrecife (Lanzarote)', country: 'Spain', lat: 28.963, lng: -13.548,
+    spring: [38,48,42,52,55,62,65],
+    summer: [45,58,52,62,65,70,68],
+    fall:   [30,40,35,45,48,55,58],
+    excursions: ['timanfaya','jameos del agua','papagayo','cesar manrique'],
+    notExcursions: ['el golfo','la geria','orzola','famara'],
+  },
+  'morro jable': {
+    name: 'Morro Jable (Fuerteventura)', country: 'Spain', lat: 28.050, lng: -14.346,
+    spring: [28,38,32,40,44,52,55],
+    summer: [35,48,42,52,55,62,60],
+    fall:   [22,32,26,34,38,46,50],
+    excursions: ['corralejo','grandes playas','betancuria','cofete beach'],
+    notExcursions: ['el cotillo','la oliva','tindaya','ajuy'],
+  },
+  toulon: {
+    name: 'Toulon', country: 'France', lat: 43.125, lng: 5.930,
+    spring: [30,40,35,44,46,38,32],
+    summer: [40,52,46,56,58,50,44],
+    fall:   [24,32,28,36,38,30,26],
+    excursions: ['toulon','marseille','hyeres','iles d or','verdon gorge'],
+    notExcursions: ['bandol','sanary sur mer','six fours','ollioules'],
   },
 };
 
@@ -1546,6 +1617,337 @@ const DESTS = {
     alt:null,
   },
 
+  // REMAINING PORTS — FINAL ADDITIONS
+  // KEFALONIA (Argostoli)
+  'kefalonia': {
+    name:'Kefalonia', country:'Greece', lat:38.172, lng:20.491,
+    nearPorts:['argostoli'],
+    cityByDay:[35,48,42,52,55,65,68],
+    sub:'Ionian island',
+    note:'Greece\'s largest Ionian island with extraordinary beaches (Myrtos, Petani), a dramatic cave lake (Melissani), and the picturesque village of Fiskardo. Cruise groups concentrate at Myrtos and Argostoli town.',
+    shoulder:'Fiskardo in the north gets far fewer cruise visitors than the southern beaches.',
+    alt:null,
+  },
+  'melissani cave': {
+    name:'Melissani Cave', country:'Greece', lat:38.253, lng:20.618,
+    nearPorts:['argostoli'],
+    cityByDay:[30,42,36,45,50,62,65],
+    sub:'Underground lake cave',
+    note:'Boat tours through an underground lake lit by a hole in the cave ceiling. Standard Kefalonia cruise excursion — entry is timed and groups are managed, but the experience is still genuinely special.',
+    shoulder:'First morning entry when the light angle is most dramatic.',
+    alt:null,
+  },
+  // ISRAEL — ASHDOD
+  'tel aviv': {
+    name:'Tel Aviv', country:'Israel', lat:32.087, lng:34.787,
+    nearPorts:['ashdod'],
+    cityByDay:[55,62,60,65,68,72,45],
+    sub:'Mediterranean city',
+    note:'Ashdod is 35km south of Tel Aviv. Bauhaus White City architecture, outstanding food scene, and beach culture. Cruise groups from Ashdod typically head to Jerusalem instead — Tel Aviv sees fewer.',
+    shoulder:'Carmel Market Friday morning is exceptional. Old Jaffa port district for dinner.',
+    alt:null,
+  },
+  'masada': {
+    name:'Masada', country:'Israel', lat:31.316, lng:35.354,
+    nearPorts:['ashdod','haifa'],
+    cityByDay:[38,50,44,52,56,62,55],
+    sub:'Desert fortress',
+    note:'Herodian fortress above the Dead Sea. Standard Ashdod and Haifa excursion. The cable car eliminates the climb — cruise groups arrive in waves 9am–noon. The Snake Path on foot is quieter.',
+    shoulder:'Sunrise hike via the Snake Path before the cable car crowds. Views are extraordinary.',
+    alt:null,
+  },
+  'dead sea': {
+    name:'Dead Sea', country:'Israel', lat:31.558, lng:35.473,
+    nearPorts:['ashdod','haifa'],
+    cityByDay:[35,45,40,48,52,58,52],
+    sub:'Lowest point on Earth',
+    note:'Combined with Masada on most cruise excursions. The main public beach areas are manageable. Ein Gedi nature reserve nearby is rarely on cruise itineraries.',
+    shoulder:null,
+    alt:null,
+  },
+  // CYPRUS — LARNACA
+  'nicosia': {
+    name:'Nicosia', country:'Cyprus', lat:35.166, lng:33.363,
+    nearPorts:['larnaca','limassol'],
+    cityByDay:[38,48,42,52,55,58,50],
+    sub:'Divided capital',
+    note:'The last divided capital in the world — you can cross between the Greek and Turkish sides via the Ledra Street checkpoint. Cruise excursion from Larnaca and Limassol. The old city is compact and walkable.',
+    shoulder:null,
+    alt:null,
+  },
+  // MOROCCO — AGADIR
+  'essaouira': {
+    name:'Essaouira', country:'Morocco', lat:31.508, lng:-9.760,
+    nearPorts:['agadir'],
+    cityByDay:[32,42,36,44,48,58,62],
+    sub:'Atlantic walled port',
+    note:'UNESCO medina on the Atlantic coast, 2.5hrs from Agadir. Ramparts, blue boats, argan oil, and world-class wind for kite-surfing. Jimi Hendrix famously visited. Much less crowded than Marrakech.',
+    shoulder:null,
+    alt:null,
+  },
+  'taroudant': {
+    name:'Taroudant', country:'Morocco', lat:30.470, lng:-8.877,
+    nearPorts:['agadir'],
+    cityByDay:[18,25,20,28,32,40,38],
+    sub:'The Little Marrakech',
+    note:'Walled market town 80km from Agadir, often called "Marrakech without the tourists." Intact red-ochre ramparts, traditional souks, and almost no cruise groups.',
+    shoulder:null,
+    alt:null,
+  },
+  // CANARY ISLANDS — LANZAROTE & FUERTEVENTURA
+  'timanfaya': {
+    name:'Timanfaya National Park', country:'Spain', lat:29.013, lng:-13.738,
+    nearPorts:['arrecife'],
+    cityByDay:[35,48,42,52,55,60,62],
+    sub:'Volcanic moonscape',
+    note:'Lunar volcanic landscape from 1730s eruptions. Standard Lanzarote cruise excursion — geothermal demonstrations and camel rides are the cruise focal points. The park itself is vast and spectacular.',
+    shoulder:'Afternoon visits after 3pm when morning coach tours have departed.',
+    alt:null,
+  },
+  'corralejo': {
+    name:'Corralejo', country:'Spain', lat:28.730, lng:-13.866,
+    nearPorts:['morro jable'],
+    cityByDay:[28,38,32,42,45,58,62],
+    sub:'Dune resort & beach',
+    note:'Fuerteventura\'s main resort town with access to the Corralejo Natural Park (enormous sand dunes). Cruise excursion from Morro Jable. The dunes are spectacular — the resort strip less so.',
+    shoulder:'The natural park is best early morning before the tour buses arrive.',
+    alt:null,
+  },
+  'betancuria': {
+    name:'Betancuria', country:'Spain', lat:28.422, lng:-14.058,
+    nearPorts:['morro jable'],
+    cityByDay:[12,18,14,20,22,30,32],
+    sub:'Ancient island capital',
+    note:'Former capital of Fuerteventura, tiny village of 700 people. Rarely on cruise excursion menus. The 15th-century church and museum of sacred art are genuinely impressive for such a small place.',
+    shoulder:null,
+    alt:null,
+  },
+  // FRANCE — TOULON
+  'hyeres islands': {
+    name:'Îles d\'Or (Hyères)', country:'France', lat:43.002, lng:6.402,
+    nearPorts:['toulon'],
+    cityByDay:[25,35,28,38,42,58,62],
+    sub:'Mediterranean island chain',
+    note:'Three protected islands (Porquerolles, Port-Cros, Levant) reachable by ferry from Hyères. Port-Cros is Europe\'s oldest marine national park. Cruise excursion from Toulon. Porquerolles is the most visited but still stunning.',
+    shoulder:'Port-Cros on a weekday — the island trails are quiet and the water is extraordinary.',
+    alt:null,
+  },
+  // PUGLIA & SOUTHERN ITALY (Bari port)
+  'matera': {
+    name:'Matera', country:'Italy', lat:40.666, lng:16.604,
+    nearPorts:['bari'],
+    cityByDay:[32,42,36,44,48,58,55],
+    sub:'Ancient cave city',
+    note:'UNESCO Sassi cave dwellings — one of the oldest continuously inhabited cities on earth. Growing cruise excursion from Bari (1.5hrs). Still less crowded than most Italian UNESCO sites.',
+    shoulder:'Evening is spectacular — the cave city lights up at dusk and cruise groups are long gone.',
+    alt:null,
+  },
+  'alberobello': {
+    name:'Alberobello', country:'Italy', lat:40.786, lng:17.239,
+    nearPorts:['bari'],
+    cityByDay:[30,40,34,42,46,55,52],
+    sub:'Trulli cone houses',
+    note:'UNESCO trulli district. Standard Bari cruise excursion. The Rione Monti district gets busy midday but the Aia Piccola neighborhood has almost no visitors.',
+    shoulder:'Early morning before 9am or after 5pm.',
+    alt:'Locorotondo — 15 min away, circular hill town, whitewashed streets, almost no cruise groups.',
+  },
+  'lecce': {
+    name:'Lecce', country:'Italy', lat:40.352, lng:18.174,
+    nearPorts:['bari'],
+    cityByDay:[28,38,32,40,44,52,50],
+    sub:'Baroque capital of Puglia',
+    note:'Known as the "Florence of the South." Rich Baroque architecture in golden limestone. Long drive from Bari limits cruise group frequency.',
+    shoulder:null,
+    alt:null,
+  },
+  'ostuni': {
+    name:'Ostuni', country:'Italy', lat:40.731, lng:17.574,
+    nearPorts:['bari'],
+    cityByDay:[25,35,28,38,42,58,62],
+    sub:'The White City',
+    note:'Dazzling whitewashed hilltop town. Growing in popularity but still manageable compared to more famous Pugliese towns.',
+    shoulder:null,
+    alt:null,
+  },
+  // GREECE — NEW PORTS
+  'olympia': {
+    name:'Ancient Olympia', country:'Greece', lat:37.638, lng:21.630,
+    nearPorts:['katakolon'],
+    cityByDay:[38,50,44,55,58,62,60],
+    sub:'Birthplace of the Olympics',
+    note:'The primary excursion from Katakolon port (45 min drive). Museum and archaeological site both fill quickly on port days — the stadium itself is the least crowded area.',
+    shoulder:'Opening time (8am) is dramatically less crowded. Museum before 9:30am.',
+    alt:null,
+  },
+  'kos town': {
+    name:'Kos Town', country:'Greece', lat:36.893, lng:27.288,
+    nearPorts:['kos'],
+    cityByDay:[42,55,48,58,62,72,75],
+    sub:'Dodecanese island capital',
+    note:'Ancient Agora, Knights\' Castle, and the tree of Hippocrates are cruise stops. Town is manageable — bicycle is the best way to escape the cruise cluster.',
+    shoulder:'The Asklepion (ancient healing sanctuary, 4km outside town) is rarely overrun.',
+    alt:null,
+  },
+  'meteora': {
+    name:'Meteora', country:'Greece', lat:39.721, lng:21.630,
+    nearPorts:['thessaloniki'],
+    cityByDay:[45,58,52,60,64,72,70],
+    sub:'Monasteries on rock pillars',
+    note:'One of Greece\'s most spectacular sights — monasteries perched atop towering sandstone pillars. Long cruise excursion from Thessaloniki (3hrs). Sunrise visits before tour buses arrive are transformative.',
+    shoulder:'First entry (9am), or sunset when day-tripper coaches have left.',
+    alt:null,
+  },
+  'thessaloniki': {
+    name:'Thessaloniki', country:'Greece', lat:40.629, lng:22.952,
+    nearPorts:['thessaloniki'],
+    cityByDay:[45,55,50,58,62,68,65],
+    sub:'Byzantine capital',
+    note:'Greece\'s second city and arguably its best food scene. Cruise ships visit but the city is large enough to absorb groups. The Roman Rotunda and Byzantine churches are the cruise focal points.',
+    shoulder:'The Modiano and Kapani markets are best before noon. Ladadika nightlife district is purely local.',
+    alt:null,
+  },
+  'patmos town': {
+    name:'Patmos', country:'Greece', lat:37.321, lng:26.543,
+    nearPorts:['patmos'],
+    cityByDay:[30,40,35,42,45,58,62],
+    sub:'Sacred island of Revelation',
+    note:'The Monastery of St John and Holy Cave where the Book of Revelation was written. Small island that can feel crowded when tenders bring cruise passengers. Most groups leave by 4pm.',
+    shoulder:'Chora (the hilltop village) early morning before cruise tenders begin.',
+    alt:null,
+  },
+  // TURKEY — NEW PORTS
+  'pergamon': {
+    name:'Pergamon (Bergama)', country:'Turkey', lat:39.120, lng:27.184,
+    nearPorts:['izmir'],
+    cityByDay:[25,35,28,38,42,48,45],
+    sub:'Ancient Hellenistic city',
+    note:'Dramatic acropolis with the steepest ancient theatre in the world. Cruise excursion from Izmir. Far less crowded than Ephesus with equally impressive ruins.',
+    shoulder:null,
+    alt:'Ephesus via Kusadasi is 90 min the other direction — genuinely different sites worth comparing.',
+  },
+  'izmir city': {
+    name:'İzmir', country:'Turkey', lat:38.418, lng:27.128,
+    nearPorts:['izmir'],
+    cityByDay:[42,52,46,55,58,62,60],
+    sub:'Aegean coastal city',
+    note:'Turkey\'s third-largest city and one of its most cosmopolitan. The Kordon waterfront promenade and Kemeralti bazaar are genuine. Cruise groups typically transit to Ephesus rather than staying in the city.',
+    shoulder:null,
+    alt:null,
+  },
+  'dalyan': {
+    name:'Dalyan & Kaunos', country:'Turkey', lat:36.832, lng:28.641,
+    nearPorts:['marmaris'],
+    cityByDay:[28,38,32,40,44,55,58],
+    sub:'River delta & Lycian tombs',
+    note:'Rock-cut Lycian tombs visible from the river. Marmaris cruise excursion. The boat trip through the delta to Iztuzu beach (loggerhead turtle nesting site) is genuinely special.',
+    shoulder:null,
+    alt:null,
+  },
+  'datca': {
+    name:'Datça Peninsula', country:'Turkey', lat:36.726, lng:27.688,
+    nearPorts:['marmaris'],
+    cityByDay:[18,25,20,28,32,45,50],
+    sub:'Remote Aegean peninsula',
+    note:'90-minute drive from Marmaris along a narrow peninsula. Ancient Knidos at the tip is rarely on cruise itineraries. Among the least-touristed coastal areas in the Aegean.',
+    shoulder:null,
+    alt:null,
+  },
+  // SPAIN — NEW PORTS
+  'valencia city': {
+    name:'Valencia', country:'Spain', lat:39.470, lng:-0.376,
+    nearPorts:['valencia'],
+    cityByDay:[52,62,56,64,68,75,72],
+    sub:'City of Arts & Sciences',
+    note:'Calatrava\'s City of Arts and Sciences is a cruise focal point. The original paella homeland — cruise groups concentrate in the tourist waterfront restaurants, not the authentic inland spots.',
+    shoulder:'Mercado Central before 11am. The Ruzafa neighborhood for lunch is purely local.',
+    alt:null,
+  },
+  'cartagena city': {
+    name:'Cartagena', country:'Spain', lat:37.606, lng:-0.986,
+    nearPorts:['cartagena'],
+    cityByDay:[35,45,40,48,52,58,55],
+    sub:'Roman port city',
+    note:'Underrated Spanish port with excellent Roman ruins (theatre, forum). Cruise ships stop here but groups are smaller than at Barcelona or Málaga.',
+    shoulder:null,
+    alt:null,
+  },
+  'gibraltar rock': {
+    name:'Gibraltar', country:'UK', lat:36.140, lng:-5.353,
+    nearPorts:['gibraltar'],
+    cityByDay:[48,58,52,60,65,68,65],
+    sub:'British Overseas Territory',
+    note:'The Rock, Barbary macaques, and the tunnels are the cruise stops. Small territory — genuinely crowded when ships dock. Main Street fills quickly.',
+    shoulder:'The Upper Rock Nature Reserve (above the cable car terminus) sees far fewer cruise groups.',
+    alt:'Tarifa — 30 min east in Spain, Europe\'s southernmost point, kite-surfing capital, no cruise ships.',
+  },
+  // FRANCE — CORSICA
+  'bonifacio': {
+    name:'Bonifacio', country:'France', lat:41.387, lng:9.159,
+    nearPorts:['ajaccio'],
+    cityByDay:[35,45,40,50,55,68,72],
+    sub:'Clifftop citadel',
+    note:'Dramatically perched limestone citadel above turquoise water. Occasional Ajaccio cruise excursion (90 min drive). Gets crowded in summer but far less than mainland equivalents.',
+    shoulder:'Evening after the day-trippers leave — the upper town is genuinely peaceful.',
+    alt:null,
+  },
+  'corte': {
+    name:'Corte', country:'France', lat:42.309, lng:9.150,
+    nearPorts:['ajaccio'],
+    cityByDay:[18,25,20,28,32,40,38],
+    sub:'Mountain citadel',
+    note:'Corsica\'s interior capital, rarely on cruise excursion menus. The gorges of Tavignano and Restonica are spectacular walking country. Genuinely off the tourist circuit.',
+    shoulder:null,
+    alt:null,
+  },
+  // CYPRUS
+  'paphos': {
+    name:'Paphos', country:'Cyprus', lat:34.775, lng:32.424,
+    nearPorts:['limassol'],
+    cityByDay:[38,48,42,52,56,65,62],
+    sub:'Aphrodite\'s birthplace',
+    note:'UNESCO archaeological park with Roman mosaics — among the best-preserved in the world. Standard Limassol cruise excursion.',
+    shoulder:'Site opens at 8am. First hour before tour buses arrive is significantly quieter.',
+    alt:null,
+  },
+  'troodos': {
+    name:'Troodos Mountains', country:'Cyprus', lat:34.918, lng:32.879,
+    nearPorts:['limassol'],
+    cityByDay:[20,28,24,30,34,45,42],
+    sub:'Byzantine painted churches',
+    note:'Ten UNESCO Byzantine churches with medieval frescoes scattered across pine-forested mountains. Not on standard cruise itineraries — the access roads are too narrow for coaches.',
+    shoulder:null,
+    alt:null,
+  },
+  // MOROCCO — TANGIER
+  'chefchaouen': {
+    name:'Chefchaouen', country:'Morocco', lat:35.168, lng:-5.269,
+    nearPorts:['tangier'],
+    cityByDay:[38,48,42,52,55,62,60],
+    sub:'The Blue City',
+    note:'Medina painted in shades of blue. Growing in Instagram fame but still manageable. 2.5hr drive from Tangier — occasional cruise excursion. The upper medina above the main square stays relatively quiet.',
+    shoulder:'Before 10am the medina belongs to locals.',
+    alt:null,
+  },
+  'asilah': {
+    name:'Asilah', country:'Morocco', lat:35.466, lng:-6.035,
+    nearPorts:['tangier'],
+    cityByDay:[22,30,25,32,36,48,50],
+    sub:'Atlantic walled medina',
+    note:'Small whitewashed Atlantic coastal medina 45 min from Tangier. Annual arts festival adds murals throughout. Not on major cruise itineraries.',
+    shoulder:null,
+    alt:null,
+  },
+  // PUGLIA EXTRAS
+  'polignano a mare': {
+    name:'Polignano a Mare', country:'Italy', lat:40.994, lng:17.221,
+    nearPorts:['bari'],
+    cityByDay:[30,42,35,45,50,68,72],
+    sub:'Clifftop Adriatic village',
+    note:'Dramatic clifftop village built over sea caves. Growing rapidly in Instagram popularity — weekends in summer are very crowded. Not yet on major cruise itineraries.',
+    shoulder:'Weekday mornings. The sea caves (Grotta Palazzese) are best at low tide.',
+    alt:null,
+  },
+
   // VENICE & VENETO
   'venice': {
     name:'Venice', country:'Italy', lat:45.441, lng:12.316,
@@ -1782,8 +2184,21 @@ const VALUE_SCORES = {
   'malaga':7,'granada':10,'ronda':8,'marbella':5,
   'cadiz':8,'seville':9,'jerez':7,
   'antalya':6,'aspendos':8,'side':7,'olympos':8,
+  'kefalonia':8,'melissani cave':7,
+  'tel aviv':8,'masada':9,'dead sea':8,
+  'nicosia':7,
+  'essaouira':8,'taroudant':7,
+  'timanfaya':8,'corralejo':6,'betancuria':6,
+  'hyeres islands':8,
   'montepulciano':8,'pienza':8,'cortona':8,'greve in chianti':7,
   'pitigliano':8,'castelnuovo berardenga':7,'san quirico d orcia':7,'montefalco':8,
+  'matera':9,'alberobello':8,'lecce':8,'ostuni':7,'polignano a mare':7,
+  'olympia':9,'kos town':7,'meteora':10,'thessaloniki':8,'patmos town':9,
+  'pergamon':8,'izmir city':6,'dalyan':7,'datca':6,
+  'valencia city':7,'cartagena city':7,'gibraltar rock':6,
+  'bonifacio':8,'corte':6,
+  'paphos':8,'troodos':7,
+  'chefchaouen':8,'asilah':7,
 };
 
 // ─────────────────────────────────────────────────────────
@@ -1820,13 +2235,30 @@ const REGIONS = {
   },
   greece: {
     label:'Greek Islands', emoji:'🏺',
-    keys:['santorini','mykonos town','athens','delphi','rhodes old town','lindos','knossos','chania','rethymno','corfu','zakynthos'],
+    keys:['santorini','mykonos town','athens','delphi','rhodes old town','lindos',
+          'knossos','chania','rethymno','corfu','zakynthos','skiathos',
+          'kos town','meteora','thessaloniki','patmos town','olympia','kefalonia'],
     port:'piraeus',
   },
   adriatic: {
     label:'Adriatic Coast', emoji:'⚓',
-    keys:['dubrovnik old town','split old town','hvar','trogir','ston','kotor old town','perast','budva'],
+    keys:['dubrovnik old town','split old town','hvar','trogir','ston','kotor old town','perast','budva','zadar'],
     port:'dubrovnik',
+  },
+  puglia: {
+    label:'Puglia & South Italy', emoji:'👁️',
+    keys:['matera','alberobello','lecce','ostuni','polignano a mare'],
+    port:'bari',
+  },
+  corsica: {
+    label:'Corsica', emoji:'🏔️',
+    keys:['bonifacio','corte'],
+    port:'ajaccio',
+  },
+  cyprus: {
+    label:'Cyprus', emoji:'🏛️',
+    keys:['paphos','troodos','nicosia'],
+    port:'limassol',
   },
   riviera: {
     label:'French Riviera', emoji:'☀️',
@@ -1845,22 +2277,22 @@ const REGIONS = {
   },
   turkey: {
     label:'Turkish Coast', emoji:'🕌',
-    keys:['istanbul','ephesus','pamukkale','bodrum','antalya','aspendos','side','olympos'],
+    keys:['istanbul','ephesus','pamukkale','bodrum','antalya','aspendos','side','olympos','pergamon','dalyan'],
     port:'kusadasi',
   },
   morocco: {
     label:'Morocco', emoji:'🌙',
-    keys:['marrakech','casablanca'],
+    keys:['marrakech','casablanca','chefchaouen','asilah','essaouira','taroudant'],
     port:'casablanca',
   },
   israel: {
     label:'Israel', emoji:'✡️',
-    keys:['jerusalem','haifa'],
+    keys:['jerusalem','haifa','tel aviv','masada','dead sea'],
     port:'haifa',
   },
   canary: {
     label:'Canary Islands', emoji:'🌋',
-    keys:['teide','santa cruz tenerife','las palmas','maspalomas'],
+    keys:['teide','santa cruz tenerife','las palmas','maspalomas','timanfaya','corralejo','betancuria'],
     port:'santa cruz',
   },
 };
@@ -2242,7 +2674,9 @@ function renderCard(scored, idx) {
     'marseille','valletta','kotor old town','genoa','salerno','palermo','messina','catania',
     'kusadasi','bodrum','istanbul','las palmas','santa cruz tenerife','corfu','haifa',
     'casablanca','athens','rhodes old town','heraklion','zakynthos','skiathos',
-    'malaga','cadiz','antalya']);
+    'malaga','cadiz','antalya','zadar','bari','kos town','thessaloniki',
+    'izmir city','valencia city','cartagena city','gibraltar rock',
+    'limassol','tangier','ajaccio','larnaca','toulon']);
   const isPortCity = PORT_CITY_KEYS.has(key);
 
   const portNote = primaryPort && isExcursionDest
@@ -2726,28 +3160,58 @@ let exploreSeason = 'spring';
 
 // Region grouping by country for the structured list
 const REGION_GROUPS = [
-  { country:'Italy', regions:['tuscany','venice','rome','amalfi','sicily'] },
+  { country:'Italy', regions:['tuscany','venice','rome','amalfi','sicily','puglia','corsica'] },
   { country:'Greece', regions:['greece'] },
   { country:'Croatia & Montenegro', regions:['adriatic'] },
   { country:'Spain', regions:['spain','andalusia','canary'] },
   { country:'France', regions:['riviera'] },
   { country:'Turkey', regions:['turkey'] },
+  { country:'Cyprus', regions:['cyprus'] },
   { country:'Morocco', regions:['morocco'] },
   { country:'Israel', regions:['israel'] },
 ];
 
+// Region geographic centers for the selector map
+const REGION_CENTERS = {
+  tuscany:   [43.4, 11.0],
+  venice:    [45.4, 12.3],
+  rome:      [41.9, 12.5],
+  amalfi:    [40.6, 14.5],
+  sicily:    [37.5, 14.0],
+  puglia:    [40.7, 17.2],
+  adriatic:  [43.5, 16.5],
+  greece:    [37.8, 23.5],
+  riviera:   [43.7,  7.3],
+  spain:     [41.4,  2.2],
+  andalusia: [37.2, -4.5],
+  turkey:    [37.5, 28.5],
+  corsica:   [41.9,  9.0],
+  morocco:   [33.6, -7.6],
+  tangier:   [35.7, -5.8],
+  israel:    [32.0, 34.8],
+  cyprus:    [34.9, 33.0],
+  canary:    [28.1,-15.4],
+  argostoli: [38.2, 20.5],
+  ashdod:    [31.8, 34.6],
+  larnaca:   [34.9, 33.6],
+  agadir:    [30.4, -9.6],
+  arrecife:  [29.0,-13.5],
+  toulon:    [43.1,  5.9],
+};
+
+let selectorMap = null;
+const selectorMarkers = {};
+
 function initExplore() {
+  // Build country-grouped list
   const listEl = document.getElementById('region-list');
   if (listEl && !listEl.dataset.built) {
     listEl.dataset.built = '1';
-
     REGION_GROUPS.forEach(group => {
-      // Country header
       const hdr = document.createElement('div');
       hdr.style.cssText = 'grid-column:1/-1;font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:.07em;margin-top:8px;margin-bottom:2px;padding-left:2px';
       hdr.textContent = group.country;
       listEl.appendChild(hdr);
-
       group.regions.forEach(k => {
         const r = REGIONS[k];
         if (!r) return;
@@ -2763,22 +3227,53 @@ function initExplore() {
     });
   }
 
-  // Wire SVG map dot hovers
-  document.querySelectorAll('.rdot').forEach(g => {
-    const ring = g.querySelector('.rdot-ring');
-    g.addEventListener('mouseenter', () => {
-      if (!ring) return;
-      ring.setAttribute('fill-opacity','0.35');
-      ring.setAttribute('r', parseFloat(ring.getAttribute('r')) > 12 ? '16' : '15');
+  // Build Leaflet selector map (only once)
+  if (selectorMap) return;
+  if (typeof L === 'undefined') return;
+
+  selectorMap = L.map('med-map', {
+    center: [38, 14],
+    zoom: 4,
+    zoomControl: true,
+    attributionControl: true,
+    minZoom: 3,
+    maxZoom: 8,
+  });
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© <a href="https://openstreetmap.org">OpenStreetMap</a>',
+  }).addTo(selectorMap);
+
+  // Add a marker for each region
+  Object.entries(REGIONS).forEach(([k, r]) => {
+    const center = REGION_CENTERS[k];
+    if (!center) return;
+
+    const marker = L.circleMarker(center, {
+      radius: 14,
+      fillColor: '#2A7050',
+      fillOpacity: 0.18,
+      color: '#2A7050',
+      weight: 2,
+    }).addTo(selectorMap);
+
+    // Label tooltip always visible
+    marker.bindTooltip(r.emoji + ' ' + r.label, {
+      permanent: true,
+      direction: 'top',
+      offset: [0, -14],
+      className: 'region-tooltip',
+    }).openTooltip();
+
+    marker.on('mouseover', function() {
+      if (exploreRegion !== k) this.setStyle({fillOpacity:0.4, radius:17});
     });
-    g.addEventListener('mouseleave', () => {
-      if (!ring) return;
-      const rk = g.dataset.region;
-      if (rk !== exploreRegion) {
-        ring.setAttribute('fill-opacity','0.15');
-        ring.setAttribute('r', parseFloat(ring.getAttribute('r')) > 14 ? '14' : '13');
-      }
+    marker.on('mouseout', function() {
+      if (exploreRegion !== k) this.setStyle({fillOpacity:0.18, radius:14});
     });
+    marker.on('click', function() { selectRegionMap(k); });
+
+    selectorMarkers[k] = marker;
   });
 }
 
@@ -2786,17 +3281,13 @@ function selectRegionMap(k) {
   if (!REGIONS[k]) return;
   exploreRegion = k;
 
-  // Update SVG dots
-  document.querySelectorAll('.rdot').forEach(g => {
-    const ring = g.querySelector('.rdot-ring');
-    const core = g.querySelector('.rdot-core');
-    const lbl  = g.querySelector('.rdot-lbl');
-    if (!ring) return;
-    const isSelected = g.dataset.region === k;
-    ring.setAttribute('fill', isSelected ? '#1a5035' : '#2A7050');
-    ring.setAttribute('fill-opacity', isSelected ? '0.3' : '0.15');
-    core.setAttribute('fill', isSelected ? '#1a1a1a' : '#2A7050');
-    if (lbl) lbl.setAttribute('fill', isSelected ? '#1a1a1a' : '#1a5035');
+  // Update Leaflet markers
+  Object.entries(selectorMarkers).forEach(([key, marker]) => {
+    if (key === k) {
+      marker.setStyle({fillColor:'#1a1a1a', color:'#1a1a1a', fillOpacity:0.8, radius:16});
+    } else {
+      marker.setStyle({fillColor:'#2A7050', color:'#2A7050', fillOpacity:0.18, radius:14});
+    }
   });
 
   // Update list buttons
@@ -2806,10 +3297,6 @@ function selectRegionMap(k) {
     btn.style.color = isSelected ? '#fff' : '#555';
     btn.style.borderColor = isSelected ? '#1a1a1a' : '#eee';
   });
-
-  // Update map hint text
-  const hint = document.getElementById('map-hint');
-  if (hint) hint.textContent = `Showing: ${REGIONS[k].label}`;
 
   renderExplore();
 }
