@@ -4251,6 +4251,7 @@ function toggleCard(idx) {
 // ─────────────────────────────────────────────────────────
 // Per-stop alt toggle state (key → true=useAlt, false=useOriginal)
 let _altToggles = {};
+let _flexDays = 3; // ±days flexibility — user-adjustable
 
 function openMinimize(withAlts) {
   const scored = currentStops.map(s => scoreStop(s.key, s.date)).filter(Boolean)
@@ -4260,6 +4261,12 @@ function openMinimize(withAlts) {
   document.getElementById('minimize-title').textContent = withAlts
     ? 'Minimize Crowds + Suggest Alternatives'
     : 'Minimize Crowds — Optimized Days';
+
+  // Trip window — clamp all suggestions to stay within the actual trip dates
+  const allDates = scored.map(s => s.date);
+  const tripMin = new Date(Math.min(...allDates));
+  const tripMax = new Date(Math.max(...allDates));
+  const tripDays = Math.round((tripMax - tripMin) / 86400000) + 1;
 
   // For each stop compute crowd score for every day of week
   const perStop = scored.map(s => {
@@ -4274,31 +4281,34 @@ function openMinimize(withAlts) {
     return { s, scores, curScore: scores[dayIdx] };
   });
 
-  // ── CONFLICT-FREE GREEDY REARRANGEMENT ──────────────────
-  // Assign each stop the best available day (±3 days) that
-  // hasn't already been taken by a previously assigned stop.
-  const assignedDates = new Set(); // ISO strings already claimed
+  // ── CONFLICT-FREE REARRANGEMENT with trip-window clamping ──
+  const assignedDates = new Set();
 
   const rearranged = perStop.map(({s, scores, curScore}) => {
     const orig = s.date;
-    // Build candidate offsets sorted by score ascending (best first)
+    // Build candidates within ±_flexDays AND within the trip window
     const candidates = [];
-    for (let offset = -3; offset <= 3; offset++) {
+    for (let offset = -_flexDays; offset <= _flexDays; offset++) {
       const trial = new Date(orig);
       trial.setDate(trial.getDate() + offset);
+      // Clamp to trip window
+      if (trial < tripMin || trial > tripMax) continue;
       const dayI = getDayIdx(trial);
       candidates.push({ offset, date: trial, score: scores[dayI] });
     }
+    // If no candidates in window (e.g. single-day trip), keep original
+    if (candidates.length === 0) {
+      candidates.push({ offset: 0, date: orig, score: curScore });
+    }
     candidates.sort((a, b) => a.score - b.score);
 
-    // Pick the lowest-score candidate whose date isn't already taken
-    let chosen = candidates[0]; // default: best score even if conflict
+    // Pick best available non-conflicting date
+    let chosen = candidates[0];
     for (const c of candidates) {
       const iso = c.date.toISOString().split('T')[0];
       if (!assignedDates.has(iso)) { chosen = c; break; }
     }
-    const chosenIso = chosen.date.toISOString().split('T')[0];
-    assignedDates.add(chosenIso);
+    assignedDates.add(chosen.date.toISOString().split('T')[0]);
 
     const newDate = chosen.date;
     const bestOffset = chosen.offset;
@@ -4318,20 +4328,34 @@ function openMinimize(withAlts) {
 
   let h = '';
 
+  // ── FLEXIBILITY TOGGLE ──────────────────────────────────
+  const tripDateRange = tripMin.toLocaleDateString('en-US',{month:'short',day:'numeric'}) +
+    (tripDays > 1 ? ' – ' + tripMax.toLocaleDateString('en-US',{month:'short',day:'numeric'}) : '');
+  h += `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:8px">
+    <div style="font-size:11px;color:#888">
+      Trip: <strong style="color:#444">${tripDateRange}</strong> · ${tripDays} day${tripDays!==1?'s':''}
+      ${_flexDays >= tripDays ? '<span style="color:#B87820;margin-left:4px">· max flexibility for this trip</span>' : ''}
+    </div>
+    <div style="display:flex;gap:4px;align-items:center">
+      <span style="font-size:10px;color:#aaa;margin-right:2px">Flexibility:</span>
+      ${[1,2,3].map(n => `<button onclick="setFlexDays(${n}, ${withAlts})" style="padding:3px 9px;font-size:10px;font-weight:600;border-radius:5px;border:1.5px solid ${_flexDays===n?'#1a1a1a':'#ddd'};background:${_flexDays===n?'#1a1a1a':'#fff'};color:${_flexDays===n?'#fff':'#888'};cursor:pointer">±${n}d</button>`).join('')}
+    </div>
+  </div>`;
+
   // Summary banner
   if (withAlts) {
     const altCount = rearranged.filter(r => r.hasAlt && r.needsAlt && _altToggles[r.s.key]).length;
     h += `<div style="background:#EAF3DE;border-radius:8px;padding:10px 13px;margin-bottom:1rem;font-size:12px;color:#164030;">
       <strong>Crowd-minimized itinerary.</strong> ${altCount} stop${altCount!==1?'s':''} replaced with lower-traffic alternatives.
-      ${anyImprovement ? `Visit days also optimized — crowd exposure reduced by <strong>${Math.round((saving/totalOrig)*100)}%</strong>.` : ''}
+      ${anyImprovement ? `Days optimized within your trip window — crowd exposure reduced by <strong>${Math.round((saving/totalOrig)*100)}%</strong>.` : 'No day improvements found within ±'+_flexDays+' days.'}
       Toggle any stop below to switch between the alternative and original city.
     </div>`;
   } else {
     h += anyImprovement
       ? `<div style="background:#EAF3DE;border-radius:8px;padding:10px 13px;margin-bottom:1rem;font-size:12px;color:#164030;">
-          <strong>Days optimized.</strong> Shifting ${rearranged.filter(r=>r.bestOffset!==0).length} stop${rearranged.filter(r=>r.bestOffset!==0).length!==1?'s':''} reduces crowd exposure by <strong>${Math.round((saving/totalOrig)*100)}%</strong>.
+          <strong>Days optimized.</strong> Shifting ${rearranged.filter(r=>r.bestOffset!==0).length} stop${rearranged.filter(r=>r.bestOffset!==0).length!==1?'s':''} within your trip reduces crowd exposure by <strong>${Math.round((saving/totalOrig)*100)}%</strong>.
         </div>`
-      : `<div style="background:#fafaf8;border-radius:8px;padding:10px 13px;margin-bottom:1rem;font-size:12px;color:#888;">Your current dates are already close to optimal within a ±3 day window.</div>`;
+      : `<div style="background:#fafaf8;border-radius:8px;padding:10px 13px;margin-bottom:1rem;font-size:12px;color:#888;">Your current dates are already optimal within this trip window (±${_flexDays} day${_flexDays!==1?'s':''}).</div>`;
   }
 
   const fullDays = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
@@ -4344,7 +4368,6 @@ function openMinimize(withAlts) {
     const displayStatus = usingAlt ? '↗ Alternative' : (s.status === 'red' ? '⚠ AVOID' : s.status === 'amber' ? '⚠ CAUTION' : '✓ CLEAR');
     const statusColor = usingAlt ? '#2A7050' : s.status === 'red' ? '#B83232' : s.status === 'amber' ? '#B87820' : '#2A7050';
 
-    // Score reduction label for alternatives — look up alt city's score if in DESTS
     const altKey = altCity ? altCity.toLowerCase() : null;
     const altDest = altKey ? (DESTS[altKey] || null) : null;
     let altScore = null;
@@ -4359,6 +4382,13 @@ function openMinimize(withAlts) {
     }
 
     const suggestedDateStr = newDate.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+
+    // Only show day-of-week bars for dates within the trip window
+    const tripDow = [];
+    for (let d = new Date(tripMin); d <= tripMax; d.setDate(d.getDate()+1)) {
+      tripDow.push({ dayI: getDayIdx(new Date(d)), dateStr: new Date(d).toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'}) });
+    }
+    const uniqueTripDow = tripDow.filter((v,i,a) => a.findIndex(x=>x.dayI===v.dayI)===i);
 
     h += `<div class="modal-card" style="${changed?'border-color:#C0DD97;':''};${usingAlt?'background:#f8fdf5;':''}">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;gap:8px">
@@ -4380,28 +4410,27 @@ function openMinimize(withAlts) {
       </div>` : ''}
       <div class="mc-cur">
         ${usingAlt
-          ? `<span style="color:#555">${s.dest.name} original score: <strong>${curScore}</strong></span>
+          ? `<span style="color:#555">${s.dest.name} score: <strong>${curScore}</strong></span>
              <span style="margin:0 4px;color:#ccc">→</span>
-             <strong style="color:#2A7050">${altCity} on ${suggestedDateStr}${altScore !== null ? ` · score ${altScore}` : ''}</strong>`
-          : `${s.date.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})} · crowd score <strong>${curScore}</strong>
+             <strong style="color:#2A7050">${altCity} on ${suggestedDateStr}${altScore !== null ? ' · score ' + altScore : ''}</strong>`
+          : `${s.date.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})} · score <strong>${curScore}</strong>
              ${changed
                ? ` <span style="margin:0 4px;color:#ccc">→</span> <strong style="color:#2A7050">${suggestedDateStr} · score ${bestScore}</strong>`
-               : ' <span style="color:#aaa">(already optimal day)</span>'}`
+               : ' <span style="color:#aaa;font-size:11px">already optimal within ±'+_flexDays+'d</span>'}`
         }
       </div>
-      ${!usingAlt ? `<div class="mc-days" style="margin-top:8px">
-        ${fullDays.map((d,i) => {
-          const isNew = changed && i === getDayIdx(newDate);
-          const isCur = i === getDayIdx(s.date);
+      ${!usingAlt && uniqueTripDow.length > 1 ? `<div class="mc-days" style="margin-top:8px">
+        ${uniqueTripDow.map(({dayI, dateStr}) => {
+          const isNew = changed && dayI === getDayIdx(newDate);
+          const isCur = dayI === getDayIdx(s.date);
           let cls = 'mc-day';
           if (isNew) cls += ' best';
-          return `<div class="${cls}" title="${d}: score ${scores[i]}/100" style="${isNew?'outline:2px solid #2A7050;':''}">${d} <strong>${scores[i]}</strong>${isCur?' ◉':''}</div>`;
+          return `<div class="${cls}" title="${dateStr}: score ${scores[dayI]}/100" style="${isNew?'outline:2px solid #2A7050;':''}">${fullDays[dayI]} <strong>${scores[dayI]}</strong>${isCur?' ◉':''}</div>`;
         }).join('')}
       </div>` : ''}
     </div>`;
   });
 
-  // Apply button
   h += `<button onclick="applyRearrangement(${withAlts})" style="width:100%;margin-top:1rem;padding:11px;font-size:13px;font-weight:600;border:none;border-radius:8px;background:#1a1a1a;color:#fff;cursor:pointer">Apply this itinerary →</button>`;
 
   window._pendingRearrangement = rearranged;
@@ -4409,14 +4438,18 @@ function openMinimize(withAlts) {
 
   document.getElementById('modal-sub').textContent = withAlts
     ? 'Caution/Avoid stops replaced with lower-traffic alternatives by default. Toggle any stop to switch back to the original.'
-    : 'Days shifted (±3 days) to minimize crowds. ◉ = current date.';
+    : 'Days shifted within your trip window to minimize crowds. ◉ = current date.';
   document.getElementById('modal-content').innerHTML = h;
   document.getElementById('minimize-modal').classList.add('open');
 }
-
 function toggleAlt(key, withAlts) {
   _altToggles[key] = !_altToggles[key];
-  openMinimize(withAlts); // re-render
+  openMinimize(withAlts);
+}
+
+function setFlexDays(n, withAlts) {
+  _flexDays = n;
+  openMinimize(withAlts);
 }
 
 function applyRearrangement(withAlts) {
