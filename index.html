@@ -296,7 +296,26 @@ textarea:focus{border-color:#999;background:#fff}
     <div class="panel" style="padding-bottom:0">
       <div style="font-size:12px;color:#888;margin-bottom:.875rem;line-height:1.6">Click a region on the map or browse by country below. Destinations are ranked by cultural value vs. cruise crowd levels.</div>
 
-      <!-- SVG Map -->\n      <!-- Real Leaflet map replacing the SVG -->\n      <div id=\"med-map-wrap\" style=\"border-radius:12px;overflow:hidden;margin-bottom:0.75rem;border:1px solid #dce8f0\">\n        <div id=\"med-map\" style=\"height:360px;width:100%\"></div>\n      </div>\n\n      <!-- Anywhere button — standalone below map -->\n      <button id=\"btn-anywhere\" onclick=\"selectAllRegions()\" style=\"width:100%;margin-bottom:0.75rem;padding:10px 14px;font-size:13px;font-weight:600;border:2px solid #eee;border-radius:10px;background:#fff;color:#444;cursor:pointer;text-align:left;display:flex;align-items:center;gap:8px;transition:all .15s\">\n        <span style=\"font-size:17px\">🌍</span>\n        <span>Show all destinations — least crowded first</span>\n      </button>\n\n      <!-- Country/Region grouped list — collapsed by default -->\n      <div style=\"margin-bottom:1.25rem\">\n        <button onclick=\"toggleRegionList(this)\" style=\"display:flex;align-items:center;gap:6px;padding:0;font-size:12px;font-weight:500;color:#888;background:none;border:none;cursor:pointer\">\n          <span>Browse by country</span>\n          <span id=\"region-list-chev\" style=\"font-size:10px;transition:transform .2s\">▾</span>\n        </button>\n        <div id=\"region-list\" style=\"display:none;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:6px;margin-top:8px\">\n        </div>\n      </div>
+      <!-- Real Leaflet map replacing the SVG -->
+      <div id="med-map-wrap" style="border-radius:12px;overflow:hidden;margin-bottom:0.75rem;border:1px solid #dce8f0">
+        <div id="med-map" style="height:360px;width:100%"></div>
+      </div>
+
+      <!-- Anywhere button — standalone below map -->
+      <button id="btn-anywhere" onclick="selectAllRegions()" style="width:100%;margin-bottom:0.75rem;padding:10px 14px;font-size:13px;font-weight:600;border:2px solid #eee;border-radius:10px;background:#fff;color:#444;cursor:pointer;text-align:left;display:flex;align-items:center;gap:8px;transition:all .15s">
+        <span style="font-size:17px">🌍</span>
+        <span>Show all destinations — least crowded first</span>
+      </button>
+
+      <!-- Country/Region grouped list — collapsed by default -->
+      <div style="margin-bottom:1.25rem">
+        <button onclick="toggleRegionList(this)" style="display:flex;align-items:center;gap:6px;padding:0;font-size:12px;font-weight:500;color:#888;background:none;border:none;cursor:pointer">
+          <span>Browse by country</span>
+          <span id="region-list-chev" style="font-size:10px;transition:transform .2s">▾</span>
+        </button>
+        <div id="region-list" style="display:none;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:6px;margin-top:8px">
+        </div>
+      </div>
 
       <!-- Trip settings -->
       <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:1.25rem">
