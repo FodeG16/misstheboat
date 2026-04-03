@@ -30,12 +30,16 @@
 - 24 ports: **manually estimated** — JS-rendered pages defeated scraper
 - Will be replaced with Puppeteer scrape or live AIS API before launch
 
-### Excursion Data (EXCURSION_DATA)
-- **Status: NOT YET BUILT** — previous `excursions: []` arrays on PORTS were training-data estimates
-- Royal Caribbean pages are gated behind login — not scrapeable
-- **Solution ready:** `scrape_viator_excursions.js` — scrapes Viator shore excursion pages (server-rendered, no login needed)
-- Run: `node scrape_viator_excursions.js` → outputs `viator_excursions.json`
-- GYG Partner API also an option (need API token — request at partner.getyourguide.com with PID VKYN0SM)
+### Excursion Data (excursions: [] on each PORTS entry)
+- **Status: TRAINING DATA ESTIMATES** — written from knowledge, not scraped
+- This is a **critical accuracy gap** — excursion destination mapping is the core value prop of the site
+  (identifying which sub-cities get overwhelmed by cruise passengers vs. which have none)
+- RC pages gated behind login — not scrapeable without authentication
+- Viator pages return 403 to Node.js scrapers (bot detection)
+- **Best solution:** GYG Partner API (request token at partner.getyourguide.com with PID VKYN0SM)
+- **Fallback:** Puppeteer (real Chrome) can scrape Viator — `npm install puppeteer`, then rewrite scraper
+- Script ready but needs Puppeteer: `scrape_viator_excursions.js`
+- **Must fix before launch** — inaccurate excursion mapping = wrong crowd scores at destination level
 
 ## Destinations & Ports
 - **Total destinations:** 184
@@ -80,7 +84,10 @@ require('fs').writeFileSync('/tmp/test.mjs', script);
 - ⬜ Custom domain misstheboat.app (~$12)
 
 ## Backlog (Priority Order)
-1. **[NOW]** Run `scrape_viator_excursions.js`, share output → wire EXCURSION_DATA into scoring
+1. **[CRITICAL]** Get accurate excursion data — GYG Partner API token OR Puppeteer scrape of Viator
+   - This is the root of the product's value. Training data estimates are not sufficient for launch.
+2. **[NOW]** Run `scrape_viator_excursions.js` with Puppeteer once installed
+3. **[DONE]** ✅ "Anywhere" all-regions button added to Explore tab region selector
 2. **[NEXT]** OG image for social sharing
 3. **[NEXT]** Mobile layout audit  
 4. **[NEXT]** User testing

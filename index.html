@@ -308,7 +308,9 @@ textarea:focus{border-color:#999;background:#fff}
           <span>Browse by country</span>
           <span id="region-list-chev" style="font-size:10px;transition:transform .2s">▾</span>
         </button>
-        <div id="region-list" style="display:none;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:6px;margin-top:8px"></div>
+        <div id="region-list" style="display:none;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:6px;margin-top:8px">
+          <!-- "Anywhere" button injected first by initExplore() -->
+        </div>
       </div>
 
       <!-- Trip settings -->
@@ -4133,6 +4135,56 @@ async function loadWeather(scored, idx) {
 
 function renderResults(stops) {
   currentStops = stops;
+
+  // ── AUTO-FIX: resolve duplicate dates before scoring ────
+  // Only applies to stops that have dates assigned
+  const datedStops = stops.filter(s => s.date);
+  if (datedStops.length > 1) {
+    // Find trip window
+    const dates = datedStops.map(s => s.date.getTime());
+    const tripMin = new Date(Math.min(...dates));
+    const tripMax = new Date(Math.max(...dates));
+
+    // Check for duplicates
+    const usedDates = new Set();
+    let hasConflict = false;
+    for (const s of datedStops) {
+      const iso = s.date.toISOString().split('T')[0];
+      if (usedDates.has(iso)) { hasConflict = true; break; }
+      usedDates.add(iso);
+    }
+
+    if (hasConflict) {
+      // Resolve conflicts: reassign duplicates to nearest unused date within trip window
+      const assigned = new Set();
+      for (const s of datedStops) {
+        const iso = s.date.toISOString().split('T')[0];
+        if (!assigned.has(iso)) {
+          assigned.add(iso);
+        } else {
+          // Find nearest unassigned date within trip window
+          let found = false;
+          for (let offset = 1; offset <= 30; offset++) {
+            for (const dir of [1, -1]) {
+              const candidate = new Date(s.date);
+              candidate.setDate(candidate.getDate() + offset * dir);
+              if (candidate < tripMin || candidate > tripMax) continue;
+              const candidateIso = candidate.toISOString().split('T')[0];
+              if (!assigned.has(candidateIso)) {
+                s.date = candidate;
+                assigned.add(candidateIso);
+                found = true;
+                break;
+              }
+            }
+            if (found) break;
+          }
+          // If no date found within window, keep original (edge case: more stops than days)
+        }
+      }
+    }
+  }
+
   const scored = stops.map(s => scoreStop(s.key, s.date)).filter(Boolean);
 
   const counts = {red:0,amber:0,green:0};
@@ -4791,6 +4843,22 @@ function initExplore() {
   const listEl = document.getElementById('region-list');
   if (listEl && !listEl.dataset.built) {
     listEl.dataset.built = '1';
+
+    // ── "Anywhere" mega-button at the top ──────────────────
+    const anyBtn = document.createElement('button');
+    anyBtn.id = 'rlist-anywhere';
+    anyBtn.style.cssText = 'grid-column:1/-1;padding:10px 14px;font-size:13px;font-weight:600;border:2px solid #eee;border-radius:10px;background:#fff;color:#444;cursor:pointer;text-align:left;transition:all .15s;display:flex;align-items:center;gap:8px;width:100%';
+    anyBtn.innerHTML = `<span style="font-size:18px">🌍</span><span>Anywhere — show all destinations, least crowded first</span>`;
+    anyBtn.onmouseenter = () => { if (exploreRegion !== 'anywhere') anyBtn.style.background = '#f5f5f5'; };
+    anyBtn.onmouseleave = () => { if (exploreRegion !== 'anywhere') anyBtn.style.background = '#fff'; };
+    anyBtn.onclick = () => selectAllRegions();
+    listEl.appendChild(anyBtn);
+
+    // Divider
+    const div = document.createElement('div');
+    div.style.cssText = 'grid-column:1/-1;border-top:1px solid #f0f0f0;margin:4px 0';
+    listEl.appendChild(div);
+
     REGION_GROUPS.forEach(group => {
       const hdr = document.createElement('div');
       hdr.style.cssText = 'grid-column:1/-1;font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:.07em;margin-top:8px;margin-bottom:2px;padding-left:2px';
@@ -4884,6 +4952,44 @@ function selectRegionMap(k) {
     btn.style.color = isSelected ? '#fff' : '#555';
     btn.style.borderColor = isSelected ? '#1a1a1a' : '#eee';
   });
+
+  renderExplore();
+}
+
+function selectAllRegions() {
+  // Build a synthetic "anywhere" region from all destination keys across all regions
+  const allKeys = [];
+  const seen = new Set();
+  Object.values(REGIONS).forEach(r => {
+    if (r.keys) r.keys.forEach(k => { if (!seen.has(k)) { seen.add(k); allKeys.push(k); } });
+  });
+
+  // Temporarily inject a synthetic region
+  REGIONS['anywhere'] = {
+    label: 'Anywhere',
+    emoji: '🌍',
+    keys: allKeys,
+  };
+  exploreRegion = 'anywhere';
+
+  // Reset all map markers to unselected
+  Object.values(selectorMarkers).forEach(marker => {
+    marker.setStyle({fillColor:'#2A7050', color:'#2A7050', fillOpacity:0.18, radius:14});
+  });
+
+  // Update list buttons
+  document.querySelectorAll('[id^="rlist-"]').forEach(btn => {
+    const isSelected = btn.id === 'rlist-anywhere';
+    btn.style.background = isSelected ? '#1a1a1a' : '#fff';
+    btn.style.color = isSelected ? '#fff' : '#555';
+    btn.style.borderColor = isSelected ? '#2px solid #1a1a1a' : '#eee';
+  });
+  const anyBtn = document.getElementById('rlist-anywhere');
+  if (anyBtn) {
+    anyBtn.style.background = '#1a1a1a';
+    anyBtn.style.color = '#fff';
+    anyBtn.style.borderColor = '#1a1a1a';
+  }
 
   renderExplore();
 }
