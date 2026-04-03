@@ -882,10 +882,67 @@ const PORTS = {
     excursions: ['toulon','marseille','hyeres','iles d or','verdon gorge'],
     notExcursions: ['bandol','sanary sur mer','six fours','ollioules'],
   },
+  // ── PORTUGAL & ATLANTIC SPAIN ─────────────────────────
+  lisbon: {
+    name: 'Lisbon', country: 'Portugal', lat: 38.717, lng: -9.142,
+    spring: [72,85,78,88,90,75,68],
+    summer: [85,95,88,95,98,82,75],
+    fall:   [60,72,65,75,78,62,55],
+    excursions: ['lisbon','sintra','cascais','obidos','setubal'],
+    notExcursions: ['evora','alentejo','nazare','batalha','fatima'],
+  },
+  porto: {
+    name: 'Porto (Leixões)', country: 'Portugal', lat: 41.185, lng: -8.704,
+    spring: [55,68,62,72,75,62,55],
+    summer: [68,80,72,82,85,72,65],
+    fall:   [45,58,52,62,65,52,45],
+    excursions: ['porto','guimaraes','braga','douro valley','viana do castelo'],
+    notExcursions: ['amarante','peso da regua','lamego','barcelos'],
+  },
+  funchal: {
+    name: 'Funchal (Madeira)', country: 'Portugal', lat: 32.650, lng: -16.908,
+    spring: [45,58,52,62,65,55,48],
+    summer: [58,72,65,75,78,65,58],
+    fall:   [38,50,44,55,58,48,42],
+    excursions: ['funchal','monte','cabo girao','santana','pico do arieiro'],
+    notExcursions: ['porto moniz','sao vicente','calheta','machico'],
+  },
+  // ── IBIZA & BALEARICS ────────────────────────────────
+  ibiza: {
+    name: 'Ibiza Town', country: 'Spain', lat: 38.908, lng: 1.433,
+    spring: [42,52,46,55,58,68,72],
+    summer: [65,78,70,80,82,88,90],
+    fall:   [32,42,36,45,48,58,62],
+    excursions: ['ibiza town','dalt vila','ses salines','santa eularia'],
+    notExcursions: ['sant joan','portinatx','es vedra','cala conta'],
+  },
+  // ── ADRIATIC ADDITIONS ───────────────────────────────
+  rovinj: {
+    name: 'Rovinj', country: 'Croatia', lat: 45.082, lng: 13.640,
+    spring: [38,50,44,55,58,62,65],
+    summer: [58,72,65,75,78,82,85],
+    fall:   [28,40,34,45,48,52,55],
+    excursions: ['rovinj','pula','porec','limska fjord'],
+    notExcursions: ['vrsar','bale','svetvincenat','labin'],
+  },
+  sibenik: {
+    name: 'Šibenik', country: 'Croatia', lat: 43.735, lng: 15.895,
+    spring: [35,48,42,52,55,58,62],
+    summer: [52,65,58,68,72,75,78],
+    fall:   [25,38,32,42,45,48,52],
+    excursions: ['sibenik','krka waterfalls','kornati','trogir','split old town'],
+    notExcursions: ['primosten','skradin','knin','drnis'],
+  },
+  // ── EASTERN MED ADDITIONS ────────────────────────────
+  alexandria: {
+    name: 'Alexandria', country: 'Egypt', lat: 31.200, lng: 29.918,
+    spring: [55,68,62,72,75,65,58],
+    summer: [65,78,70,80,82,72,65],
+    fall:   [45,58,52,62,65,55,48],
+    excursions: ['cairo','giza pyramids','alexandria','luxor','abu simbel'],
+    notExcursions: ['el alamein','marsa matruh','siwa oasis'],
+  },
 };
-
-// ─────────────────────────────────────────────────────────
-// DATA: DESTINATION DATABASE
 // cityByDay: Mon–Sun general tourist crowd index (0–100)
 // nearPorts: ports within excursion range
 // alt: alternative with lower cruise exposure
@@ -940,15 +997,17 @@ const DESTS = {
     note:'No cruise traffic on any shore excursion route despite proximity to Livorno. Fully walkable on top of the intact Renaissance walls.',
     shoulder:null,
     alt:null,
+    tips:['Cycle the top of the Renaissance walls (4km circuit) — rent bikes at the gates, extraordinary experience','Guinigi Tower with oak trees growing from the top — very few visitors, great views','Buccellato cake from a local bakery — sweet bread studded with raisins and anise, Lucca specialty','Piazza Anfiteatro (oval piazza on the Roman amphitheatre footprint) for coffee — more local than tourist','Palazzo Pfanner gardens in spring — baroque garden in a working palace, rarely crowded'],
   },
   'montalcino': {
     name:'Montalcino', country:'Italy', lat:43.058, lng:11.489,
     nearPorts:[],
     cityByDay:[16,20,18,19,24,30,22],
     sub:'Brunello wine country',
-    note:'No cruise traffic in port schedule or excursion database. Small hilltop town; even on weekends crowds are light by Tuscan standards.',
+    note:'No cruise traffic. Small hilltop town; even on weekends crowds are light by Tuscan standards.',
     shoulder:null,
     alt:null,
+    tips:['Brunello wine tasting at the fortress enoteca (La Fortezza) — local cooperative prices, extraordinary setting','Val d\'Orcia views from the road south toward San Quirico — some of the most photographed countryside in Italy','Abbazia di Sant\'Antimo (Romanesque abbey) 10km south — Gregorian chant at Sunday mass, almost no visitors','Buy Brunello directly from a small producer like Poggio Antico or Col d\'Orcia — fraction of the enoteca price'],
   },
   'cinque terre': {
     name:'Cinque Terre', country:'Italy', lat:44.127, lng:9.737,
@@ -958,6 +1017,7 @@ const DESTS = {
     note:'The trail and villages have a daily visitor cap but cruise excursion groups from Livorno and Genoa fill quota slots fast. Vernazza and Monterosso are the worst; Corniglia (no boat access) is the most manageable.',
     shoulder:'Take the first morning train from La Spezia (6:30am) before day-tripper coaches arrive. Manarola at dusk after the crowds leave is exceptional.',
     alt:'Portovenere — 20 min from La Spezia by ferry, same dramatic coastline, far fewer visitors, Byron\'s Grotto worth seeing.',
+    tips:['Corniglia is the only village with no boat access — most cruise groups skip it, dramatically quieter','Take the ferry between villages rather than the trail — trail requires a paid pass and gets extremely busy','Manarola for sunset after 5pm when the day-trippers leave — the harbour views are extraordinary and manageable','Portovenere is 20 min south and gets a fraction of the visitors — same colourful houses, no crowd quotas'],
   },
   'portofino': {
     name:'Portofino', country:'Italy', lat:44.303, lng:9.210,
@@ -996,51 +1056,11 @@ const DESTS = {
     alt:null,
   },
   // AMALFI / NAPLES
-  'pompeii': {
-    name:'Pompeii', country:'Italy', lat:40.750, lng:14.486,
-    nearPorts:['naples'],
-    cityByDay:[55,62,58,65,70,80,75],
-    sub:'Archaeological site',
-    note:'Top-ranked cruise excursion from Naples. Lines at the main entrance (Porta Marina) regularly exceed 30 min on port days. Groups move in packs with audio guide flags.',
-    shoulder:'Site opens at 9am — arrive at opening for a dramatically different experience.',
-    alt:'Herculaneum — 20 min west, smaller, better preserved, fraction of the crowd. Equally impressive ruins.',
-  },
-  'amalfi': {
-    name:'Amalfi', country:'Italy', lat:40.634, lng:14.603,
-    nearPorts:['naples'],
-    cityByDay:[58,65,62,68,72,82,78],
-    sub:'Amalfi Coast town',
-    note:'Naples cruise excursion staple. The coastal road (SS163) becomes severely congested on port days — buses from Naples add 40–60 min each way.',
-    shoulder:'Early morning or after 5pm. The town is genuinely beautiful when the day-trippers leave.',
-    alt:'Ravello — 7km above Amalfi, no cruise buses, same coastline views, substantially better dining.',
-  },
-  'positano': {
-    name:'Positano', country:'Italy', lat:40.628, lng:14.485,
-    nearPorts:['naples'],
-    cityByDay:[60,68,65,70,75,85,80],
-    sub:'Amalfi Coast town',
-    note:'Heavily photographed and heavily trafficked. Cruise excursion coaches from Naples and Salerno both route through. Access is bottlenecked by the single coastal road.',
-    shoulder:'Ferry from Naples or Amalfi avoids road congestion. Before 9am the staircase streets are walkable.',
-    alt:'Praiano — 10 min west by ferry, half the people, same dramatic clifftop views, no cruise buses.',
-  },
-  'sorrento': {
-    name:'Sorrento', country:'Italy', lat:40.626, lng:14.376,
-    nearPorts:['naples'],
-    cityByDay:[55,65,60,68,70,80,75],
-    sub:'Bay of Naples town',
-    note:'Major cruise excursion hub from Naples. Circumvesuviana train brings an additional wave of day-trippers independently of the port.',
-    shoulder:'Evening (after 6pm) is the best time — cruise groups are long gone and local aperitivo culture takes over.',
-    alt:null,
-  },
-  'capri': {
-    name:'Capri', country:'Italy', lat:40.550, lng:14.242,
-    nearPorts:['naples'],
-    cityByDay:[62,70,65,72,78,88,85],
-    sub:'Island',
-    note:'Peak-season Capri receives up to 10,000 day visitors when multiple cruise ships are in Naples. The funicular from Marina Grande has queues of 45+ min.',
-    shoulder:'Staying overnight lets you experience the island after the day-trippers leave on the last ferry. Or go early on a non-port day.',
-    alt:'Ischia — 45 min ferry from Naples, thermal baths, volcanic beaches, a fraction of Capri\'s visitors.',
-  },
+
+
+
+
+
   'ravello': {
     name:'Ravello', country:'Italy', lat:40.650, lng:14.614,
     nearPorts:[],
@@ -1146,6 +1166,7 @@ const DESTS = {
     note:'Appears on some Civitavecchia cruise menus but far less frequently than Rome. Manageable even on port days.',
     shoulder:null,
     alt:null,
+    tips:['Orvieto Underground (tunnels and caves beneath the city) — guided tour, extraordinary, cruise groups rarely book it','Cathedral facade is one of the finest Gothic works in Italy — at its best in morning light before crowds','Pozzo di San Patrizio (St Patrick\'s Well) — double-helix Renaissance well, engineering marvel, rarely crowded','Cantina Foresi wine bar in Piazza del Duomo — Orvieto Classico at the source, outdoor tables facing the cathedral','Drive down to the old river town (Orvieto Scalo) for a local lunch — no tourists, trattoria prices'],
   },
   // GREECE
   'athens': {
@@ -1249,24 +1270,8 @@ const DESTS = {
     shoulder:'Noon midweek after cruise groups leave. The trails above the monastery are quiet even when the plaza is crowded.',
     alt:null,
   },
-  'nice': {
-    name:'Nice', country:'France', lat:43.710, lng:7.262,
-    nearPorts:['villefranche'],
-    cityByDay:[58,65,60,68,70,78,75],
-    sub:'French Riviera city',
-    note:'Villefranche is just 6km from Nice. Old Town (Vieux-Nice) is the cruise concentration zone. Promenade des Anglais is broad enough to absorb it.',
-    shoulder:'Morning market in Cours Saleya before 11am is excellent. Old Town lunch after 2pm when bus tours have moved on.',
-    alt:null,
-  },
-  'monaco': {
-    name:'Monaco', country:'Monaco', lat:43.738, lng:7.425,
-    nearPorts:['villefranche'],
-    cityByDay:[55,62,58,65,68,75,72],
-    sub:'City-state',
-    note:'Very small geography for a consistent cruise stop. The Prince\'s Palace square and Casino square are the concentration points. Formula 1 week is a different category entirely.',
-    shoulder:null,
-    alt:'Menton — 20 min east, Belle Époque architecture, lemon festival, beautiful old town, no cruise groups.',
-  },
+
+
   'eze': {
     name:'Eze', country:'France', lat:43.727, lng:7.362,
     nearPorts:['villefranche'],
@@ -1275,15 +1280,6 @@ const DESTS = {
     note:'Villefranche cruise excursion staple — appears on most French Riviera shore excursion menus. The single road in means the village becomes genuinely congested when buses arrive 10am–2pm.',
     shoulder:'Before 9:30am or after 4pm. The exotic garden at the top is quieter than the main street even on busy days.',
     alt:'Peillon — 30 min inland, equally dramatic perched village, not on any cruise itinerary, almost no tourists at all.',
-  },
-  'antibes': {
-    name:'Antibes', country:'France', lat:43.580, lng:7.125,
-    nearPorts:['villefranche'],
-    cityByDay:[45,52,48,55,58,72,68],
-    sub:'Old town and ramparts',
-    note:'Occasional cruise excursion from Villefranche. More manageable than Nice or Monaco due to size. Picasso Museum and the market are the main cruise stops.',
-    shoulder:null,
-    alt:null,
   },
   'saint-paul-de-vence': {
     name:'Saint-Paul-de-Vence', country:'France', lat:43.697, lng:7.121,
@@ -1294,15 +1290,6 @@ const DESTS = {
     shoulder:'After 5pm when day-trippers leave — the light on the valley is better for photography anyway.',
     alt:null,
   },
-  'menton': {
-    name:'Menton', country:'France', lat:43.776, lng:7.500,
-    nearPorts:[],
-    cityByDay:[22,28,24,30,32,45,42],
-    sub:'Belle Époque border town',
-    note:'Not on any major cruise excursion menu. Just 3km from the Italian border. Consistently underrated — better beaches than Nice, less crowded old town than Monaco.',
-    shoulder:null,
-    alt:null,
-  },
   'avignon': {
     name:'Avignon', country:'France', lat:43.949, lng:4.806,
     nearPorts:['marseille'],
@@ -1311,6 +1298,7 @@ const DESTS = {
     note:'Occasional Marseille cruise excursion. Long drive reduces frequency. Manageable even on port days.',
     shoulder:null,
     alt:null,
+    tips:['Palais des Papes: one of the largest Gothic buildings in Europe — arrive at opening, manageable before noon','Pont Saint-Bénézet (the broken bridge): small and overpriced but genuine — go early or skip it for the view from the ramparts','Rocher des Doms park above the city: free, panoramic views of the Rhône, almost no cruise groups','Villeneuve-lès-Avignon across the river: 15-min walk, chartreuse monastery ruins, Musée Pierre de Luxembourg, almost no tourists','Les Halles indoor market Saturday morning — Provençal produce, truffle season stands, local crowd'],
   },
   // MALTA
   'valletta': {
@@ -1403,24 +1391,6 @@ const DESTS = {
     shoulder:'The Jewish Quarter and southern residential areas of the old town see far fewer cruise groups. Early morning on the walls is excellent.',
     alt:'Lindos village (acropolis side) early morning — cruise buses arrive by 10am so go before then.',
   },
-  'lindos': {
-    name:'Lindos', country:'Greece', lat:36.090, lng:28.086,
-    nearPorts:['Rhodes'],
-    cityByDay:[50,62,55,65,68,78,80],
-    sub:'Acropolis village',
-    note:'Standard Rhodes cruise excursion. The donkey path to the acropolis and the whitewashed village streets become genuinely jammed 10am–3pm.',
-    shoulder:'Acropolis at 8am (opening) before the first cruise buses arrive from Rhodes port.',
-    alt:null,
-  },
-  'knossos': {
-    name:'Knossos', country:'Greece', lat:35.298, lng:25.163,
-    nearPorts:['heraklion'],
-    cityByDay:[42,55,48,58,60,68,65],
-    sub:'Minoan palace complex',
-    note:'Default Heraklion cruise excursion — 5km from the port. Site is large but tour groups cluster around the same reconstruction areas simultaneously.',
-    shoulder:'First entry (8am) or last 2 hours of the day.',
-    alt:null,
-  },
   'chania': {
     name:'Chania', country:'Greece', lat:35.513, lng:24.018,
     nearPorts:['heraklion'],
@@ -1429,6 +1399,7 @@ const DESTS = {
     note:'Long drive from Heraklion (150km) means only some cruise excursions make the journey. The Venetian harbour is compact and gets crowded quickly.',
     shoulder:'The leather workshop street and covered market are best before 10am.',
     alt:null,
+    tips:['Splantzia neighborhood behind the harbour — quiet Ottoman-Venetian streets, no cruise buses, excellent kafenions','Leather Street (Skrydlof) at 8am before the tourist wave — genuine craftsmen, good prices','Municipal Market for a local breakfast — fresh cheese, honey, olive oil, locals shopping','Imbros Gorge (east of Chania): less famous than Samaria but equally beautiful and far less crowded','Balos Lagoon: requires a boat or 4WD — the lagoon is extraordinary but avoid peak summer midday'],
   },
   'rethymno': {
     name:'Rethymno', country:'Greece', lat:35.368, lng:24.474,
@@ -1438,6 +1409,7 @@ const DESTS = {
     note:'Occasionally on Heraklion cruise excursion menus. Less crowded than Chania with a more authentic local atmosphere.',
     shoulder:null,
     alt:null,
+    tips:['Fortezza (Venetian fortress) for panoramic views — cruise groups rarely climb up','Rimondi Fountain area at dusk — locals at kafenions, far more authentic than Chania harbour','Arkadi Monastery 25km inland — dramatic history (1866 revolt), extraordinary baroque church, almost no crowds','Cretaquarium east of Heraklion is worth knowing about — world-class Mediterranean marine exhibit, zero queue'],
   },
   // SPANISH COAST
   'sitges': {
@@ -1448,6 +1420,7 @@ const DESTS = {
     note:'Occasional Barcelona cruise excursion. Manageable on weekdays; weekends are packed with Barcelona day-trippers independent of cruise activity.',
     shoulder:null,
     alt:null,
+    tips:['Museu Cau Ferrat (Santiago Rusiñol\'s house): extraordinary collection of El Greco paintings and Art Nouveau objects, almost never crowded','Carrer de l\'Esglesésia (Church Street) early morning before the beach crowds arrive','Bodega Renaixença for cava tasting: Penedès wine region is 20 min inland, zero tourist infrastructure'],
   },
   'tarragona': {
     name:'Tarragona', country:'Spain', lat:41.119, lng:1.245,
@@ -1457,6 +1430,17 @@ const DESTS = {
     note:'Less frequent Barcelona cruise excursion. The Roman amphitheatre and old town are genuinely excellent and largely uncrowded even on port days.',
     shoulder:null,
     alt:null,
+    tips:['Roman Amphitheatre overlooking the sea: extraordinarily scenic, cruise groups from Barcelona rarely make the 1.5hr trip','Passeig Arqueològic (city walls walkway): walk the 2nd-century BC city walls, almost always quiet','Museu Nacional Arqueològic: exceptional collection of Roman mosaics and sculptures, free on Sundays'],
+  },
+  'palma de mallorca': {
+    name:'Palma de Mallorca', country:'Spain', lat:39.574, lng:2.650,
+    nearPorts:['palma'],
+    cityByDay:[55,65,60,68,72,82,85],
+    sub:'Mallorcan capital ⚓ PORT',
+    note:'Major Mediterranean cruise homeport and stop. The Cathedral (La Seu) and old town are cruise focal points. City is large enough to absorb groups.',
+    shoulder:'La Seu Cathedral first thing in the morning. The Es Baluard museum area is rarely overrun.',
+    alt:null,
+    tips:['La Seu Cathedral: Antoni Gaudí restored the interior — extraordinary light through the rose window, arrive at 9am opening','Es Baluard (modern art museum): world-class collection in a converted bastion, almost always manageable','Mercat de l\'Olivar: covered market, local produce, excellent tapas bar at the back — entirely Mallorcan clientele','Santa Catalina neighbourhood for lunch: the market hall and surrounding restaurants are local and excellent','Palau March museum: private collection including Rodin sculptures, Henry Moore, and a Miró tapestry — almost never crowded'],
   },
   'valldemossa': {
     name:'Valldemossa', country:'Spain', lat:39.711, lng:2.622,
@@ -1466,6 +1450,7 @@ const DESTS = {
     note:'Standard Palma cruise excursion — Chopin and George Sand connection makes it a crowd-puller. The monastery courtyard is small and fills quickly.',
     shoulder:'Before 10am or after 4pm. The village itself outside the monastery is calm even when cruise groups are present.',
     alt:'Deià — 10 min north, Robert Graves lived here, far fewer visitors, better restaurants, equally beautiful.',
+    tips:['Deià village 10 min north: Robert Graves\' house (La Casa de Robert Graves) open to visitors, extraordinary terraced gardens, far fewer tourists','Tramuntana mountain road (Ma-10): drive it yourself rather than on a coach — viewpoints with zero cruise buses','Fornalutx village beyond Sóller: arguably the most beautiful village in Spain, almost no coaches go there'],
   },
   'soller': {
     name:'Sóller', country:'Spain', lat:39.765, lng:2.714,
@@ -1475,6 +1460,7 @@ const DESTS = {
     note:'Accessible by vintage tram from Palma — the train itself is a cruise excursion staple. The port (Port de Sóller) is more impacted than the town.',
     shoulder:null,
     alt:null,
+    tips:['Take the vintage wooden train from Palma: the experience is genuinely extraordinary — the cruise excursion version packs you in, but booking independently gives you flexibility','Fornalutx village 4km from Sóller: stone houses, mountain views, no coach parking — entirely peaceful','Orange and olive oil products from a local farm shop — genuine Mallorcan produce, not airport gifts'],
   },
   // CROATIA EXTRAS
   'ston': {
@@ -1484,15 +1470,6 @@ const DESTS = {
     sub:'Medieval salt pans',
     note:'Not on any major cruise excursion route. Europe\'s second-longest walls, extraordinary oysters, and virtually no foreign tourists mid-week.',
     shoulder:null,
-    alt:null,
-  },
-  'trogir': {
-    name:'Trogir', country:'Croatia', lat:43.517, lng:16.251,
-    nearPorts:['split'],
-    cityByDay:[38,50,42,52,55,62,58],
-    sub:'UNESCO island town',
-    note:'Occasional Split cruise excursion. Small island connected by bridge — gets crowded when multiple groups arrive simultaneously.',
-    shoulder:'Evening is best. Most cruise groups are back on the ship by 5pm.',
     alt:null,
   },
   'perast': {
@@ -1534,24 +1511,8 @@ const DESTS = {
     shoulder:null,
     alt:null,
   },
-  'pamukkale': {
-    name:'Pamukkale', country:'Turkey', lat:37.920, lng:29.119,
-    nearPorts:['kusadasi'],
-    cityByDay:[38,50,42,55,58,68,65],
-    sub:'Travertine terraces',
-    note:'Long-haul cruise excursion from Kusadasi (3hrs each way). Coach groups arrive in waves — the terraces are small enough that this is very noticeable.',
-    shoulder:'Arrive before 9am or stay past 4pm when day-tripper buses leave. The site is stunning at golden hour.',
-    alt:null,
-  },
-  'bodrum': {
-    name:'Bodrum', country:'Turkey', lat:37.034, lng:27.430,
-    nearPorts:['bodrum'],
-    cityByDay:[42,55,48,60,65,80,85],
-    sub:'Aegean coastal town',
-    note:'Increasingly popular cruise stop and yacht charter hub. The Castle of St Peter and old bazaar are the cruise focal points. Weekend general tourism adds to port day crowds.',
-    shoulder:'Early evening when the day boats return and cruise passengers reboard is the best time.',
-    alt:null,
-  },
+
+
   'istanbul': {
     name:'Istanbul', country:'Turkey', lat:41.008, lng:28.978,
     nearPorts:['istanbul'],
@@ -1620,6 +1581,7 @@ const DESTS = {
     note:'UNESCO old town with narrow alleyways that funnel cruise groups through the same streets. Multiple ships simultaneously is common in summer.',
     shoulder:'The Liston promenade before 9:30am. The Venetian fortress is often skipped by cruise groups — excellent views.',
     alt:'Paleokastritsa — 25km northwest, dramatic monastery on a cliff, no cruise buses.',
+    tips:['Old Fortress (Paleo Frourio): cruise groups walk the Liston but almost never enter the fortress — extraordinary views','Kanoni peninsula for the Mouse Island view — most photogenic at dawn or dusk when cruise groups are absent','Paleokastritsa monastery: 25km away, cliff-top setting, dramatic coves below, hire a small boat to the sea caves','Corfu town backstreets at 7am — genuine Greek island morning before the cruise wave, excellent kafenion coffee'],
   },
   'zakynthos': {
     name:'Zakynthos (Shipwreck Beach)', country:'Greece', lat:37.849, lng:20.760,
@@ -1629,6 +1591,7 @@ const DESTS = {
     note:'Navagio (Shipwreck Beach) is one of the most photographed spots in Greece and a standard cruise excursion. Boat tours from the port go in convoys — midday is peak.',
     shoulder:'First boats from Agios Nikolaos port depart at 9am. Go early.',
     alt:null,
+    tips:['Navagio viewpoint from above (not the beach): dramatic cliff-top view, no boat required, far fewer people than the beach itself','Blue Caves (Xigia): sea caves with vivid blue water, accessible by small boat, much less crowded than Navagio','Marathonisi island (turtle nesting beach): quiet, protected, Caretta caretta sea turtles — no cruise excursions go here','Zakynthos Town\'s Byzantine Museum has extraordinary rescued frescoes — almost always empty'],
   },
   'skiathos': {
     name:'Skiathos', country:'Greece', lat:39.162, lng:23.493,
@@ -1638,6 +1601,7 @@ const DESTS = {
     note:'Small island that can feel overwhelmed on busy port days. Koukounaries beach is the cruise group default.',
     shoulder:'The old town and Kastro (abandoned medieval capital) are rarely on cruise itineraries.',
     alt:null,
+    tips:['Kastro (abandoned medieval capital): 45-min walk or boat, extraordinary ruins on a sea cliff, cruise groups never go','Lalaria beach (accessible only by boat): white pebbles, sculpted rock arch, dramatic — hire a small boat from the harbour','Monastery of Evangelistria: where the first Greek flag was raised (1807), 30-min walk from town, peaceful, almost no tourists','Morning coffee in the old port before the cruise tender brings the first wave — genuinely lovely'],
   },
 
   // ISRAEL
@@ -1649,15 +1613,7 @@ const DESTS = {
     note:'Major Israeli cruise port. Bahai Gardens and Acre (Akko) are the standard excursions. City itself is relaxed and manageable.',
     shoulder:null,
     alt:null,
-  },
-  'jerusalem': {
-    name:'Jerusalem Old City', country:'Israel', lat:31.778, lng:35.235,
-    nearPorts:['haifa'],
-    cityByDay:[58,65,62,68,72,75,30],
-    sub:'Holy city',
-    note:'2-hour drive from Haifa — full-day cruise excursion staple. Western Wall and Church of the Holy Sepulchre are extremely crowded on port days. Friday is quieter for general tourism but note Shabbat begins at sundown.',
-    shoulder:'Damascus Gate and the Muslim Quarter early morning (8–9am) before tour groups arrive.',
-    alt:null,
+    tips:['Bahai Gardens: the terraced gardens are extraordinary — arrive at the top and walk down for the best experience, cruise groups walk up','Acre (Akko) by train (30 min): one of the most complete Crusader cities in the world, UNESCO, far less visited than Jerusalem','German Colony neighbourhood in Haifa: tree-lined boulevard with excellent restaurants and cafés, almost no cruise groups','Wadi Nisnas neighbourhood: Arab-Jewish mixed quarter, street food, local market — a different Israel from the tour bus circuit'],
   },
 
   // MOROCCO
@@ -1669,6 +1625,7 @@ const DESTS = {
     note:'Atlantic cruise port and Morocco\'s largest city. Hassan II Mosque is the cruise focal point — the medina is less touristed than Marrakech but still busy on port days.',
     shoulder:null,
     alt:null,
+    tips:['Hassan II Mosque: the third-largest mosque in the world, guided tours available — genuinely extraordinary architecture','Old Medina: far less touristic than Marrakech, local shopping, real Casablanca life','Rick\'s Café: yes, it\'s themed around the film and the real Rick\'s didn\'t exist — but it\'s a beautiful space and excellent food','La Corniche seafront: locals\' promenade, seafood restaurants, Atlantic views — not on any cruise itinerary'],
   },
   'marrakech': {
     name:'Marrakech', country:'Morocco', lat:31.629, lng:-7.981,
@@ -1755,17 +1712,289 @@ const DESTS = {
     alt:null,
   },
 
-  // REMAINING PORTS — FINAL ADDITIONS
-  // KEFALONIA (Argostoli)
-  'kefalonia': {
-    name:'Kefalonia', country:'Greece', lat:38.172, lng:20.491,
-    nearPorts:['argostoli'],
-    cityByDay:[35,48,42,52,55,65,68],
-    sub:'Ionian island',
-    note:'Greece\'s largest Ionian island with extraordinary beaches (Myrtos, Petani), a dramatic cave lake (Melissani), and the picturesque village of Fiskardo. Cruise groups concentrate at Myrtos and Argostoli town.',
-    shoulder:'Fiskardo in the north gets far fewer cruise visitors than the southern beaches.',
+  // ── PORTUGAL ─────────────────────────────────────────
+  'lisbon': {
+    name:'Lisbon', country:'Portugal', lat:38.717, lng:-9.142,
+    nearPorts:['lisbon'],
+    cityByDay:[68,75,72,78,80,85,82],
+    sub:'Atlantic capital',
+    note:'Major Atlantic cruise port and homeport. Belém, Alfama, and the castle are the cruise concentration zones. City is large enough to absorb groups but the historic districts get dense on peak port days.',
+    shoulder:'Alfama at 8am before the tuk-tuks start — genuinely different. Bairro Alto for dinner after cruise groups leave.',
     alt:null,
+    tips:['Alfama neighborhood early morning — fado bars, local cafés, steep alleyways, zero cruise buses before 9am','LX Factory Sunday market — repurposed industrial complex, local designers and food, no coach groups','Museu Nacional do Azulejo — extraordinary tile museum in a convent, cruise groups almost never go','Time Out Market: take the concept, eat elsewhere — adjacent Mercado de Ribeira has the same vendors at half price and no queue','Ferry to Cacilhas across the Tagus — 10 minutes, dramatic Lisbon skyline view, entirely local experience'],
   },
+  'sintra': {
+    name:'Sintra', country:'Portugal', lat:38.798, lng:-9.390,
+    nearPorts:['lisbon'],
+    cityByDay:[58,72,65,75,78,88,92],
+    sub:'Fairy-tale palaces',
+    note:'Top cruise excursion from Lisbon (45 min by train). Pena Palace and the town centre are genuinely overwhelming on port days — one of the most crowded day-trip destinations in Europe per square kilometre.',
+    shoulder:'First train from Lisbon Rossio at 7:30am. Quinta da Regaleira opens at 9:30am and is less crowded than Pena Palace.',
+    alt:'Cascais — 40 min from Lisbon, Atlantic fishing town, beaches, no cruise buses, excellent seafood.',
+    tips:['Take the train from Rossio (not a coach) — arrive before 9am to beat the crowd wave','Quinta da Regaleira for the initiation well — cruise groups go to Pena Palace, not here','Monserrate Palace is 4km from the centre — practically no visitors, extraordinary gardens and architecture','Moorish Castle above the town is often skipped for Pena Palace — better views, fewer people'],
+  },
+  'porto': {
+    name:'Porto', country:'Portugal', lat:41.149, lng:-8.611,
+    nearPorts:['porto'],
+    cityByDay:[62,70,66,72,75,80,78],
+    sub:'Wine and tile city',
+    note:'Cruise ships dock at Leixões, 12km from the city. Ribeira waterfront and the wine lodges in Vila Nova de Gaia are cruise concentration points. City is large enough to absorb groups well.',
+    shoulder:'Ribeira at 7am before the coaches arrive. The Bolhão market and Bonfim neighborhood are nearly cruise-free.',
+    alt:null,
+    tips:['Majestic Café for coffee — yes, tourists know it, but it\'s genuinely beautiful and manageable before noon','Wine lodges in Vila Nova de Gaia: Taylor\'s and Ramos Pinto are less crowded than Graham\'s and Sandeman','Livraria Lello bookshop requires a ticket (€5) that counts toward purchase — go at opening to beat queues','Foz do Douro at the river mouth — local neighbourhood, beach, seafood, no cruise groups','Mercado do Bolhão (renovated) for lunch — tripe and bread, local stalls, a fraction of the tourist restaurants'],
+  },
+  'cascais': {
+    name:'Cascais', country:'Portugal', lat:38.697, lng:-9.421,
+    nearPorts:['lisbon'],
+    cityByDay:[42,52,46,55,58,72,78],
+    sub:'Atlantic fishing town',
+    note:'40-minute train from Lisbon, not on standard cruise excursion menus. Genuinely local Atlantic resort town — historic centre, beaches, excellent seafood.',
+    shoulder:null,
+    alt:null,
+    tips:['Boca do Inferno (Hell\'s Mouth) cliffs at sunset — dramatic, free, few tourists on weekdays','Casa da Guia seafood restaurants above the cliffs — better than anything in the tourist centre','Bike the coastal path to Guincho beach — empty Atlantic beaches 10km from town','Museu Condes de Castro Guimarães is free, extraordinary building, virtually no visitors'],
+  },
+  'funchal': {
+    name:'Funchal', country:'Portugal', lat:32.650, lng:-16.908,
+    nearPorts:['funchal'],
+    cityByDay:[48,58,52,62,65,72,68],
+    sub:'Madeira capital',
+    note:'Major Atlantic cruise hub. The Monte cable car, Mercado dos Lavradores, and the Reid\'s Palace area are cruise concentration points. City absorbs groups reasonably well.',
+    shoulder:'Levada walks are almost entirely cruise-free — tour operators offer transfers but the groups are small.',
+    alt:null,
+    tips:['Levada do Caldeirão Verde walk — 13km through laurisilva forest, zero cruise groups, extraordinary','Monte Palace Tropical Garden: cruise groups ride the cable car to Monte, but most skip the garden','Ponta de São Lourenço peninsula — dramatic volcanic headland, 45 min drive, almost no visitors','Mercado dos Lavradores: buy passion fruit and poncha (local rum drink) from the actual stall holders, not the tourist stalls at the entrance','Toboggan ride from Monte: yes, it\'s touristy, but it\'s genuinely Madeiran and fun'],
+  },
+  'obidos': {
+    name:'Óbidos', country:'Portugal', lat:39.362, lng:-9.157,
+    nearPorts:['lisbon'],
+    cityByDay:[35,48,42,52,55,65,68],
+    sub:'Medieval walled village',
+    note:'Occasional Lisbon cruise excursion (1hr drive). One of Portugal\'s most beautiful small towns — intact medieval walls, ginja (sour cherry liqueur) served in chocolate cups. Manageable even on port days due to its size.',
+    shoulder:null,
+    alt:null,
+    tips:['Drink ginja from a chocolate cup at a stall on Rua Direita — the whole village does this','Walk the full circuit of the medieval walls — free, views of the surrounding valley, cruise groups rarely go all the way around','Visit on a weekday morning when coach groups haven\'t arrived'],
+  },
+  'guimaraes': {
+    name:'Guimarães', country:'Portugal', lat:41.443, lng:-8.291,
+    nearPorts:['porto'],
+    cityByDay:[38,48,42,52,55,62,58],
+    sub:'Birthplace of Portugal',
+    note:'UNESCO historic centre, 55km from Porto. Birthplace of the first Portuguese king (1128). Not on standard cruise menus — too far for a half-day excursion.',
+    shoulder:null,
+    alt:null,
+    tips:['The castle and Paço dos Duques are extraordinary and almost always quiet','Largo da Oliveira square for lunch — local restaurants, local prices, no tourist menus','The Saturday market outside the walls is purely local'],
+  },
+  // ── IBIZA & BALEARICS ─────────────────────────────────
+  'ibiza town': {
+    name:'Ibiza Town (Dalt Vila)', country:'Spain', lat:38.908, lng:1.433,
+    nearPorts:['ibiza'],
+    cityByDay:[52,62,56,66,70,88,90],
+    sub:'UNESCO old town',
+    note:'Ibiza Town\'s Dalt Vila (upper old town) is a UNESCO World Heritage Site separate from the club scene. Cruise ships call at the harbour below. The old town is compact and fills quickly on port days.',
+    shoulder:'Dalt Vila at 8am before the first ferries and cruise tenders start.',
+    alt:'Formentera island — 30 min ferry, car-free, extraordinary beaches, almost no cruise groups.',
+    tips:['Dalt Vila for sunset from the cathedral terrace — cruise groups leave by 5pm, then it\'s magical','Es Canar Wednesday hippy market — 45 min north, genuine counterculture institution since 1973','Formentera by ferry: the water is Caribbean-quality and there\'s almost no development','Cala d\'Hort beach for the Es Vedrà rock view — difficult access keeps coach tours away'],
+  },
+  // ── ADDITIONAL GREEK ISLANDS ──────────────────────────
+  'naxos': {
+    name:'Naxos', country:'Greece', lat:37.106, lng:25.376,
+    nearPorts:['piraeus'],
+    cityByDay:[38,48,42,52,55,68,72],
+    sub:'Largest Cyclades island',
+    note:'Naxos Town has a dramatic Venetian kastro and the giant Portara arch on a causeway. Cruise calls here are less frequent than Mykonos or Santorini — better managed crowds.',
+    shoulder:null,
+    alt:null,
+    tips:['The Portara (Temple of Apollo arch) at sunset — usually quiet even on busy days','Village of Apiranthos inland — marble-paved streets, local cheese, almost zero tourists','Mount Zas hike — highest peak in the Cyclades, rewarding views, completely off tourist radar','Naxian cheese and kitron liqueur tasting at a local shop — genuine Cycladic food culture'],
+  },
+  'paros': {
+    name:'Paros', country:'Greece', lat:37.086, lng:25.148,
+    nearPorts:['piraeus'],
+    cityByDay:[40,52,45,55,58,75,80],
+    sub:'Cyclades island',
+    note:'Paros Town (Parikia) and Naoussa are the main cruise stops. Less overwhelmed than Mykonos but can get busy in peak summer. Growing in popularity.',
+    shoulder:'Naoussa fishing village before 10am is genuinely beautiful.',
+    alt:null,
+    tips:['Naoussa village for dinner — prettier than Parikia, better restaurants, cruise groups less concentrated','Panagia Ekatontapiliani (Church of 100 Doors) — one of the oldest churches in Greece, free, rarely crowded','Antiparos island by ferry (10 min) — quieter, Cycladic village, stalactite cave','Golden Beach on the east coast for windsurfing — serious sport, not tourist infrastructure'],
+  },
+  'milos': {
+    name:'Milos', country:'Greece', lat:36.723, lng:24.440,
+    nearPorts:['piraeus'],
+    cityByDay:[28,38,32,42,45,62,68],
+    sub:'Volcanic Cyclades island',
+    note:'Milos has the most dramatic beaches in the Cyclades (Sarakiniko, Kleftiko). Fewer cruise calls than Mykonos or Santorini — still relatively undiscovered. Growing fast.',
+    shoulder:null,
+    alt:null,
+    tips:['Sarakiniko white volcanic beach — otherworldly, arrive early before the boats from other islands arrive','Kleftiko sea caves: only accessible by boat, the most extraordinary swimming in the Aegean','Plaka village (capital) at sunset — minimal crowds, best view of the island','Venus de Milo was found here — the small local archaeological museum has the context cruise groups miss'],
+  },
+  'samos': {
+    name:'Samos', country:'Greece', lat:37.759, lng:26.978,
+    nearPorts:['piraeus'],
+    cityByDay:[30,40,35,45,48,60,65],
+    sub:'Eastern Aegean island',
+    note:'Samos Town (Vathy) and Pythagorion (UNESCO ancient harbour) are the cruise stops. Less visited than the Dodecanese or Cyclades — genuine Greek island character.',
+    shoulder:null,
+    alt:null,
+    tips:['Pythagorion ancient harbour and Eupalinos Tunnel (ancient Greek engineering marvel) — rarely crowded','Ireon sanctuary of Hera — vast ancient site, almost always empty','Samos wine tasting: muscat of Samos is legendary, local wineries outside town welcome visitors','Mount Ampelos interior — unspoiled villages, local tavernas, zero cruise groups'],
+  },
+  'lesbos': {
+    name:'Lesbos (Mytilene)', country:'Greece', lat:39.107, lng:26.554,
+    nearPorts:['piraeus'],
+    cityByDay:[28,38,32,42,45,55,58],
+    sub:'Northern Aegean island',
+    note:'Greece\'s third-largest island, rarely on major cruise menus. Petrified forest, ouzo production (the real source of Greek ouzo), medieval castle. Authentic Greek island life.',
+    shoulder:null,
+    alt:null,
+    tips:['Petrified Forest of Lesbos — UNESCO geopark, 20-million-year-old trees, almost no tourists','Plomari village: ouzo distilleries including Barbayiannis — free tastings, entirely local experience','Molyvos (Mithymna) northern village — perfectly preserved medieval harbour town, fewer visitors than Mytilene','Eressos village on the west coast — birthplace of Sappho, black volcanic beach, entirely unspoiled'],
+  },
+  'aegina': {
+    name:'Aegina', country:'Greece', lat:37.748, lng:23.443,
+    nearPorts:['piraeus'],
+    cityByDay:[42,55,48,58,62,78,82],
+    sub:'Saronic Gulf island',
+    note:'Only 35 minutes by hydrofoil from Piraeus. Temple of Aphaia (one of the best-preserved in Greece), pistachio orchards, and the charming port town. Weekend crowds from Athens can be intense.',
+    shoulder:'Weekdays are dramatically quieter — weekend Athenians dominate Saturday/Sunday.',
+    alt:null,
+    tips:['Temple of Aphaia: contemporary with the Parthenon, far less visited, often almost empty on weekdays','Aegina pistachio products are genuinely among the best in the world — buy from a farmer not a tourist shop','Palaiochora (abandoned medieval capital) above the island: extraordinary ruins in a ghost town, almost no visitors','Perdika village for a fish lunch — 8km from the port, local fishing boats, minimal tourist infrastructure'],
+  },
+  'hydra': {
+    name:'Hydra', country:'Greece', lat:37.348, lng:23.459,
+    nearPorts:['piraeus'],
+    cityByDay:[45,58,52,62,65,80,85],
+    sub:'Car-free Saronic island',
+    note:'No cars or motorbikes — all transport by donkey or boat. Beautiful harbour, artists\' colony. Day-trippers from Athens (1.5hr hydrofoil) and cruise tenders both arrive. Small island can feel crowded.',
+    shoulder:'Arrive by first hydrofoil, leave on the last — midday is the worst for crowds.',
+    alt:null,
+    tips:['Walk the coastal path to Kamini and Vlychos villages — 30 min, no donkey traffic, peaceful','Sunset from the cannon platforms above the harbour — most visitors are in the waterfront bars by then','Swim at Spilia sea platform (ladder into water below the cliff) — cruise groups don\'t find it','Eat at a taverna in Kamini not the harbour — same food, half the price, locals'],
+  },
+  'rhodes old town extras': {
+    name:'Rhodes Old Town', country:'Greece', lat:36.444, lng:28.222,
+    nearPorts:['Rhodes'],
+    cityByDay:[55,65,58,68,70,78,80],
+    sub:'Medieval walled city',
+    note:'One of the best-preserved medieval cities in Europe and a top Aegean cruise stop.',
+    shoulder:'Jewish Quarter and southern residential areas see far fewer cruise groups.',
+    alt:'Lindos village (acropolis side) early morning.',
+    tips:['Jewish Quarter (Ovriaki) is almost never crowded despite being metres from the main tourist zone','Street of the Knights at 7:30am is extraordinary — completely empty before the first cruise tender','Lindos white village: go before 10am, when cruise buses arrive it becomes impassable','Monolithos castle on the west coast: dramatic ruins, incredible views, almost zero visitors'],
+  },
+  // ── FRANCE ADDITIONS ──────────────────────────────────
+  'nice': {
+    name:'Nice', country:'France', lat:43.710, lng:7.262,
+    nearPorts:['villefranche'],
+    cityByDay:[62,68,65,70,72,82,85],
+    sub:'Riviera capital',
+    note:'Major Riviera city — cruise ships tender from Villefranche 10km east. The Promenade des Anglais and Vieux-Nice are cruise focal points. City is large enough to absorb groups.',
+    shoulder:'Cours Saleya flower market before 10am. The Russian Orthodox Cathedral area sees almost no cruise groups.',
+    alt:null,
+    tips:['Cours Saleya flower market at 7am before the tourist wave — buy socca (chickpea pancake) for breakfast','Colline du Château (Castle Hill) for panoramic views — free lift, cruise groups rarely make the climb','Musée Matisse and Musée National Marc Chagall are world-class and rarely crowded','Socca at Chez René Socca on Rue Miralheti — the best in Nice, locals-only queue before noon','Vieux-Nice back streets (Rue Pairolière) for shopping — local provisions, not tourist trinkets'],
+  },
+  'cannes': {
+    name:'Cannes', country:'France', lat:43.552, lng:7.017,
+    nearPorts:['marseille'],
+    cityByDay:[55,65,60,68,72,85,88],
+    sub:'Film festival city',
+    note:'Occasional tender stop for smaller ships. La Croisette and the Palais des Festivals are the cruise focal points. Lérins Islands (free ferry) are better than the town on busy days.',
+    shoulder:'Forville market early morning — local Provençal produce, no tourist stalls.',
+    alt:null,
+    tips:['Île Sainte-Marguerite (Lérins Islands) by ferry — Mediterranean nature reserve, the real Man in the Iron Mask prison, almost no crowds','Forville market for breakfast — local cheese, tapenade, socca, entirely non-touristy','Le Suquet (old town on the hill) — cruise groups stay on La Croisette, the old town is peaceful','Mougins village 10km inland — where Picasso spent his last years, Michelin-starred restaurants, zero cruise traffic'],
+  },
+  'arles': {
+    name:'Arles', country:'France', lat:43.677, lng:4.630,
+    nearPorts:['marseille'],
+    cityByDay:[38,50,44,54,58,70,72],
+    sub:'Van Gogh city',
+    note:'Cruise excursion from Marseille (1hr). Roman amphitheatre, Van Gogh sites, and the Camargue are the draws. Less crowded than Avignon.',
+    shoulder:null,
+    alt:null,
+    tips:['Roman amphitheatre (Les Arènes) opens at 9am — first hour is almost empty','Van Gogh Foundation: not the hospital from the paintings (that\'s the Espace Van Gogh) but an extraordinary art space','Les Alyscamps (Roman necropolis) at dusk — one of the great atmospheric sites in Provence, almost never crowded','Camargue flamingo viewing at the Pont de Gau bird sanctuary — 15 min south, no cruise buses'],
+  },
+  // ── MONACO ────────────────────────────────────────────
+  'monaco': {
+    name:'Monaco', country:'Monaco', lat:43.740, lng:7.406,
+    nearPorts:['villefranche'],
+    cityByDay:[58,65,62,68,72,80,82],
+    sub:'City-state',
+    note:'Cruise ships tender from Villefranche or dock directly at Monaco\'s small port. The Casino, Prince\'s Palace, and Oceanographic Museum are cruise focal points. Very small — crowds are intense on port days.',
+    shoulder:'Jardins Exotiques (exotic cactus garden on the cliff) is almost never on cruise itineraries.',
+    alt:'Èze village — 10 min inland, medieval village perched 427m above sea, half the crowds.',
+    tips:['Jardins Exotiques — dramatic cactus collection on a cliff face, extraordinary views, cruise groups skip it','Old Monaco-Ville at 7:30am before the cruise tenders start — actually walkable','The Oceanographic Museum is world-class (founded by Prince Albert I in 1910) and manageable before noon','Casino de Monte-Carlo: you can enter the atrium free — for the interior you need to dress up but cruise groups usually don\'t'],
+  },
+  // ── TURKEY ADDITIONS ──────────────────────────────────
+  'pamukkale': {
+    name:'Pamukkale', country:'Turkey', lat:37.920, lng:29.119,
+    nearPorts:['kusadasi','izmir'],
+    cityByDay:[42,58,50,62,65,72,68],
+    sub:'Cotton castle travertines',
+    note:'UNESCO terraced hot spring pools and the ancient city of Hierapolis above. Long cruise excursion from Kusadasi (3hrs each way). Coach convoys arrive in waves 11am–2pm.',
+    shoulder:'Arrive at opening (8am) — the white travertines are photogenic and empty before the coach groups.',
+    alt:null,
+    tips:['Enter from the top (Hierapolis ruins) not the bottom — cruise groups enter from the bottom, you walk downhill into a quieter experience','Antique pool (Cleopatra\'s Pool) where you swim among Roman columns — book ahead, worth it despite the fee','Hierapolis necropolis (vast ancient cemetery) extends 2km beyond the main site — cruise groups never walk that far','Stay overnight in Pamukkale village — the travertines at sunset and sunrise with no day-trippers are extraordinary'],
+  },
+  'bodrum': {
+    name:'Bodrum', country:'Turkey', lat:36.856, lng:27.224,
+    nearPorts:['bodrum'],
+    cityByDay:[50,62,55,65,68,82,85],
+    sub:'Aegean resort town',
+    note:'Major cruise port and Turkish holiday hub. The Castle of St Peter (Bodrum Castle) and the old bazaar are cruise focal points. Town is lively but can feel overwhelmed on peak summer port days.',
+    shoulder:'Castle at opening (9am). The waterfront restaurants are packed — eat inland in the bazaar.',
+    alt:'Gümüşlük village — 20km west, submerged ancient city, excellent fish restaurants, zero cruise buses.',
+    tips:['Gümüşlük village: wade across the causeway to Rabbit Island, fish restaurants with tables in the water, utterly local','Bodrum Castle (Museum of Underwater Archaeology) is genuinely world-class — arrive at opening before the guided groups','The peninsula beaches at Yalıkavak and Türkbükü are quieter than Bodrum Town and accessible by dolmuş','Mausoleum of Halicarnassus: one of the Seven Wonders of the Ancient World, ruins often nearly empty'],
+  },
+  // ── ISRAEL ADDITIONS ──────────────────────────────────
+  'tel aviv': {
+    name:'Tel Aviv', country:'Israel', lat:32.087, lng:34.787,
+    nearPorts:['ashdod'],
+    cityByDay:[55,62,60,65,68,72,42],
+    sub:'Mediterranean city',
+    note:'35km from Ashdod port. Bauhaus White City (UNESCO), Carmel Market, and the beach. Cruise groups from Ashdod typically head to Jerusalem — Tel Aviv sees relatively few.',
+    shoulder:'Carmel Market (Shuk HaCarmel) Friday morning is one of the great urban food experiences.',
+    alt:null,
+    tips:['Carmel Market on a Friday morning: enormous, chaotic, extraordinary — arrive before 11am','Bauhaus White City walking tour: the largest concentration of Bauhaus architecture in the world, free to walk','Jaffa Port and flea market — wander the Ottoman alleys, galleries in old warehouses, excellent hummus at Abu Hassan','Levinsky Market (spice market) in Florentin: saffron, dried fruit, pickles, halva — zero tourists','Hatachana (old train station complex): independent restaurants, galleries, local crowd at weekends'],
+  },
+  // ── CYPRUS ADDITIONS ────────────────────────────────
+  'kyrenia': {
+    name:'Kyrenia (North Cyprus)', country:'Cyprus', lat:35.341, lng:33.319,
+    nearPorts:['larnaca','limassol'],
+    cityByDay:[28,38,32,42,45,55,52],
+    sub:'Crusader harbour',
+    note:'Kyrenia\'s horseshoe harbour and Crusader castle are among the most photogenic in the eastern Mediterranean. In the Turkish-controlled north — requires crossing through Nicosia checkpoint or flying to Ercan.',
+    shoulder:null,
+    alt:null,
+    tips:['The Kyrenia castle and shipwreck museum (ancient Greek merchant ship) are extraordinary and rarely crowded','Bellapais Abbey above the town: Gothic ruins in a mountain village, Lawrence Durrell wrote about it, almost no visitors','Drive up to St Hilarion Castle: fairy-tale Crusader fortress in the mountains, commanding views, few tourists'],
+  },
+  // ── MOROCCO ADDITIONS ───────────────────────────────
+  'fes': {
+    name:'Fès', country:'Morocco', lat:34.037, lng:-5.000,
+    nearPorts:['casablanca','tangier'],
+    cityByDay:[42,55,48,58,62,68,65],
+    sub:'Imperial city',
+    note:'The largest medieval Islamic city in the world — Fès el-Bali is genuinely disorienting. Long cruise excursion from Casablanca (3hrs) or Tangier (3hrs). Tour groups concentrate at the tanneries and main medina gates.',
+    shoulder:'The tanneries from the leather shops above (usually free entry) are best in morning light.',
+    alt:null,
+    tips:['Tanneries viewed from above (enter the leather shops, they\'ll invite you up): morning light makes the colours extraordinary','The Bou Inania madrasa is more beautiful than the more-visited Attarine madrasa and less crowded','Hire a local guide (not a tour group guide) — the medina has 9,000 streets, you will get lost without one','Lunch at a rooftop restaurant overlooking the medina — the view changes everything','Rue Talaa Kebira from the Bab Bou Jeloud gate early morning: the main artery before the chaos begins'],
+  },
+  // ── EGYPT ───────────────────────────────────────────
+  'cairo': {
+    name:'Cairo & Pyramids', country:'Egypt', lat:30.044, lng:31.236,
+    nearPorts:['alexandria'],
+    cityByDay:[62,70,65,72,75,68,55],
+    sub:'Ancient capital',
+    note:'Full-day cruise excursion from Alexandria (3hrs each way). The Giza Pyramids, Sphinx, and Egyptian Museum are the cruise stops. One of the world\'s great experiences but the logistics are significant — a full day barely scratches the surface.',
+    shoulder:'Pyramids at dawn or dusk are dramatically less crowded than midday. The Sound & Light show is actually worthwhile.',
+    alt:null,
+    tips:['Solar Boat Museum next to the Great Pyramid: a 4,600-year-old intact wooden boat, rarely included in cruise tours','Egyptian Museum: the Tutankhamun galleries are extraordinary but arrive early — cruise groups fill them by 11am','Khan el-Khalili bazaar: the tourist section is the first alleyway — walk deeper for genuine workshops and merchants','Islamic Cairo (Al-Azhar area): the medieval mosque and madrasa complex is extraordinary and cruise tours almost never go'],
+  },
+  'alexandria': {
+    name:'Alexandria', country:'Egypt', lat:31.200, lng:29.918,
+    nearPorts:['alexandria'],
+    cityByDay:[48,58,52,62,65,60,52],
+    sub:'Ancient Mediterranean city',
+    note:'Most cruise excursions head straight to Cairo (3hrs away). Alexandria itself has the Bibliotheca Alexandrina, Greco-Roman Museum, catacombs, and the Corniche seafront — all manageable without a guide.',
+    shoulder:null,
+    alt:null,
+    tips:['Bibliotheca Alexandrina: world-class modern library on the site of the ancient one, architecture is extraordinary','Catacombs of Kom el-Shoqafa: Greco-Roman burial chambers discovered by a donkey falling through the floor in 1900 — genuinely remarkable','Qaitbay Citadel built on the exact site of the ancient Lighthouse of Alexandria — views of the harbour','Stanley Bridge neighbourhood: locals\' seafront, seafood restaurants, entirely non-touristy'],
+  },
+
+  // ── REMAINING PORTS — FINAL ADDITIONS
+  // KEFALONIA (Argostoli),
   'melissani cave': {
     name:'Melissani Cave', country:'Greece', lat:38.253, lng:20.618,
     nearPorts:['argostoli'],
@@ -1776,15 +2005,7 @@ const DESTS = {
     alt:null,
   },
   // ISRAEL — ASHDOD
-  'tel aviv': {
-    name:'Tel Aviv', country:'Israel', lat:32.087, lng:34.787,
-    nearPorts:['ashdod'],
-    cityByDay:[55,62,60,65,68,72,45],
-    sub:'Mediterranean city',
-    note:'Ashdod is 35km south of Tel Aviv. Bauhaus White City architecture, outstanding food scene, and beach culture. Cruise groups from Ashdod typically head to Jerusalem instead — Tel Aviv sees fewer.',
-    shoulder:'Carmel Market Friday morning is exceptional. Old Jaffa port district for dinner.',
-    alt:null,
-  },
+
   'masada': {
     name:'Masada', country:'Israel', lat:31.316, lng:35.354,
     nearPorts:['ashdod','haifa'],
@@ -1822,6 +2043,7 @@ const DESTS = {
     note:'UNESCO medina on the Atlantic coast, 2.5hrs from Agadir. Ramparts, blue boats, argan oil, and world-class wind for kite-surfing. Jimi Hendrix famously visited. Much less crowded than Marrakech.',
     shoulder:null,
     alt:null,
+    tips:['The ramparts at sunrise — completely empty, dramatic Atlantic views from the Skala sea bastion','Fish grills at the port: the freshest catch of the day, grilled to order, entirely local prices','Argan oil cooperatives on the road from Agadir: women\'s cooperatives doing traditional processing — buy direct, not from tourist shops in the medina','Gnawa musicians in Djemaa Lghzel square — ancient sub-Saharan musical tradition, informal performances in the evening'],
   },
   'taroudant': {
     name:'Taroudant', country:'Morocco', lat:30.470, lng:-8.877,
@@ -1831,6 +2053,7 @@ const DESTS = {
     note:'Walled market town 80km from Agadir, often called "Marrakech without the tourists." Intact red-ochre ramparts, traditional souks, and almost no cruise groups.',
     shoulder:null,
     alt:null,
+    tips:['Cycle the full circuit of the ramparts (7km) — hire a bicycle from the square, almost no other tourists do this','Souk des Bijoutiers (jewellery souk) for Berber silver — genuine craftsmen, no fixed prices, far less pressure than Marrakech','Riad lunch in the medina — several family-run riads serve set lunch to non-guests, extraordinary value'],
   },
   // CANARY ISLANDS — LANZAROTE & FUERTEVENTURA
   'timanfaya': {
@@ -1841,6 +2064,7 @@ const DESTS = {
     note:'Lunar volcanic landscape from 1730s eruptions. Standard Lanzarote cruise excursion — geothermal demonstrations and camel rides are the cruise focal points. The park itself is vast and spectacular.',
     shoulder:'Afternoon visits after 3pm when morning coach tours have departed.',
     alt:null,
+    tips:['Jameos del Agua (César Manrique): lava tube cave with a blind albino crab population found nowhere else on Earth — extraordinary, rarely crowded in the afternoon','Cueva de los Verdes: continuation of the same lava tube, extraordinary acoustic concert hall inside','El Golfo green lagoon: volcanic crater lake with vivid emerald water next to the black beach — 10 min from Timanfaya, most tour buses skip it'],
   },
   'corralejo': {
     name:'Corralejo', country:'Spain', lat:28.730, lng:-13.866,
@@ -1850,6 +2074,7 @@ const DESTS = {
     note:'Fuerteventura\'s main resort town with access to the Corralejo Natural Park (enormous sand dunes). Cruise excursion from Morro Jable. The dunes are spectacular — the resort strip less so.',
     shoulder:'The natural park is best early morning before the tour buses arrive.',
     alt:null,
+    tips:['Dunes of Corralejo Natural Park: 10km of Sahara-quality dunes — walk 20 minutes from the road and you\'ll have them to yourself','Ferry to Lobos island (20 min): uninhabited nature reserve, transparent water, no development, no cruise groups','Majanicho on the north coast: tiny fishing village with no beach, just volcanic rock pools — completely off the tourist map'],
   },
   'betancuria': {
     name:'Betancuria', country:'Spain', lat:28.422, lng:-14.058,
@@ -1859,6 +2084,7 @@ const DESTS = {
     note:'Former capital of Fuerteventura, tiny village of 700 people. Rarely on cruise excursion menus. The 15th-century church and museum of sacred art are genuinely impressive for such a small place.',
     shoulder:null,
     alt:null,
+    tips:['Church of Santa María de Betancuria: the oldest church in the Canary Islands, extraordinary carved ceiling','Casa Museo Aborigen: small museum of pre-Spanish Guanche culture — illuminating context for the islands'],
   },
   // FRANCE — TOULON
   'hyeres islands': {
@@ -1879,6 +2105,7 @@ const DESTS = {
     note:'UNESCO Sassi cave dwellings — one of the oldest continuously inhabited cities on earth. Growing cruise excursion from Bari (1.5hrs). Still less crowded than most Italian UNESCO sites.',
     shoulder:'Evening is spectacular — the cave city lights up at dusk and cruise groups are long gone.',
     alt:null,
+    tips:['Sasso Caveoso district is less visited than Sasso Barisano — same cave houses, fewer tour groups','Casa Noha (Fondo Ambiente Italiano): documentary screening about Matera\'s history in a restored cave house, rarely crowded','Walk down into the ravine (Gravina) below the Sassi: ancient cave churches carved in the cliff, almost no tourists go down','Matera at night: the cave city lit up is one of the most extraordinary sights in Italy — cruise groups are all gone by then','Rupestrian churches (rock-cut Byzantine churches with frescoes) dotted through the ravine — most tourists miss them entirely'],
   },
   'alberobello': {
     name:'Alberobello', country:'Italy', lat:40.786, lng:17.239,
@@ -1888,6 +2115,7 @@ const DESTS = {
     note:'UNESCO trulli district. Standard Bari cruise excursion. The Rione Monti district gets busy midday but the Aia Piccola neighborhood has almost no visitors.',
     shoulder:'Early morning before 9am or after 5pm.',
     alt:'Locorotondo — 15 min away, circular hill town, whitewashed streets, almost no cruise groups.',
+    tips:['Aia Piccola neighborhood: 400 trulli, almost no tourist shops, real residents still living in them','Trullo Sovrano (the only two-story trullo, now a museum) is right in the main zone but usually manageable','Locorotondo 15 min away: circular hill town, extraordinary views over the Valle d\'Itria, genuinely local','Cisternino village 20 min east: Pugliese town with almost no foreign tourists, outstanding street food (bombette pork rolls)'],
   },
   'lecce': {
     name:'Lecce', country:'Italy', lat:40.352, lng:18.174,
@@ -1897,6 +2125,7 @@ const DESTS = {
     note:'Known as the "Florence of the South." Rich Baroque architecture in golden limestone. Long drive from Bari limits cruise group frequency.',
     shoulder:null,
     alt:null,
+    tips:['Piazza del Duomo at dusk: three extraordinary Baroque facades lit up, almost empty — cruise groups left hours ago','Basilica di Santa Croce facade: the most elaborate Baroque facade in Italy — 100 years in the making, overwhelmingly ornate','Pasticceria Alvino for pasticciotto (custard pastry): the Lecce breakfast institution, local morning ritual','Porta Napoli (Roman arch) at the north end of town: almost no tourists walk this far','Anfiteatro Romano in Piazza Sant\'Oronzo: 2nd-century Roman amphitheatre partially excavated beneath the main piazza'],
   },
   'ostuni': {
     name:'Ostuni', country:'Italy', lat:40.731, lng:17.574,
@@ -1906,6 +2135,7 @@ const DESTS = {
     note:'Dazzling whitewashed hilltop town. Growing in popularity but still manageable compared to more famous Pugliese towns.',
     shoulder:null,
     alt:null,
+    tips:['The centro storico is compact — walk through the back streets away from the main Corso Vittorio Emanuele','Cathedral terrace for the panorama over the olive grove valley toward the Adriatic','Masseria dining: several farm estates (masserias) outside town serve lunch — extraordinary setting, local food, no cruise groups'],
   },
   // GREECE — NEW PORTS
   'olympia': {
@@ -1916,6 +2146,7 @@ const DESTS = {
     note:'The primary excursion from Katakolon port (45 min drive). Museum and archaeological site both fill quickly on port days — the stadium itself is the least crowded area.',
     shoulder:'Opening time (8am) is dramatically less crowded. Museum before 9:30am.',
     alt:null,
+    tips:['The original Olympic stadium (enter through the stone tunnel): stand at the starting line — cruise groups cluster around the Temple of Zeus and rarely walk this far','Museum of the History of the Olympic Games: separate building, often empty, genuinely fascinating exhibits','Katakolon village itself has a pleasant harbour and local fish tavernas — cruise groups rush past it to the buses'],
   },
   'kos town': {
     name:'Kos Town', country:'Greece', lat:36.893, lng:27.288,
@@ -1925,6 +2156,7 @@ const DESTS = {
     note:'Ancient Agora, Knights\' Castle, and the tree of Hippocrates are cruise stops. Town is manageable — bicycle is the best way to escape the cruise cluster.',
     shoulder:'The Asklepion (ancient healing sanctuary, 4km outside town) is rarely overrun.',
     alt:null,
+    tips:['Asklepion: ancient medical school of Hippocrates, 4km from town by bicycle — extraordinary ruins in a hillside setting, cruise groups often skip it','Rent a bicycle: the island is flat and the inland villages (Zia, Asfendiou) are 30 min away with no cruise buses','Casa Romana (restored Roman villa with mosaics): in the centre of town, almost always quiet','Agios Fokas beach: 8km east, black volcanic sand, no beach clubs, few tourists'],
   },
   'meteora': {
     name:'Meteora', country:'Greece', lat:39.721, lng:21.630,
@@ -1934,6 +2166,7 @@ const DESTS = {
     note:'One of Greece\'s most spectacular sights — monasteries perched atop towering sandstone pillars. Long cruise excursion from Thessaloniki (3hrs). Sunrise visits before tour buses arrive are transformative.',
     shoulder:'First entry (9am), or sunset when day-tripper coaches have left.',
     alt:null,
+    tips:['Great Meteoron monastery is the busiest — start with Varlaam or Roussanou instead, same views and fewer crowds','Sunrise from the Psaropetra viewpoint (opposite the main monasteries): no tour buses at 7am, extraordinary light on the rocks','The hiking trails between the monasteries take 2–3 hours and are almost entirely tourist-free','Kalambaka town below has good local restaurants — eat here, not in the tourist tavernas at the monastery car parks'],
   },
   'thessaloniki': {
     name:'Thessaloniki', country:'Greece', lat:40.629, lng:22.952,
@@ -1943,6 +2176,7 @@ const DESTS = {
     note:'Greece\'s second city and arguably its best food scene. Cruise ships visit but the city is large enough to absorb groups. The Roman Rotunda and Byzantine churches are the cruise focal points.',
     shoulder:'The Modiano and Kapani markets are best before noon. Ladadika nightlife district is purely local.',
     alt:null,
+    tips:['Modiano and Kapani covered markets: two covered markets side by side — cheese, olives, spices, fresh fish — entirely local','Ladadika neighbourhood at night: former red-light district turned taverna strip, no tourists, extraordinary mezedes','Ano Poli (upper town): Ottoman-era neighbourhood above the city walls, traditional houses, panoramic views, virtually no cruise groups','Rotunda (early Christian monument): late-Roman mausoleum converted to mosque converted to church — extraordinary layers of history, rarely crowded','Thessaloniki is genuinely the best food city in Greece — eat bouyiourdi (baked feta with peppers) and loukoumades (honey fritters) here'],
   },
   'patmos town': {
     name:'Patmos', country:'Greece', lat:37.321, lng:26.543,
@@ -1952,6 +2186,7 @@ const DESTS = {
     note:'The Monastery of St John and Holy Cave where the Book of Revelation was written. Small island that can feel crowded when tenders bring cruise passengers. Most groups leave by 4pm.',
     shoulder:'Chora (the hilltop village) early morning before cruise tenders begin.',
     alt:null,
+    tips:['Monastery of St John Treasury: extraordinary collection of Byzantine manuscripts and icons — arrive at opening (8am)','Grikos bay on the south: quiet cove, local taverna, no cruise excursion buses go this far','Chora at dusk after the tenders leave: whitewashed alleys, monastery silhouette, completely quiet'],
   },
   // TURKEY — NEW PORTS
   'pergamon': {
@@ -1962,6 +2197,7 @@ const DESTS = {
     note:'Dramatic acropolis with the steepest ancient theatre in the world. Cruise excursion from Izmir. Far less crowded than Ephesus with equally impressive ruins.',
     shoulder:null,
     alt:'Ephesus via Kusadasi is 90 min the other direction — genuinely different sites worth comparing.',
+    tips:['The theatre is the steepest ancient theatre anywhere — 80-degree rake, 10,000 seats, extraordinary engineering','Red Basilica (Kizil Avlu) in town: vast 2nd-century Roman temple later converted to a Byzantine church — enormous and almost never crowded','Bergama market town below the acropolis: Tuesday market is purely local, excellent leather goods and produce'],
   },
   'izmir city': {
     name:'İzmir', country:'Turkey', lat:38.418, lng:27.128,
@@ -1971,6 +2207,7 @@ const DESTS = {
     note:'Turkey\'s third-largest city and one of its most cosmopolitan. The Kordon waterfront promenade and Kemeralti bazaar are genuine. Cruise groups typically transit to Ephesus rather than staying in the city.',
     shoulder:null,
     alt:null,
+    tips:['Kemeraltı Bazaar: İzmir\'s historic covered market — vastly more authentic than Istanbul\'s Grand Bazaar and almost no tourists','Kordon waterfront at sunset: Atatürk statue, palm trees, locals walking — genuinely lovely and not touristy','Agora ruins (Roman forum): right in the middle of the city, extraordinary ancient columns, almost always quiet','Asansör (the historic lift connecting upper and lower neighbourhoods): extraordinary views from the top, café at the summit'],
   },
   'dalyan': {
     name:'Dalyan & Kaunos', country:'Turkey', lat:36.832, lng:28.641,
@@ -1980,6 +2217,7 @@ const DESTS = {
     note:'Rock-cut Lycian tombs visible from the river. Marmaris cruise excursion. The boat trip through the delta to Iztuzu beach (loggerhead turtle nesting site) is genuinely special.',
     shoulder:null,
     alt:null,
+    tips:['Iztuzu beach: loggerhead turtle nesting beach, strictly protected — no sun loungers in the central section, extraordinary','Lycian rock tombs: take the small boat across the river for the best views from below','Mud baths at Sultaniye hot springs: genuinely therapeutic sulphurous mud, local experience, boat trip from Dalyan town'],
   },
   'datca': {
     name:'Datça Peninsula', country:'Turkey', lat:36.726, lng:27.688,
@@ -1989,6 +2227,7 @@ const DESTS = {
     note:'90-minute drive from Marmaris along a narrow peninsula. Ancient Knidos at the tip is rarely on cruise itineraries. Among the least-touristed coastal areas in the Aegean.',
     shoulder:null,
     alt:null,
+    tips:['Ancient Knidos at the peninsula tip: major Hellenistic city, dramatic setting on two harbours, almost no visitors','Datça\'s old town (Eski Datça): Ottoman stone houses, almond orchards, zero tourists','Fresh almonds and olive oil are the local speciality — buy direct from a producer not a tourist shop'],
   },
   // SPAIN — NEW PORTS
   'valencia city': {
@@ -1999,6 +2238,7 @@ const DESTS = {
     note:'Calatrava\'s City of Arts and Sciences is a cruise focal point. The original paella homeland — cruise groups concentrate in the tourist waterfront restaurants, not the authentic inland spots.',
     shoulder:'Mercado Central before 11am. The Ruzafa neighborhood for lunch is purely local.',
     alt:null,
+    tips:['Paella at a restaurant in El Palmar village in the Albufera rice fields — 20 min south, where paella actually originated, locals only','Mercado Central: Art Nouveau iron market, arrive at 9am for the fresh fish and produce — enormous','Ruzafa neighbourhood for dinner: where Valencians actually eat, no tourist menus, better food than the waterfront','Turia Gardens: 9km of converted river bed (river was rerouted after 1957 floods) — entirely local park life','City of Arts and Sciences exterior is free to walk around — the architecture is extraordinary without paying the entry fees'],
   },
   'cartagena city': {
     name:'Cartagena', country:'Spain', lat:37.606, lng:-0.986,
@@ -2008,6 +2248,7 @@ const DESTS = {
     note:'Underrated Spanish port with excellent Roman ruins (theatre, forum). Cruise ships stop here but groups are smaller than at Barcelona or Málaga.',
     shoulder:null,
     alt:null,
+    tips:['Roman Theatre: discovered in 1988 beneath a baroque church — extraordinary excavation, world-class presentation, rarely crowded','Barrio del Foro Romano: walking the Roman street grid between excavated blocks is genuinely atmospheric','Cartagena Military Museum: Spain\'s naval history, rarely visited by cruise groups','Cabo de Palos cape 25km south: lighthouse, crystal-clear water, local seafood restaurants — zero cruise presence'],
   },
   'gibraltar rock': {
     name:'Gibraltar', country:'UK', lat:36.140, lng:-5.353,
@@ -2114,34 +2355,7 @@ const DESTS = {
     shoulder:null,
     alt:null,
   },
-  // PROVENCE — pairs with Riviera/Marseille
-  'les baux de provence': {
-    name:'Les Baux-de-Provence', country:'France', lat:43.744, lng:4.800,
-    nearPorts:['marseille'],
-    cityByDay:[35,48,40,50,55,68,72],
-    sub:'Clifftop village & Carrières de Lumières',
-    note:'Ruined fortress village perched on white limestone cliffs. The Carrières de Lumières immersive art show fills an old quarry — extraordinary experience that cruise groups do visit, usually as part of an Arles day.',
-    shoulder:'Early morning or after 5pm when the light on the limestone cliffs is best.',
-    alt:null,
-  },
-  'cassis': {
-    name:'Cassis', country:'France', lat:43.214, lng:5.538,
-    nearPorts:['marseille'],
-    cityByDay:[30,42,36,45,50,68,75],
-    sub:'Calanques port village',
-    note:'Small fishing port between Marseille and Toulon, gateway to the Calanques (dramatic limestone fjords). Weekend summer crowds are severe but weekday visits are manageable. Occasional cruise excursion from Marseille.',
-    shoulder:'Arrive by 9am or take a boat into the Calanques before the midday heat.',
-    alt:null,
-  },
-  'gordes': {
-    name:'Gordes', country:'France', lat:43.911, lng:5.200,
-    nearPorts:['marseille'],
-    cityByDay:[28,38,32,40,44,58,62],
-    sub:'Perched Luberon village',
-    note:'Frequently cited as one of France\'s most beautiful villages. Lavender fields below in July. Not directly on cruise excursion menus but close enough to Marseille for a long day.',
-    shoulder:'Early morning before tour buses arrive from Aix-en-Provence. The abbey of Sénanque nearby is quieter.',
-    alt:null,
-  },
+  // PROVENCE — pairs with Riviera/Marseille,,,
   // VENICE & VENETO
   'venice': {
     name:'Venice', country:'Italy', lat:45.441, lng:12.316,
@@ -2179,6 +2393,7 @@ const DESTS = {
     note:'Occasional Venice cruise excursion (2hr drive). The Arena, Piazza Bra, and Juliet\'s balcony are the cruise concentration points.',
     shoulder:'The Arena opera season (June–August) is spectacular but adds non-cruise crowds. Piazza delle Erbe early morning is excellent.',
     alt:null,
+    tips:['Avoid Juliet\'s balcony — it\'s extremely crowded and entirely fictional. Castel San Pietro hill above the city has the real view','Piazza delle Erbe at 7am: the market set-up, locals buying vegetables, no tourists yet','Arena di Verona: even if not attending opera, the exterior at dusk is extraordinary and accessible','Giardino Giusti (Renaissance garden) is world-class and almost always manageable','Amarone wine tasting at an enoteca in the Valpolicella zone north of the city — the real stuff'],
   },
   'padua': {
     name:'Padua', country:'Italy', lat:45.406, lng:11.876,
@@ -2188,6 +2403,7 @@ const DESTS = {
     note:'Occasionally on Venice cruise excursions. Scrovegni Chapel (Giotto frescoes) requires advance booking — cruise groups often fill slots months ahead.',
     shoulder:'The Bo Palace university tour and Prato della Valle square are rarely overrun.',
     alt:null,
+    tips:['Book Scrovegni Chapel at least 2 weeks ahead — only 25 people allowed in per session, cruise groups fill it','Oratorio di San Giorgio and Scuola del Santo (across from the Basilica) have extraordinary Titian frescoes and almost no visitors','Prato della Valle — one of Europe\'s largest squares, lined with 78 statues, entirely local at any hour','Padua Botanical Garden (oldest university botanical garden in the world, 1545) is usually quiet','Caffè Pedrocchi: historic 19th-century café, free to sit in the reading room, enormous architectural statement'],
   },
   'vicenza': {
     name:'Vicenza', country:'Italy', lat:45.547, lng:11.547,
@@ -2197,6 +2413,7 @@ const DESTS = {
     note:'Not on any cruise excursion menu. UNESCO-listed Palladian architecture in a manageable, authentically Italian city. Underrated.',
     shoulder:null,
     alt:null,
+    tips:['Villa La Rotonda (Villa Almerico Capra) outside town: the most influential building in Western architecture — copied from Washington to St Petersburg, rarely crowded','Teatro Olimpico: first indoor theatre in the world (1585), permanent perspective stage set, extraordinary — book ahead','Contra Porti street: Palladian palaces lining both sides, almost no visitors on weekday mornings'],
   },
 
   // SICILY — CATANIA PORT
@@ -2208,6 +2425,7 @@ const DESTS = {
     note:'Catania itself is underrated — the Baroque Piazza del Duomo and covered fish market (La Pescheria) are among the most authentic urban experiences in Sicily. Cruise groups typically pass through en route to Etna or Taormina.',
     shoulder:'The fish market is best at 7–9am when it\'s purely local.',
     alt:null,
+    tips:['La Pescheria (fish market) at 7am: one of Italy\'s great fish markets, under the arches beside the Duomo, entirely local','Arancini from Savia pasticceria on Viale Regina Margherita — the definitive version, locals queue for them','Piazza Bellini: quiet square behind the Duomo with Roman theatre ruins visible through iron grating in the road','Via dei Crociferi: pedestrianised Baroque street with extraordinary church facades, manageable before noon','Aperitivo at a bar on Via Santa Filomena — local students and residents, not tourists'],
   },
   'etna': {
     name:'Mount Etna', country:'Italy', lat:37.748, lng:15.001,
@@ -2217,6 +2435,7 @@ const DESTS = {
     note:'Top cruise excursion from both Catania and Messina. The crater rim (3,350m) is accessible by cable car and 4x4 — capacity is limited and cruise groups book the first morning slots.',
     shoulder:'Afternoon visits after 2pm see far fewer cruise groups. The Valle del Bove viewpoint on the eastern flank is not on standard cruise itineraries.',
     alt:null,
+    tips:['Valle del Bove viewpoint on the eastern flank: 6km caldera visible from a path near Zafferana Etnea — zero cruise groups, extraordinary scale','Etna wine tasting in Randazzo or Passopisaro: volcanic soil Nerello Mascalese reds are among Italy\'s most interesting wines — wineries are not on cruise itineraries','Silvestri craters at 1,900m: accessible by your own transport, dramatic landscape, no cable car queues'],
   },
   'syracuse': {
     name:'Syracuse', country:'Italy', lat:37.075, lng:15.286,
@@ -2226,6 +2445,7 @@ const DESTS = {
     note:'Long cruise excursion from Catania (1.5hrs). Ortigia island and the Greek theatre are the cruise stops. Neapolis archaeological park requires a full day to appreciate — cruise groups rarely have time.',
     shoulder:'Ortigia early morning before 9am is genuinely peaceful.',
     alt:null,
+    tips:['Fonte Aretusa (freshwater spring flowing into the sea): ancient myth brought to life, free, rarely crowded','Ortigia at 7am: the fish market sets up, locals buy breakfast, extraordinary atmosphere before the tourist wave','Neapolis Archaeological Park: the Greek theatre is the main cruise stop — walk to the Latomia del Paradiso quarry and the Ear of Dionysus cave, often nearly empty','Castello Maniace (Norman castle at the tip of Ortigia): extraordinary setting, cruise groups rarely walk this far'],
   },
   'noto': {
     name:'Noto', country:'Italy', lat:36.890, lng:15.068,
@@ -2235,6 +2455,7 @@ const DESTS = {
     note:'Occasionally on Catania cruise menus. The golden limestone main street is one of Italy\'s most beautiful. Manageable even on port days due to its size.',
     shoulder:null,
     alt:null,
+    tips:['Caffè Sicilia: the legendary pasticceria on Corso Vittorio Emanuele — granita di mandorla (almond granita) is the definitive version','Palazzo Nicolaci balconies: carved grotesque faces, extraordinary Baroque detail, free to see from the street','Noto Antica: the ruins of the original city destroyed in the 1693 earthquake, 10km inland, almost never visited'],
   },
   'ragusa': {
     name:'Ragusa', country:'Italy', lat:36.927, lng:14.731,
@@ -2244,6 +2465,7 @@ const DESTS = {
     note:'Rarely on cruise excursion menus — too far from Catania for a half-day. Ragusa Ibla (the lower town) is one of Sicily\'s best-preserved Baroque quarters with almost no cruise traffic.',
     shoulder:null,
     alt:null,
+    tips:['Ragusa Ibla: the lower town is an entirely intact Baroque quarter — walk down from Ragusa Superiore for a completely unjostled experience','Duomo di San Giorgio: the finest Baroque church facade in Sicily, huge steps, almost always quiet','Cioccolato di Modica: ancient Aztec-recipe chocolate (no emulsifiers, grainy texture) — buy from a producer in Modica 15 min east'],
   },
 
   // SPAIN — MALAGA PORT
@@ -2314,6 +2536,7 @@ const DESTS = {
     note:'Occasional Cádiz cruise excursion. Sherry bodegas (González Byass, Tío Pepe) are the main draw — tours are timed and manageable even on port days.',
     shoulder:null,
     alt:null,
+    tips:['González Byass bodega tour: extraordinary cathedral-like sherry warehouses, mice trained to walk a ladder to a sherry glass (genuinely)','Real Escuela Andaluza del Arte Ecuestre (Royal Andalusian School of Equestrian Art): world-famous horse training — visit Tuesday/Thursday for working sessions, cheaper than the show','Pepe Hillo tabanco (sherry bar): standing room only, old men drinking manzanilla, no tourists — one street from the main bodega district','Barrio de Santiago: the original flamenco neighbourhood, local bars with spontaneous performances in the evenings'],
   },
 
   // TURKEY — ANTALYA PORT
@@ -2325,6 +2548,7 @@ const DESTS = {
     note:'Major Mediterranean cruise homeport and stop. The old town (Kaleiçi) and Hadrian\'s Gate are the cruise focal points. City is large enough to absorb groups.',
     shoulder:'Kaleiçi harbor at dusk after cruise groups reboard is worth staying for.',
     alt:null,
+    tips:['Kaleiçi harbour at dusk: Roman harbour walls, bobbing boats, tea houses — cruise groups gone by 5pm','Düden Waterfalls cascade directly into the sea from a cliff — completely free, dramatic, cruise groups almost never go','Antalya Museum: world-class collection of Roman statues from nearby Perge — one of Turkey\'s best museums, rarely crowded','Tophane Clock Tower area: local teahouses, backgammon, zero tourists — five minutes from the cruise zone'],
   },
   'aspendos': {
     name:'Aspendos', country:'Turkey', lat:36.938, lng:31.172,
@@ -2334,6 +2558,7 @@ const DESTS = {
     note:'Standard Antalya cruise excursion. The best-preserved Roman theatre in the world — capacity is genuinely limited and cruise buses arrive in convoys 10am–1pm.',
     shoulder:'Before 9am or after 3pm the site is dramatically quieter.',
     alt:null,
+    tips:['The aqueduct 3km away: Roman aqueduct with siphon towers, extraordinary engineering, almost never visited by tourists','Seljuk caravanserai (Köprülü Çayı): medieval bridge nearby over the gorge, local tea houses, kayaking — none of this is on cruise itineraries'],
   },
   'side': {
     name:'Side', country:'Turkey', lat:36.768, lng:31.389,
@@ -2343,6 +2568,7 @@ const DESTS = {
     note:'Occasional Antalya excursion. Temple of Apollo by the sea is the signature image — cruise groups cluster there 10am–2pm.',
     shoulder:'Dusk at the Apollo temple after cruise groups leave is exceptional.',
     alt:null,
+    tips:['Apollo temple at sunset: genuinely one of the most atmospheric ancient sites in Turkey — cruise groups long gone','Side Museum (converted Roman bath): extraordinary collection of local finds, rarely crowded','East beach beyond the Apollo temple: quieter than the main beach, local fish restaurants'],
   },
   'olympos': {
     name:'Olympos & Chimaera', country:'Turkey', lat:36.392, lng:30.463,
@@ -2352,6 +2578,251 @@ const DESTS = {
     note:'Not on standard cruise menus — too far and too rugged for coach groups. The eternal flame (Chimaera) burning from the hillside is a genuine once-in-a-lifetime sight.',
     shoulder:null,
     alt:null,
+    tips:['Chimaera eternal flame: walk up at dusk, the natural methane flames are dramatic in low light — this is a truly remarkable natural phenomenon','Olympos ancient ruins: walk through a laurel forest to a Lycian/Roman city that is barely excavated, extraordinary atmosphere','Tree houses in Olympos village: rustic accommodation in wooden platforms in the trees, entirely non-touristy community'],
+  },
+
+  // ── PROVENCE & LANGUEDOC ─────────────────────────────
+  'gordes': {
+    name:'Gordes', country:'France', lat:43.912, lng:5.200,
+    nearPorts:['marseille'],
+    cityByDay:[25,35,28,38,42,60,65],
+    sub:'Perched Luberon village',
+    note:'One of France\'s most beautiful villages — clinging to a cliff above the Luberon valley. Occasional Marseille cruise excursion. Gets crowded in summer but quiet on weekday mornings.',
+    shoulder:'Before 9am or after 5pm.',
+    alt:null,
+    tips:['Abbaye de Sénanque (lavender-surrounded Cistercian abbey): June–July lavender blooms are extraordinary — arrive before 9am or after 5pm to avoid coaches','Village des Bories (prehistoric dry-stone hut settlement): 30 min walk from Gordes, extraordinary, almost never crowded','Drive the Luberon: Bonnieux, Lacoste (Marquis de Sade\'s castle), Ménerbes — all more peaceful than Gordes'],
+  },
+  'les baux de provence': {
+    name:'Les Baux-de-Provence', country:'France', lat:43.744, lng:4.801,
+    nearPorts:['marseille'],
+    cityByDay:[30,42,35,45,50,65,70],
+    sub:'Ruined citadel village',
+    note:'Dramatic ruined citadel on a rocky spur. Carrières de Lumières (light show in old quarry) is a major draw. Gets busy in summer.',
+    shoulder:'First entry at opening before coach tours arrive.',
+    alt:null,
+    tips:['Carrières de Lumières: immersive art projection in ancient bauxite quarries — extraordinary, book ahead in summer','The ruined citadel above the village: cruise groups stay in the lower village, the actual ruins are quieter','Baux olive oil: local AOC olive oil from the Vallée des Baux — buy direct from a mill not a tourist shop'],
+  },
+  'cassis': {
+    name:'Cassis', country:'France', lat:43.214, lng:5.538,
+    nearPorts:['marseille'],
+    cityByDay:[35,45,38,48,52,75,80],
+    sub:'Calanques fishing port',
+    note:'12km from Marseille, access point for the Calanques national park. Weekends are packed with Marseillais — weekdays much quieter. Not a standard cruise excursion but proximity makes it reachable.',
+    shoulder:'Weekday morning — the port and market are local and peaceful.',
+    alt:null,
+    tips:['Calanque de Port-Miou: 20-min walk from town, turquoise fjord-like inlet, boat access only to inner calanques','Cassis AOC white wine: dry, mineral, extraordinary with seafood — buy a bottle at the cave coopérative','Take the small boat to Calanque d\'En Vau: requires a short hike, the most dramatic calanque, almost no cruise groups'],
+  },
+  'montpellier': {
+    name:'Montpellier', country:'France', lat:43.611, lng:3.877,
+    nearPorts:['marseille'],
+    cityByDay:[42,50,46,52,55,62,58],
+    sub:'University city',
+    note:'Major French university city with a well-preserved historic centre. Rarely on cruise excursion menus. Genuinely lively, cosmopolitan, local.',
+    shoulder:null,
+    alt:null,
+    tips:['Place de la Comédie: the main square is grand and lively — tram lines converge here, local life','Quartier Antigone: monumental neo-classical neighbourhood designed by Ricardo Bofill in the 1980s — extraordinary and bizarre, completely tourist-free','Marché du Lez on weekends: design market in a converted industrial space, Montpellier\'s most local cultural venue','Musée Fabre: one of France\'s great provincial art museums, barely known outside France — extraordinary collection'],
+  },
+  'nimes': {
+    name:'Nîmes', country:'France', lat:43.837, lng:4.360,
+    nearPorts:['marseille'],
+    cityByDay:[35,45,38,48,52,62,58],
+    sub:'Roman arena city',
+    note:'Home to the best-preserved Roman arena in the world (better than the Colosseum), the Maison Carrée temple, and the Pont du Gard 25km north. Underrated by cruise itineraries.',
+    shoulder:null,
+    alt:null,
+    tips:['Les Arènes de Nîmes: the Roman amphitheatre still hosts bullfights and concerts — the site is extraordinary and less visited than Rome\'s Colosseum','Maison Carrée: perfectly preserved 1st-century Roman temple, free to photograph outside, rarely crowded','Pont du Gard (25km north): Roman aqueduct bridge, one of the world\'s great engineering achievements — go at sunrise or sunset to avoid day-trippers','Jardin de la Fontaine: 18th-century formal garden on Roman ruins, enormous and almost always quiet'],
+  },
+
+  // ── ADDITIONAL ITALY ──────────────────────────────────
+  'genoa old city': {
+    name:'Genoa', country:'Italy', lat:44.407, lng:8.934,
+    nearPorts:['genoa'],
+    cityByDay:[45,52,48,55,58,65,60],
+    sub:'Ligurian capital ⚓ PORT',
+    note:'Major cruise homeport, often overlooked as a destination in its own right. The UNESCO old city (the largest medieval historic centre in Europe) and the Palazzo dei Rolli are extraordinary.',
+    shoulder:null,
+    alt:null,
+    tips:['Rolli Palaces: 42 Renaissance palaces listed as UNESCO — Via Garibaldi has the finest concentration, almost no cruise groups visit','Mercato Orientale: 19th-century covered market, genuine local food shopping, extraordinary to walk through','Pesto at the source: Genoa is where pesto was invented, a bowl of trofie al pesto from a local trattoria is mandatory','Boccadasse neighbourhood: tiny fishing village absorbed into the city, coloured houses, local gelato at Cremeria Buonafede','Porto Antico (old port): Renzo Piano redesign, aquarium, excellent for an evening walk when cruise groups have gone'],
+  },
+  'la spezia': {
+    name:'La Spezia', country:'Italy', lat:44.104, lng:9.824,
+    nearPorts:['la spezia'],
+    cityByDay:[32,40,35,42,45,55,52],
+    sub:'Gateway to Cinque Terre',
+    note:'Cruise port and the best base for Cinque Terre. The city itself is genuinely pleasant and entirely cruise-group-free — groups rush straight to the Cinque Terre villages.',
+    shoulder:null,
+    alt:null,
+    tips:['Mercato Centrale (covered market): morning food shopping, excellent local products','Castello di San Giorgio above the city: panoramic views of the gulf, almost never visited by tourists','Portovenere by boat (30 min): Byron\'s Cave, coloured houses, San Pietro church on a promontory — spectacular and far less crowded than Cinque Terre','Eat in La Spezia rather than the Cinque Terre villages: better food, lower prices, no cruise surcharge'],
+  },
+  'naples city': {
+    name:'Naples', country:'Italy', lat:40.852, lng:14.268,
+    nearPorts:['naples'],
+    cityByDay:[58,65,62,68,72,75,70],
+    sub:'Southern capital ⚓ PORT',
+    note:'Naples itself is a UNESCO historic centre with extraordinary art collections, street food, and Baroque churches. Cruise groups transit to Pompeii and the Amalfi Coast — fewer linger in the city.',
+    shoulder:null,
+    alt:null,
+    tips:['Pizza at Pizzeria Brandi (birthplace of Margherita pizza) or Di Matteo on Via Tribunali — the historic centre is the place for pizza','Museo Nazionale Archeologico: houses the greatest collection of Greco-Roman art in the world, the Farnese Bull and Pompeii erotic art room — rarely has long queues','Spaccanapoli (the street that splits Naples): the heart of the historic centre, genuinely overwhelming, best at 8am before the chaos begins','Cappella Sansevero: the Veiled Christ sculpture is one of the most astonishing works of art in Italy — small chapel, book ahead','Quartieri Spagnoli (Spanish Quarter): the gridded alleys, laundry strung between windows, shrines on every corner — the real Naples'],
+  },
+  'bari city': {
+    name:'Bari', country:'Italy', lat:41.117, lng:16.871,
+    nearPorts:['bari'],
+    cityByDay:[35,42,38,45,48,55,52],
+    sub:'Pugliese capital ⚓ PORT',
+    note:'Gateway to Puglia and a cruise homeport. Bari Vecchia (old city) is an extraordinarily dense medieval labyrinth. Cruise groups transit to Alberobello and Matera — fewer explore the old city.',
+    shoulder:null,
+    alt:null,
+    tips:['Bari Vecchia early morning: elderly women make orecchiette pasta by hand in the doorways of Via Arco Basso — genuinely extraordinary, arrive before 10am','Basilica di San Nicola: one of Puglia\'s finest Romanesque churches, crypt with the bones of St Nicholas (the original Santa Claus)','Focaccia barese at Panificio Fiore: olive-oil-soaked focaccia bread, genuinely different from anywhere else in Italy','Lungomare seafront at sunset: locals\' promenade, gelato, children playing — zero cruise groups this far from the port'],
+  },
+  'palma di montechiaro': {
+    name:'Agrigento Province', country:'Italy', lat:37.296, lng:13.586,
+    nearPorts:['palermo'],
+    cityByDay:[18,25,20,28,32,40,38],
+    sub:'Rural western Sicily',
+    note:'The interior of Sicily between Palermo and Agrigento — barely touched by tourism. Piazza Armerina has the Villa Romana del Casale, the finest Roman mosaic floor in existence.',
+    shoulder:null,
+    alt:null,
+    tips:['Villa Romana del Casale at Piazza Armerina: 3,500 sq metres of extraordinary Roman mosaics including the famous bikini girls — remarkable and rarely crowded mid-week','Enna (the navel of Sicily): hilltop city with Lombard castle, no tourist infrastructure, completely authentic Sicilian town life'],
+  },
+
+  // ── ADDITIONAL CROATIA & ADRIATIC ───────────────────
+  'rovinj': {
+    name:'Rovinj', country:'Croatia', lat:45.082, lng:13.640,
+    nearPorts:['rovinj'],
+    cityByDay:[42,52,46,55,60,78,82],
+    sub:'Venetian Istrian town',
+    note:'One of the most beautiful towns on the Adriatic — pastel-coloured houses rising from the sea. Growing cruise stop. The old town peninsula can feel very crowded on summer port days.',
+    shoulder:'Before 9am or after 6pm the old town is manageable.',
+    alt:'Motovun — hilltop truffle town in Istrian interior, 45 min inland, no cruise buses.',
+    tips:['St Euphemia church tower: climb it for panoramic views, cruise groups rarely make the effort','Batana boat house museum: traditional flat-bottomed fishing boat, extraordinary living cultural heritage, never crowded','Grisia Street art galleries: local artists display work on this steep cobbled street, far more interesting than souvenir shops','Motovun village in the Mirna Valley: truffle capital, hilltop walls, wine, entirely tourist-free outside weekends'],
+  },
+  'sibenik': {
+    name:'Šibenik', country:'Croatia', lat:43.735, lng:15.895,
+    nearPorts:['sibenik'],
+    cityByDay:[35,48,42,52,55,65,70],
+    sub:'UNESCO cathedral city',
+    note:'The Cathedral of St James (UNESCO) is one of the finest Renaissance buildings in the Adriatic and entirely built from stone with no mortar. Gateway to Krka waterfalls and Kornati islands. Growing cruise destination.',
+    shoulder:null,
+    alt:null,
+    tips:['Cathedral of St James: the frieze of 72 portrait heads of local citizens around the exterior is extraordinary — stand underneath it','Krka Waterfalls National Park: 20km north, stunning cascades — arrive early, coach tours fill the car park by 10am','Kornati Islands boat trip: 89 uninhabited limestone islands, extraordinary sailing, no cruise excursion reaches them without a private boat','Old fortress (Barone and St Anne): panoramic views over the channel, cruise groups cluster around the cathedral, far fewer climb up'],
+  },
+  'trogir': {
+    name:'Trogir', country:'Croatia', lat:43.517, lng:16.251,
+    nearPorts:['split'],
+    cityByDay:[38,50,44,54,58,72,75],
+    sub:'UNESCO island town',
+    note:'UNESCO old town on a tiny island connected by bridges. Standard Split cruise excursion. Small — it fills quickly when ships are in.',
+    shoulder:'Evening after coaches leave — the narrow streets are atmospheric and quiet.',
+    alt:null,
+    tips:['Cathedral of St Lawrence Portal of Radovan (1240): the finest Romanesque sculpture in Croatia, carved figures and reliefs of extraordinary quality — study it closely','Kamerlengo fortress: walk the walls, climb the tower, panoramic views of the islands — cruise groups rarely go inside','Ciovo island (connected by bridge): local restaurants on the waterfront, swimming off the rocks, no tourists'],
+  },
+
+  // ── ADDITIONAL GREECE ────────────────────────────────
+  'lindos': {
+    name:'Lindos', country:'Greece', lat:36.091, lng:28.085,
+    nearPorts:['Rhodes'],
+    cityByDay:[42,55,48,60,65,80,85],
+    sub:'Acropolis village',
+    note:'Whitewashed village below a dramatic Doric acropolis. Rhodes cruise excursion staple — coach convoys arrive from 9:30am. The main street and acropolis path are extremely crowded midday.',
+    shoulder:'Before 9am or after 4pm — the village becomes peaceful once the coaches leave.',
+    alt:null,
+    tips:['Acropolis at 8am opening: Temple of Athena and the Byzantine church ruins, dramatic views — arrive before the Rhodes coaches','Lindos from the beach (St Paul\'s Bay): looking up at the acropolis from the water is the best view and the beach is accessible by footpath','Village backstreets away from the donkey path: local houses with courtyard gardens, pebble-mosaic floors, no souvenir shops'],
+  },
+  'knossos': {
+    name:'Knossos', country:'Greece', lat:35.298, lng:25.163,
+    nearPorts:['heraklion'],
+    cityByDay:[45,60,52,65,70,75,72],
+    sub:'Minoan palace',
+    note:'Top Heraklion cruise excursion, 5km from the port. Arthur Evans\' contested reconstructions are either inspiring or misleading depending on your perspective. Gets very crowded on port days.',
+    shoulder:'First entry (8am) is dramatically less crowded. Museum before 9:30am.',
+    alt:null,
+    tips:['Heraklion Archaeological Museum: houses all the best Knossos artefacts including the famous bull-leaping fresco — visit this before or instead of the site itself','Arrive at 8am opening: the site is walkable and atmospheric before the coach convoys arrive at 10am','The palace throne room: small, genuinely atmospheric — cruise groups crowd in and out but you can linger if you arrive early'],
+  },
+  'kefalonia': {
+    name:'Kefalonia', country:'Greece', lat:38.175, lng:20.669,
+    nearPorts:['argostoli'],
+    cityByDay:[30,40,35,45,48,65,72],
+    sub:'Ionian island',
+    note:'Greece\'s largest Ionian island. Myrtos Beach is one of the most photographed in the world. Cruise calls are increasing. The island is large enough to escape groups.',
+    shoulder:null,
+    alt:null,
+    tips:['Myrtos Beach: arrive before 9am for the iconic view from above without the crowds, or hire a boat to approach from the sea','Melissani Lake cave: underground lake lit by a hole in the roof, extraordinary turquoise light — go at noon when the sun is directly overhead','Assos village: tiny peninsula village with Venetian castle, accessible by a winding road that coaches avoid','Fiskardo village on the north: survived the 1953 earthquake, intact Venetian architecture, best harbour on the island','Mt Ainos national park: ancient fir trees found nowhere else on earth, walk the summit ridge in complete solitude'],
+  },
+
+  // ── ADDITIONAL TURKEY ────────────────────────────────
+  'bodrum peninsula': {
+    name:'Bodrum Peninsula Villages', country:'Turkey', lat:37.010, lng:27.430,
+    nearPorts:['bodrum'],
+    cityByDay:[20,28,24,32,36,52,58],
+    sub:'Aegean peninsula',
+    note:'The villages of the Bodrum peninsula (Yalıkavak, Türkbükü, Gündoğan) are the Turkish equivalents of St-Tropez — where Istanbul\'s wealthy summer. Less crowded than Bodrum town.',
+    shoulder:null,
+    alt:null,
+    tips:['Yalıkavak marina village: fishing boats and superyachts side by side, excellent fish restaurants on the water, no cruise buses','Gümüşlük village: wade to Rabbit Island across the causeway, submerged ancient city visible through clear water, local fish restaurants with tables in the sea','Karaincir and Bağla beaches on the south coast: completely undeveloped, crystal water, no beach clubs, accessible only by 4WD'],
+  },
+  'cappadocia': {
+    name:'Cappadocia', country:'Turkey', lat:38.643, lng:34.828,
+    nearPorts:['istanbul'],
+    cityByDay:[48,60,55,65,68,75,72],
+    sub:'Volcanic fairy chimneys',
+    note:'Not a standard cruise excursion (3hrs from Istanbul by plane) but included because it\'s the most extraordinary landscape in Turkey and a major independent traveller destination. Göreme is the base.',
+    shoulder:null,
+    alt:null,
+    tips:['Hot air balloon at sunrise: the most spectacular balloon experience in the world — book months ahead in summer','Göreme Open Air Museum: Byzantine cave churches with extraordinary frescoes — arrive at opening','Ihlara Valley walk: 14km through a canyon with rock-cut churches, almost no tourists do the full walk','Underground cities (Derinkuyu, Kaymakli): vast subterranean cities carved by early Christians — Derinkuyu goes 8 storeys deep','Avanos pottery: the oldest pottery tradition in Anatolia (from Hittite times), buy directly from a working studio'],
+  },
+
+  // ── ADDITIONAL FRANCE ────────────────────────────────
+  'saint paul de vence': {
+    name:'Saint-Paul-de-Vence', country:'France', lat:43.697, lng:7.122,
+    nearPorts:['villefranche'],
+    cityByDay:[32,42,36,46,50,65,70],
+    sub:'Artists\' walled village',
+    note:'Medieval hilltop village that attracted Picasso, Matisse, Chagall, and Léger. Fondation Maeght (major modern art museum) is extraordinary. Gets crowded but remains genuinely beautiful.',
+    shoulder:null,
+    alt:null,
+    tips:['Fondation Maeght: one of the world\'s great private modern art collections, Miró sculptures in the garden — book ahead in summer','The village cemetery: Chagall is buried here in a simple grave — no cruise groups visit it','La Colombe d\'Or hotel bar: Picasso paintings on the walls, historic celebrity haunt — you can have a drink','Vence old town (15 min walk down): Matisse\'s Chapelle du Rosaire is genuinely extraordinary and rarely crowded'],
+  },
+  'menton': {
+    name:'Menton', country:'France', lat:43.774, lng:7.497,
+    nearPorts:['villefranche'],
+    cityByDay:[28,38,32,42,45,58,62],
+    sub:'Lemon festival town',
+    note:'The last town before the Italian border. Far less visited than Monaco or Nice. Jean Cocteau museum, extraordinary gardens, and the best lemons in the world.',
+    shoulder:null,
+    alt:null,
+    tips:['Musée Jean Cocteau (Séverin Wunderman): extraordinary collection in a purpose-built museum, almost always quiet','Jardin Serre de la Madone: Lawrence Johnston\'s extraordinary hidden garden, limited visitor numbers, book ahead','The old town (Vieille Ville): Italian-influenced multicoloured houses, almost no tourists compared to Antibes or Villefranche','Menton lemons: buy from the market — they\'re genuinely different from any lemon you\'ve had elsewhere'],
+  },
+  'antibes': {
+    name:'Antibes & Juan-les-Pins', country:'France', lat:43.580, lng:7.125,
+    nearPorts:['villefranche'],
+    cityByDay:[38,48,42,52,55,72,78],
+    sub:'Riviera walled town',
+    note:'Antibes old town has extraordinary Picasso museum (in the castle where Picasso worked in 1946) and excellent market. Less crowded than Nice. Juan-les-Pins is the jazz festival venue.',
+    shoulder:null,
+    alt:null,
+    tips:['Musée Picasso (Château Grimaldi): the whole upper floor is Picasso\'s work from the 6 months he lived and worked here — extraordinary, rarely as crowded as it should be','Marché Provençal (morning market): one of the finest daily markets on the Côte d\'Azur, local produce, under the ramparts','Ramparts walk at dusk: the old walls above the sea, stunning light, few tourists at that hour','Cap d\'Antibes: the peninsula with Villa Eilenroc is walkable from the town, coastal path with wild flowers and sea views'],
+  },
+
+  // ── POPULAR CITIES NOT YET COVERED ──────────────────
+  'marseille city': {
+    name:'Marseille', country:'France', lat:43.296, lng:5.381,
+    nearPorts:['marseille'],
+    cityByDay:[48,55,52,58,62,68,65],
+    sub:'Mediterranean port ⚓ PORT',
+    note:'France\'s oldest city (2,600 years) and largest Mediterranean port. MuCEM (Museum of European and Mediterranean Civilisations) and the Vieux-Port are the cruise stops. City is large and absorbs groups well.',
+    shoulder:null,
+    alt:null,
+    tips:['MuCEM: extraordinary architecture and collection — the walkway on top of the Fort Saint-Jean connected to the museum is one of the great architectural experiences in France','Cours Julien neighbourhood: street art, independent cafés, North African food, local life — completely off the cruise circuit','Bouillabaisse: the real thing requires a minimum of three types of fish and costs €50+. At Chez Michel or Restaurant Michel (not the tourist waterfront) — magnificent','Calanques by boat: the fjord-like inlets east of the city are extraordinary — join a boat trip from the Vieux-Port, it\'s what most tourists miss','Le Panier (old quarter): the oldest neighbourhood, steep streets, artisans, excellent for an hour before the crowds'],
+  },
+  'valencia extras': {
+    name:'Albufera Natural Park', country:'Spain', lat:39.320, lng:-0.350,
+    nearPorts:['valencia'],
+    cityByDay:[12,18,14,20,22,32,38],
+    sub:'Rice fields & lagoon',
+    note:'The wetland south of Valencia where paella was invented. Flamingos, eels, rice paddies. 20 minutes from the city centre. Almost no cruise groups go there.',
+    shoulder:null,
+    alt:null,
+    tips:['El Palmar village: eat paella in its birthplace, rice grown 500m from the restaurant','Boat trip on the lagoon at sunset: extraordinary light, herons and egrets, local fishermen — hire a flat-bottomed boat from El Palmar'],
   },
 };
 
@@ -2522,16 +2993,73 @@ const CULINARY_DATA = {
   'tangier':           { michelin:{stars:0,bibs:0},  foodCulture:2, hasProducer:false },
   'taroudant':         { michelin:{stars:0,bibs:0},  foodCulture:2, hasProducer:false },
   'asilah':            { michelin:{stars:0,bibs:0},  foodCulture:1, hasProducer:false },
-  // ISRAEL
-  'jerusalem':         { michelin:{stars:0,bibs:0},  foodCulture:3, hasProducer:false, legendaryBonus:2 }, // hummus wars, Palestinian-Israeli fusion
+  // PORTUGAL
+  'lisbon':            { michelin:{stars:8,bibs:15},  foodCulture:3, hasProducer:true,  legendaryBonus:2 }, // bacalhau, pastéis de nata, wine
+  'porto':             { michelin:{stars:3,bibs:8},   foodCulture:3, hasProducer:true,  legendaryBonus:2 }, // Port wine, francesinha
+  'sintra':            { michelin:{stars:0,bibs:0},   foodCulture:1, hasProducer:false },
+  'cascais':           { michelin:{stars:1,bibs:3},   foodCulture:2, hasProducer:false },
+  'funchal':           { michelin:{stars:1,bibs:2},   foodCulture:2, hasProducer:true  }, // Madeiran wine, espetada
+  'obidos':            { michelin:{stars:0,bibs:0},   foodCulture:2, hasProducer:true  }, // ginja cherry liqueur
+  'guimaraes':         { michelin:{stars:0,bibs:1},   foodCulture:2, hasProducer:false },
+  // NEW GREEK ISLANDS
+  'naxos':             { michelin:{stars:0,bibs:0},   foodCulture:3, hasProducer:true,  legendaryBonus:1 }, // cheese, potatoes, kitron
+  'paros':             { michelin:{stars:0,bibs:0},   foodCulture:2, hasProducer:true  },
+  'milos':             { michelin:{stars:0,bibs:0},   foodCulture:2, hasProducer:false },
+  'samos':             { michelin:{stars:0,bibs:0},   foodCulture:2, hasProducer:true  }, // Muscat wine
+  'lesbos':            { michelin:{stars:0,bibs:0},   foodCulture:2, hasProducer:true  }, // ouzo, olive oil
+  'aegina':            { michelin:{stars:0,bibs:0},   foodCulture:2, hasProducer:true  }, // pistachios
+  'hydra':             { michelin:{stars:0,bibs:1},   foodCulture:2, hasProducer:false },
+  // IBIZA
+  'ibiza town':        { michelin:{stars:2,bibs:3},   foodCulture:2, hasProducer:false },
+  // NEW MED
+  'nice':              { michelin:{stars:6,bibs:12},  foodCulture:3, hasProducer:false, legendaryBonus:1 }, // niçoise, socca
+  'cannes':            { michelin:{stars:4,bibs:6},   foodCulture:2, hasProducer:false },
+  'arles':             { michelin:{stars:1,bibs:2},   foodCulture:2, hasProducer:false },
+  'monaco':            { michelin:{stars:3,bibs:2},   foodCulture:2, hasProducer:false },
+  'tel aviv':          { michelin:{stars:0,bibs:0},   foodCulture:3, hasProducer:false, legendaryBonus:2 },
+  'fes':               { michelin:{stars:0,bibs:0},   foodCulture:3, hasProducer:false, legendaryBonus:1 },
+  'cairo':             { michelin:{stars:0,bibs:0},   foodCulture:2, hasProducer:false },
+  'alexandria':        { michelin:{stars:0,bibs:0},   foodCulture:2, hasProducer:false },
+  'kyrenia':           { michelin:{stars:0,bibs:1},   foodCulture:2, hasProducer:false },
+  // CHEFCHAOUEN already exists
   'haifa':             { michelin:{stars:0,bibs:0},  foodCulture:2, hasProducer:false },
-  'tel aviv':          { michelin:{stars:0,bibs:0},  foodCulture:3, hasProducer:false, legendaryBonus:2 }, // among top food cities globally
+  'tel aviv':          { michelin:{stars:0,bibs:0},  foodCulture:3, hasProducer:false, legendaryBonus:2 },
   'masada':            { michelin:{stars:0,bibs:0},  foodCulture:1, hasProducer:false },
   'dead sea':          { michelin:{stars:0,bibs:0},  foodCulture:1, hasProducer:false },
   // CYPRUS
   'paphos':            { michelin:{stars:0,bibs:1},  foodCulture:1, hasProducer:false },
   'troodos':           { michelin:{stars:0,bibs:0},  foodCulture:2, hasProducer:true  },
   'nicosia':           { michelin:{stars:0,bibs:2},  foodCulture:2, hasProducer:false },
+  // NEW FRANCE — PROVENCE / RIVIERA
+  'gordes':              { michelin:{stars:1,bibs:2},   foodCulture:2, hasProducer:true  },
+  'les baux de provence':{ michelin:{stars:3,bibs:2},   foodCulture:2, hasProducer:false },
+  'cassis':              { michelin:{stars:1,bibs:2},   foodCulture:2, hasProducer:true  },
+  'montpellier':         { michelin:{stars:2,bibs:8},   foodCulture:2, hasProducer:false },
+  'nimes':               { michelin:{stars:1,bibs:4},   foodCulture:2, hasProducer:false },
+  'saint paul de vence': { michelin:{stars:2,bibs:1},   foodCulture:1, hasProducer:false },
+  'menton':              { michelin:{stars:1,bibs:2},   foodCulture:2, hasProducer:true  },
+  'antibes':             { michelin:{stars:3,bibs:4},   foodCulture:2, hasProducer:false },
+  'marseille city':      { michelin:{stars:4,bibs:8},   foodCulture:3, hasProducer:false, legendaryBonus:2 },
+  // NEW ITALY
+  'genoa old city':      { michelin:{stars:3,bibs:6},   foodCulture:3, hasProducer:true,  legendaryBonus:1 },
+  'la spezia':           { michelin:{stars:1,bibs:4},   foodCulture:2, hasProducer:false },
+  'naples city':         { michelin:{stars:8,bibs:12},  foodCulture:3, hasProducer:true,  legendaryBonus:3 },
+  'bari city':           { michelin:{stars:2,bibs:6},   foodCulture:3, hasProducer:true,  legendaryBonus:1 },
+  'palma di montechiaro':{ michelin:{stars:0,bibs:0},   foodCulture:2, hasProducer:false },
+  // NEW CROATIA
+  'rovinj':              { michelin:{stars:1,bibs:3},   foodCulture:2, hasProducer:true  },
+  'sibenik':             { michelin:{stars:0,bibs:2},   foodCulture:2, hasProducer:false },
+  'trogir':              { michelin:{stars:0,bibs:1},   foodCulture:2, hasProducer:false },
+  // NEW GREECE
+  'lindos':              { michelin:{stars:0,bibs:0},   foodCulture:1, hasProducer:false },
+  'knossos':             { michelin:{stars:0,bibs:0},   foodCulture:1, hasProducer:false },
+  'kefalonia':           { michelin:{stars:0,bibs:1},   foodCulture:2, hasProducer:true  },
+  // NEW TURKEY
+  'cappadocia':          { michelin:{stars:0,bibs:0},   foodCulture:2, hasProducer:true  },
+  'bodrum peninsula':    { michelin:{stars:1,bibs:3},   foodCulture:2, hasProducer:false },
+  // NEW SPAIN
+  'palma de mallorca':   { michelin:{stars:4,bibs:8},   foodCulture:2, hasProducer:true  },
+  'valencia extras':     { michelin:{stars:0,bibs:0},   foodCulture:3, hasProducer:true  },
 };
 
 // ─────────────────────────────────────────────────────────
@@ -2570,6 +3098,40 @@ const CULTURAL_DATA = {
   'marseille':    {heritage:2,artScene:2}, 'avignon':      {heritage:3,artScene:2},
   'matera':       {heritage:3,artScene:1}, 'alberobello':  {heritage:3,artScene:1},
   'verona':       {heritage:3,artScene:2},
+  // PORTUGAL
+  'lisbon':       {heritage:3,artScene:3}, 'porto':        {heritage:3,artScene:2},
+  'sintra':       {heritage:3,artScene:1}, 'funchal':      {heritage:2,artScene:1},
+  'cascais':      {heritage:1,artScene:1}, 'guimaraes':    {heritage:3,artScene:1},
+  // NEW GREEK ISLANDS
+  'naxos':        {heritage:2,artScene:1}, 'paros':        {heritage:2,artScene:1},
+  'milos':        {heritage:2,artScene:1}, 'samos':        {heritage:2,artScene:1},
+  'lesbos':       {heritage:2,artScene:1}, 'aegina':       {heritage:2,artScene:1},
+  'hydra':        {heritage:2,artScene:2},
+  // NEW CITIES
+  'cannes':       {heritage:1,artScene:3}, 'arles':        {heritage:3,artScene:2},
+  'monaco':       {heritage:1,artScene:2}, 'cairo':        {heritage:3,artScene:2},
+  'alexandria':   {heritage:3,artScene:1}, 'fes':          {heritage:3,artScene:2},
+  'kyrenia':      {heritage:3,artScene:1}, 'ibiza town':   {heritage:2,artScene:2},
+  // NEW FRANCE
+  'gordes':       {heritage:2,artScene:2}, 'les baux de provence':{heritage:2,artScene:2},
+  'cassis':       {heritage:1,artScene:1}, 'montpellier':  {heritage:2,artScene:3},
+  'nimes':        {heritage:3,artScene:1}, 'saint paul de vence':{heritage:1,artScene:3},
+  'menton':       {heritage:2,artScene:3}, 'antibes':      {heritage:2,artScene:3},
+  'marseille city':{heritage:3,artScene:3},
+  // NEW ITALY
+  'genoa old city':{heritage:3,artScene:2}, 'la spezia':   {heritage:1,artScene:1},
+  'naples city':  {heritage:3,artScene:3}, 'bari city':    {heritage:2,artScene:2},
+  'palma di montechiaro':{heritage:2,artScene:1},
+  // NEW CROATIA
+  'rovinj':       {heritage:3,artScene:2}, 'sibenik':      {heritage:3,artScene:1},
+  'trogir':       {heritage:3,artScene:1},
+  // NEW GREECE
+  'lindos':       {heritage:3,artScene:1}, 'knossos':      {heritage:3,artScene:1},
+  'kefalonia':    {heritage:2,artScene:1},
+  // NEW TURKEY
+  'cappadocia':   {heritage:3,artScene:2}, 'bodrum peninsula':{heritage:2,artScene:1},
+  // NEW SPAIN
+  'palma de mallorca':{heritage:2,artScene:2}, 'valencia extras':{heritage:1,artScene:1},
 };
 
 // ─────────────────────────────────────────────────────────
@@ -2708,6 +3270,26 @@ const REGIONS = {
     label:'Canary Islands', emoji:'🌋',
     keys:['teide','santa cruz tenerife','las palmas','maspalomas','timanfaya','corralejo','betancuria'],
     port:'santa cruz',
+  },
+  portugal: {
+    label:'Portugal', emoji:'🇵🇹',
+    keys:['lisbon','sintra','cascais','porto','funchal','obidos','guimaraes'],
+    port:'lisbon',
+  },
+  egypt: {
+    label:'Egypt', emoji:'🏺',
+    keys:['cairo','alexandria'],
+    port:'alexandria',
+  },
+  cyclades_extra: {
+    label:'Cyclades Islands', emoji:'🏝️',
+    keys:['naxos','paros','milos','aegina','hydra'],
+    port:'piraeus',
+  },
+  eastern_aegean: {
+    label:'Eastern Aegean', emoji:'🌊',
+    keys:['samos','lesbos','chios'],
+    port:'piraeus',
   },
 };
 
@@ -2948,8 +3530,60 @@ function parsePastedItinerary(text) {
 // Any city not in DESTS gets a neutral placeholder so it
 // still appears in results, on the map, and in the planner.
 // ─────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────
+// HAVERSINE — km between two lat/lng points
+// ─────────────────────────────────────────────────────────
+function haversine(lat1, lng1, lat2, lng2) {
+  const R = 6371;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLng = (lng2 - lng1) * Math.PI / 180;
+  const a = Math.sin(dLat/2)**2 +
+    Math.cos(lat1 * Math.PI/180) * Math.cos(lat2 * Math.PI/180) * Math.sin(dLng/2)**2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+
+// Find nearest cruise port(s) within excursion range (<=200km)
+function nearestPorts(lat, lng, maxKm = 200) {
+  const results = [];
+  for (const [key, port] of Object.entries(PORTS)) {
+    if (!port.lat || !port.lng) continue;
+    const km = haversine(lat, lng, port.lat, port.lng);
+    if (km <= maxKm) results.push({ key, port, km });
+  }
+  return results.sort((a, b) => a.km - b.km).slice(0, 3); // top 3 nearest
+}
+
+// Geocode cache — avoid repeat lookups for the same city name
+const _geocodeCache = {};
+
+async function geocodeCity(name) {
+  if (_geocodeCache[name]) return _geocodeCache[name];
+  try {
+    const q = encodeURIComponent(name);
+    const url = `https://nominatim.openstreetmap.org/search?q=${q}&format=json&limit=1&addressdetails=1`;
+    const res = await fetch(url, { headers: { 'User-Agent': 'MissTheBoat/1.0' } });
+    const data = await res.json();
+    if (!data.length) return null;
+    const r = data[0];
+    const result = {
+      lat: parseFloat(r.lat),
+      lng: parseFloat(r.lon),
+      country: r.address?.country || 'Unknown',
+      displayName: r.display_name?.split(',')[0] || name,
+    };
+    _geocodeCache[name] = result;
+    return result;
+  } catch { return null; }
+}
+
+// Fallback destinations cache — built lazily as unknown cities are geocoded
+const _fallbackCache = {};
+
 function getDestOrFallback(key) {
   if (DESTS[key]) return DESTS[key];
+  // Return cached enriched fallback if already geocoded
+  if (_fallbackCache[key]) return _fallbackCache[key];
+  // Return basic placeholder immediately (geocoding is async, enrichment happens later)
   const name = key.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
   return {
     name,
@@ -2957,14 +3591,72 @@ function getDestOrFallback(key) {
     lat: null,
     lng: null,
     nearPorts: [],
-    cityByDay: [25,30,27,30,33,40,38], // neutral — not a known crowd destination
-    sub: 'Not a known cruise excursion destination',
+    cityByDay: [25,30,27,30,33,40,38],
+    sub: 'Not in our database — checking location…',
     note: null,
     shoulder: null,
     alt: null,
     tips: null,
     isFallback: true,
   };
+}
+
+// Called after a card renders — enriches fallback destinations with real geodata
+async function enrichFallbackDest(key, onEnriched) {
+  if (DESTS[key] || _fallbackCache[key]) return;
+  const name = key.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+  const geo = await geocodeCity(name);
+  if (!geo) {
+    _fallbackCache[key] = {
+      name, country: 'Unknown', lat: null, lng: null,
+      nearPorts: [], cityByDay: [25,30,27,30,33,40,38],
+      sub: 'City not found — check spelling',
+      note: null, shoulder: null, alt: null, tips: null, isFallback: true,
+    };
+    onEnriched && onEnriched(_fallbackCache[key]);
+    return;
+  }
+
+  // Find nearest ports
+  const nearby = nearestPorts(geo.lat, geo.lng);
+  const nearPortKeys = nearby.map(n => n.key);
+  const closestPort = nearby[0];
+
+  // Estimate cityByDay from nearest port distance
+  // Closer to a major port = higher baseline tourist traffic
+  const distanceFactor = closestPort ? Math.max(0, 1 - closestPort.km / 300) : 0;
+  const baseCrowd = Math.round(20 + distanceFactor * 40); // 20–60 range
+  const cityByDay = [
+    Math.round(baseCrowd * 0.75),
+    Math.round(baseCrowd * 0.90),
+    Math.round(baseCrowd * 0.80),
+    Math.round(baseCrowd * 0.90),
+    Math.round(baseCrowd * 0.95),
+    Math.round(baseCrowd * 1.25),
+    baseCrowd,
+  ];
+
+  const portNote = closestPort
+    ? `~${Math.round(closestPort.km)}km from ${closestPort.port.name}`
+    : 'No major cruise port within 200km';
+
+  _fallbackCache[key] = {
+    name: geo.displayName || name,
+    country: geo.country,
+    lat: geo.lat,
+    lng: geo.lng,
+    nearPorts: nearPortKeys,
+    cityByDay,
+    sub: portNote,
+    note: null,
+    shoulder: null,
+    alt: null,
+    tips: null,
+    isFallback: true,
+    geocoded: true,
+  };
+
+  onEnriched && onEnriched(_fallbackCache[key]);
 }
 
 function scoreStop(key, date) {
@@ -3290,7 +3982,8 @@ function renderCard(scored, idx) {
     'casablanca','athens','rhodes old town','heraklion','zakynthos','skiathos',
     'malaga','cadiz','antalya','zadar','bari','kos town','thessaloniki',
     'izmir city','valencia city','cartagena city','gibraltar rock',
-    'limassol','tangier','ajaccio','larnaca','toulon']);
+    'limassol','tangier','ajaccio','larnaca','toulon',
+    'lisbon','porto','funchal','alexandria','ibiza town','rovinj','sibenik']);
   const isPortCity = PORT_CITY_KEYS.has(key);
 
   const portNote = primaryPort && isExcursionDest
@@ -3507,10 +4200,20 @@ function renderResults(stops) {
 
   document.getElementById('cards').innerHTML = scored.map((s,i) => renderCard(s,i)).join('');
 
-  // Fire async enrichments in parallel — weather + live port schedule
+  // Fire async enrichments in parallel — weather + live port schedule + fallback geocoding
   scored.forEach((s,i) => {
     if (s.date) loadWeather(s, i);
     if (s.date && s.dest.nearPorts.length > 0) enrichCardWithLiveData(s, i);
+    // Geocode fallback destinations to get real location + nearest port
+    if (s.dest.isFallback && !s.dest.geocoded) {
+      enrichFallbackDest(s.key, (enriched) => {
+        // Re-score and re-render this card with real geodata
+        const newScored = scoreStop(s.key, s.date);
+        if (newScored) {
+          document.getElementById(`det-${i}`) && renderResults(currentStops);
+        }
+      });
+    }
   });
 
   // Share URL
@@ -3946,14 +4649,16 @@ let exploreSort = 'ratio-desc'; // ratio-desc | crowd-asc | crowd-desc | val-des
 // Region grouping by country for the structured list
 const REGION_GROUPS = [
   { country:'Italy', regions:['tuscany','venice','rome','amalfi','sicily','puglia','corsica'] },
-  { country:'Greece', regions:['greece'] },
+  { country:'Greece', regions:['greece','cyclades_extra','eastern_aegean'] },
   { country:'Croatia & Montenegro', regions:['adriatic'] },
   { country:'Spain', regions:['spain','andalusia','canary'] },
   { country:'France', regions:['riviera'] },
+  { country:'Portugal', regions:['portugal'] },
   { country:'Turkey', regions:['turkey'] },
   { country:'Cyprus', regions:['cyprus'] },
   { country:'Morocco', regions:['morocco'] },
   { country:'Israel', regions:['israel'] },
+  { country:'Egypt', regions:['egypt'] },
 ];
 
 // Region geographic centers for the selector map
@@ -3975,13 +4680,17 @@ const REGION_CENTERS = {
   tangier:   [35.7, -5.8],
   israel:    [32.0, 34.8],
   cyprus:    [34.9, 33.0],
-  canary:    [28.1,-15.4],
-  argostoli: [38.2, 20.5],
-  ashdod:    [31.8, 34.6],
-  larnaca:   [34.9, 33.6],
-  agadir:    [30.4, -9.6],
-  arrecife:  [29.0,-13.5],
-  toulon:    [43.1,  5.9],
+  canary:         [28.1,-15.4],
+  argostoli:      [38.2, 20.5],
+  ashdod:         [31.8, 34.6],
+  larnaca:        [34.9, 33.6],
+  agadir:         [30.4, -9.6],
+  arrecife:       [29.0,-13.5],
+  toulon:         [43.1,  5.9],
+  portugal:       [38.7, -9.1],
+  egypt:          [30.1, 31.2],
+  cyclades_extra: [36.9, 25.0],
+  eastern_aegean: [39.0, 26.5],
 };
 
 let selectorMap = null;
