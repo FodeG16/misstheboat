@@ -296,22 +296,7 @@ textarea:focus{border-color:#999;background:#fff}
     <div class="panel" style="padding-bottom:0">
       <div style="font-size:12px;color:#888;margin-bottom:.875rem;line-height:1.6">Click a region on the map or browse by country below. Destinations are ranked by cultural value vs. cruise crowd levels.</div>
 
-      <!-- SVG Map -->
-      <!-- Real Leaflet map replacing the SVG -->
-      <div id="med-map-wrap" style="border-radius:12px;overflow:hidden;margin-bottom:1rem;border:1px solid #dce8f0">
-        <div id="med-map" style="height:360px;width:100%"></div>
-      </div>
-
-      <!-- Country/Region grouped list — collapsed by default -->
-      <div style="margin-bottom:1.25rem">
-        <button onclick="toggleRegionList(this)" style="display:flex;align-items:center;gap:6px;padding:0;font-size:12px;font-weight:500;color:#888;background:none;border:none;cursor:pointer">
-          <span>Browse by country</span>
-          <span id="region-list-chev" style="font-size:10px;transition:transform .2s">▾</span>
-        </button>
-        <div id="region-list" style="display:none;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:6px;margin-top:8px">
-          <!-- "Anywhere" button injected first by initExplore() -->
-        </div>
-      </div>
+      <!-- SVG Map -->\n      <!-- Real Leaflet map replacing the SVG -->\n      <div id=\"med-map-wrap\" style=\"border-radius:12px;overflow:hidden;margin-bottom:0.75rem;border:1px solid #dce8f0\">\n        <div id=\"med-map\" style=\"height:360px;width:100%\"></div>\n      </div>\n\n      <!-- Anywhere button — standalone below map -->\n      <button id=\"btn-anywhere\" onclick=\"selectAllRegions()\" style=\"width:100%;margin-bottom:0.75rem;padding:10px 14px;font-size:13px;font-weight:600;border:2px solid #eee;border-radius:10px;background:#fff;color:#444;cursor:pointer;text-align:left;display:flex;align-items:center;gap:8px;transition:all .15s\">\n        <span style=\"font-size:17px\">🌍</span>\n        <span>Show all destinations — least crowded first</span>\n      </button>\n\n      <!-- Country/Region grouped list — collapsed by default -->\n      <div style=\"margin-bottom:1.25rem\">\n        <button onclick=\"toggleRegionList(this)\" style=\"display:flex;align-items:center;gap:6px;padding:0;font-size:12px;font-weight:500;color:#888;background:none;border:none;cursor:pointer\">\n          <span>Browse by country</span>\n          <span id=\"region-list-chev\" style=\"font-size:10px;transition:transform .2s\">▾</span>\n        </button>\n        <div id=\"region-list\" style=\"display:none;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:6px;margin-top:8px\">\n        </div>\n      </div>
 
       <!-- Trip settings -->
       <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:1.25rem">
@@ -4844,21 +4829,6 @@ function initExplore() {
   if (listEl && !listEl.dataset.built) {
     listEl.dataset.built = '1';
 
-    // ── "Anywhere" mega-button at the top ──────────────────
-    const anyBtn = document.createElement('button');
-    anyBtn.id = 'rlist-anywhere';
-    anyBtn.style.cssText = 'grid-column:1/-1;padding:10px 14px;font-size:13px;font-weight:600;border:2px solid #eee;border-radius:10px;background:#fff;color:#444;cursor:pointer;text-align:left;transition:all .15s;display:flex;align-items:center;gap:8px;width:100%';
-    anyBtn.innerHTML = `<span style="font-size:18px">🌍</span><span>Anywhere — show all destinations, least crowded first</span>`;
-    anyBtn.onmouseenter = () => { if (exploreRegion !== 'anywhere') anyBtn.style.background = '#f5f5f5'; };
-    anyBtn.onmouseleave = () => { if (exploreRegion !== 'anywhere') anyBtn.style.background = '#fff'; };
-    anyBtn.onclick = () => selectAllRegions();
-    listEl.appendChild(anyBtn);
-
-    // Divider
-    const div = document.createElement('div');
-    div.style.cssText = 'grid-column:1/-1;border-top:1px solid #f0f0f0;margin:4px 0';
-    listEl.appendChild(div);
-
     REGION_GROUPS.forEach(group => {
       const hdr = document.createElement('div');
       hdr.style.cssText = 'grid-column:1/-1;font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:.07em;margin-top:8px;margin-bottom:2px;padding-left:2px';
@@ -4936,6 +4906,11 @@ function selectRegionMap(k) {
   if (!REGIONS[k]) return;
   exploreRegion = k;
 
+  // Reset anywhere button
+  const anyBtn = document.getElementById('btn-anywhere');
+  if (anyBtn) { anyBtn.style.background='#fff'; anyBtn.style.color='#444'; anyBtn.style.borderColor='#eee'; }
+  if (REGIONS['anywhere']) delete REGIONS['anywhere'];
+
   // Update Leaflet markers
   Object.entries(selectorMarkers).forEach(([key, marker]) => {
     if (key === k) {
@@ -4957,39 +4932,38 @@ function selectRegionMap(k) {
 }
 
 function selectAllRegions() {
-  // Build a synthetic "anywhere" region from all destination keys across all regions
+  const btn = document.getElementById('btn-anywhere');
+
+  // Toggle off if already active
+  if (exploreRegion === 'anywhere') {
+    exploreRegion = null;
+    delete REGIONS['anywhere'];
+    if (btn) { btn.style.background='#fff'; btn.style.color='#444'; btn.style.borderColor='#eee'; }
+    document.getElementById('explore-results-wrap').style.display = 'none';
+    return;
+  }
+
+  // Collect every destination key from every real region (exclude 'anywhere' itself)
   const allKeys = [];
   const seen = new Set();
-  Object.values(REGIONS).forEach(r => {
-    if (r.keys) r.keys.forEach(k => { if (!seen.has(k)) { seen.add(k); allKeys.push(k); } });
-  });
+  for (const [k, r] of Object.entries(REGIONS)) {
+    if (k === 'anywhere') continue;
+    if (r.keys) r.keys.forEach(key => { if (!seen.has(key)) { seen.add(key); allKeys.push(key); } });
+  }
 
-  // Temporarily inject a synthetic region
-  REGIONS['anywhere'] = {
-    label: 'Anywhere',
-    emoji: '🌍',
-    keys: allKeys,
-  };
+  REGIONS['anywhere'] = { label:'Anywhere', emoji:'🌍', keys: allKeys };
   exploreRegion = 'anywhere';
 
-  // Reset all map markers to unselected
-  Object.values(selectorMarkers).forEach(marker => {
-    marker.setStyle({fillColor:'#2A7050', color:'#2A7050', fillOpacity:0.18, radius:14});
-  });
+  // Style the button as active
+  if (btn) { btn.style.background='#1a1a1a'; btn.style.color='#fff'; btn.style.borderColor='#1a1a1a'; }
 
-  // Update list buttons
-  document.querySelectorAll('[id^="rlist-"]').forEach(btn => {
-    const isSelected = btn.id === 'rlist-anywhere';
-    btn.style.background = isSelected ? '#1a1a1a' : '#fff';
-    btn.style.color = isSelected ? '#fff' : '#555';
-    btn.style.borderColor = isSelected ? '#2px solid #1a1a1a' : '#eee';
+  // Deselect all map markers and region list buttons
+  Object.values(selectorMarkers).forEach(m =>
+    m.setStyle({fillColor:'#2A7050', color:'#2A7050', fillOpacity:0.18, radius:14})
+  );
+  document.querySelectorAll('[id^="rlist-"]').forEach(b => {
+    b.style.background='#fff'; b.style.color='#555'; b.style.borderColor='#eee';
   });
-  const anyBtn = document.getElementById('rlist-anywhere');
-  if (anyBtn) {
-    anyBtn.style.background = '#1a1a1a';
-    anyBtn.style.color = '#fff';
-    anyBtn.style.borderColor = '#1a1a1a';
-  }
 
   renderExplore();
 }
