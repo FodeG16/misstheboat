@@ -4000,7 +4000,13 @@ function renderCard(scored, idx) {
       <div class="stripe st-${status[0]}" id="stripe-${idx}"></div>
       <div class="ci">
         <div class="ct">
-          <div class="cname">${dest.name}${isPortCity ? ' <span style="font-size:10px;font-weight:500;color:#aaa;letter-spacing:.03em;vertical-align:middle">⚓ PORT</span>' : ''}</div>
+          <div class="cname">
+            ${dest.name}${isPortCity ? ' <span style="font-size:10px;font-weight:500;color:#aaa;letter-spacing:.03em;vertical-align:middle">⚓ PORT</span>' : ''}
+            ${dest.lat && dest.lng
+              ? `<a href="https://www.google.com/maps?q=${dest.lat},${dest.lng}" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Open in Google Maps" style="display:inline-flex;align-items:center;margin-left:5px;color:#aaa;text-decoration:none;vertical-align:middle;font-size:11px" onmouseover="this.style.color='#2A7050'" onmouseout="this.style.color='#aaa'">↗</a>`
+              : `<a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(dest.name + (dest.country && dest.country !== 'Unknown' ? ', ' + dest.country : ''))}" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="Search in Google Maps" style="display:inline-flex;align-items:center;margin-left:5px;color:#aaa;text-decoration:none;vertical-align:middle;font-size:11px" onmouseover="this.style.color='#2A7050'" onmouseout="this.style.color='#aaa'">↗</a>`
+            }
+          </div>
           <div class="csub">${dest.sub}${portNote ? ' · ' + portNote : ''}</div>
         </div>
         <div class="cr">
@@ -4059,12 +4065,16 @@ function renderCard(scored, idx) {
         ${primaryPort && isExcursionDest ? `
         <div class="irow">
           <div class="iico">⚓</div>
-          <div class="ibody" id="port-info-${idx}"><strong>Excursion from ${primaryPort.name}.</strong> Est. cruise call volume ${maxCruise}/100 on ${['Mon','Tue','Wed','Thu','Fri','Sat','Sun'][dayIdx]}s this ${scored.season}.</div>
+          <div class="ibody" id="port-info-${idx}"><strong>Excursion from ${primaryPort.name}.</strong> Est. cruise call volume ${maxCruise}/100 on ${['Mon','Tue','Wed','Thu','Fri','Sat','Sun'][dayIdx]}s this ${scored.season}.
+            <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(primaryPort.name + ' cruise port')}" target="_blank" rel="noopener" style="font-size:11px;color:#2A7050;margin-left:6px;text-decoration:none">View port ↗</a>
+          </div>
         </div>` : ''}
         ${primaryPort && !isExcursionDest && !allZeroCruise ? `
         <div class="irow">
           <div class="iico">⚓</div>
-          <div class="ibody" id="port-info-${idx}"><strong>Near ${primaryPort.name}.</strong> Cruise spillover likely — port call volume ${maxCruise}/100 on ${['Mon','Tue','Wed','Thu','Fri','Sat','Sun'][dayIdx]}s this ${scored.season}.</div>
+          <div class="ibody" id="port-info-${idx}"><strong>Near ${primaryPort.name}.</strong> Cruise spillover likely — port call volume ${maxCruise}/100 on ${['Mon','Tue','Wed','Thu','Fri','Sat','Sun'][dayIdx]}s this ${scored.season}.
+            <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(primaryPort.name + ' cruise port')}" target="_blank" rel="noopener" style="font-size:11px;color:#2A7050;margin-left:6px;text-decoration:none">View port ↗</a>
+          </div>
         </div>` : ''}
         ${dest.note ? `
         <div class="irow">
@@ -4264,21 +4274,37 @@ function openMinimize(withAlts) {
     return { s, scores, curScore: scores[dayIdx] };
   });
 
-  // Best day within ±3 days of original
+  // ── CONFLICT-FREE GREEDY REARRANGEMENT ──────────────────
+  // Assign each stop the best available day (±3 days) that
+  // hasn't already been taken by a previously assigned stop.
+  const assignedDates = new Set(); // ISO strings already claimed
+
   const rearranged = perStop.map(({s, scores, curScore}) => {
     const orig = s.date;
-    let bestOffset = 0, bestScore = curScore;
+    // Build candidate offsets sorted by score ascending (best first)
+    const candidates = [];
     for (let offset = -3; offset <= 3; offset++) {
       const trial = new Date(orig);
       trial.setDate(trial.getDate() + offset);
       const dayI = getDayIdx(trial);
-      if (scores[dayI] < bestScore) { bestScore = scores[dayI]; bestOffset = offset; }
+      candidates.push({ offset, date: trial, score: scores[dayI] });
     }
-    const newDate = new Date(orig);
-    newDate.setDate(newDate.getDate() + bestOffset);
+    candidates.sort((a, b) => a.score - b.score);
+
+    // Pick the lowest-score candidate whose date isn't already taken
+    let chosen = candidates[0]; // default: best score even if conflict
+    for (const c of candidates) {
+      const iso = c.date.toISOString().split('T')[0];
+      if (!assignedDates.has(iso)) { chosen = c; break; }
+    }
+    const chosenIso = chosen.date.toISOString().split('T')[0];
+    assignedDates.add(chosenIso);
+
+    const newDate = chosen.date;
+    const bestOffset = chosen.offset;
+    const bestScore = chosen.score;
     const hasAlt = !!s.dest.alt;
     const needsAlt = s.status === 'red' || s.status === 'amber';
-    // Default: use alt if available and stop is crowded (withAlts mode only)
     if (withAlts && hasAlt && needsAlt && _altToggles[s.key] === undefined) {
       _altToggles[s.key] = true;
     }
@@ -4318,6 +4344,22 @@ function openMinimize(withAlts) {
     const displayStatus = usingAlt ? '↗ Alternative' : (s.status === 'red' ? '⚠ AVOID' : s.status === 'amber' ? '⚠ CAUTION' : '✓ CLEAR');
     const statusColor = usingAlt ? '#2A7050' : s.status === 'red' ? '#B83232' : s.status === 'amber' ? '#B87820' : '#2A7050';
 
+    // Score reduction label for alternatives — look up alt city's score if in DESTS
+    const altKey = altCity ? altCity.toLowerCase() : null;
+    const altDest = altKey ? (DESTS[altKey] || null) : null;
+    let altScore = null;
+    if (altDest) {
+      const dayI = getDayIdx(newDate);
+      const season = s.season;
+      let cruise = 0;
+      for (const pk of altDest.nearPorts) {
+        const p = PORTS[pk]; if (p) cruise = Math.max(cruise, p[season][dayI]);
+      }
+      altScore = Math.round(altDest.cityByDay[dayI] * 0.20 + cruise * 0.80);
+    }
+
+    const suggestedDateStr = newDate.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+
     h += `<div class="modal-card" style="${changed?'border-color:#C0DD97;':''};${usingAlt?'background:#f8fdf5;':''}">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;gap:8px">
         <div>
@@ -4337,8 +4379,15 @@ function openMinimize(withAlts) {
         </div>` : ''}
       </div>` : ''}
       <div class="mc-cur">
-        ${usingAlt ? '' : `${s.date.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})} · crowd score ${curScore}
-        ${changed ? `→ <strong style="color:#2A7050">${newDate.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})} · score ${bestScore}</strong>` : ' <span style="color:#aaa">(already optimal day)</span>'}`}
+        ${usingAlt
+          ? `<span style="color:#555">${s.dest.name} original score: <strong>${curScore}</strong></span>
+             <span style="margin:0 4px;color:#ccc">→</span>
+             <strong style="color:#2A7050">${altCity} on ${suggestedDateStr}${altScore !== null ? ` · score ${altScore}` : ''}</strong>`
+          : `${s.date.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})} · crowd score <strong>${curScore}</strong>
+             ${changed
+               ? ` <span style="margin:0 4px;color:#ccc">→</span> <strong style="color:#2A7050">${suggestedDateStr} · score ${bestScore}</strong>`
+               : ' <span style="color:#aaa">(already optimal day)</span>'}`
+        }
       </div>
       ${!usingAlt ? `<div class="mc-days" style="margin-top:8px">
         ${fullDays.map((d,i) => {
