@@ -39,7 +39,10 @@
 - **Best solution:** GYG Partner API (request token at partner.getyourguide.com with PID VKYN0SM)
 - **Fallback:** Puppeteer (real Chrome) can scrape Viator — `npm install puppeteer`, then rewrite scraper
 - Script ready but needs Puppeteer: `scrape_viator_excursions.js`
-- **Must fix before launch** — inaccurate excursion mapping = wrong crowd scores at destination level
+- **ACCURACY REQUIREMENT: 99%+** — this is the core value of the product. Knowing exactly which sub-destinations receive cruise excursion traffic is the entire point.
+- Current status: manually written baseline in place (~85-90%). Must be replaced with verified scraped data before product is considered complete.
+- Viator IP block clears after 2-4 hours. Claude Code browser is next attempt.
+- GYG Partner API token still cleanest solution — request at partner.getyourguide.com with PID VKYN0SM
 
 ## Destinations & Ports
 - **Total destinations:** 184
