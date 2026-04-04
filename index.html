@@ -3803,6 +3803,20 @@ function updateCardStatus(idx, status, label) {
   const badge = document.getElementById(`badge-${idx}`);
   if (stripe) stripe.className = `stripe st-${status[0]}`;
   if (badge) { badge.className = `badge b-${status[0]}`; badge.textContent = label; }
+
+  // Recount all visible card statuses and sync summary
+  const counts = {r:0, a:0, g:0};
+  document.querySelectorAll('[id^="badge-"]').forEach(b => {
+    if (b.classList.contains('b-r')) counts.r++;
+    else if (b.classList.contains('b-a')) counts.a++;
+    else if (b.classList.contains('b-g')) counts.g++;
+  });
+  const red = document.getElementById('sum-red');
+  const amb = document.getElementById('sum-amb');
+  const grn = document.getElementById('sum-grn');
+  if (red) red.textContent = counts.r;
+  if (amb) amb.textContent = counts.a;
+  if (grn) grn.textContent = counts.g;
 }
 
 
@@ -4653,13 +4667,19 @@ function runAnalysis() {
     }
   } else {
     const rows = document.querySelectorAll('#stop-list .stop-row');
+    let missingDate = false;
     rows.forEach(row => {
       const name = row.querySelector('.sname').textContent.trim().toLowerCase();
       const dateText = row.querySelector('.sdate').textContent.trim();
       const keys = matchDestination(name);
       const date = dateText && dateText !== '—' ? parseDate(dateText) : null;
+      if (!date) missingDate = true;
       keys.forEach(key => stops.push({ key, date }));
     });
+    if (missingDate) {
+      alert('Please select a date for each destination. Click the "—" next to any stop to set its date.');
+      return;
+    }
   }
 
   renderResults(stops);
@@ -4779,7 +4799,7 @@ function init() {
 // ─────────────────────────────────────────────────────────
 // EXPLORE REGIONS
 // ─────────────────────────────────────────────────────────
-let exploreRegion = null;
+let exploreRegions = new Set(); // multi-select — set of active region keys
 let exploreLen = 5;
 let exploreSeason = 'spring';
 let exploreSort = 'ratio-desc'; // ratio-desc | crowd-asc | crowd-desc | val-desc | val-asc
@@ -4860,8 +4880,8 @@ function initExplore() {
         btn.id = `rlist-${k}`;
         btn.style.cssText = 'padding:8px 12px;font-size:12px;font-weight:500;border:1px solid #eee;border-radius:8px;background:#fff;color:#555;cursor:pointer;text-align:left;transition:all .15s;display:flex;align-items:center;gap:6px';
         btn.innerHTML = `<span style="font-size:15px">${r.emoji}</span><span>${r.label}</span>`;
-        btn.onmouseenter = () => { if (exploreRegion !== k) btn.style.background = '#f5f5f5'; };
-        btn.onmouseleave = () => { if (exploreRegion !== k) btn.style.background = '#fff'; };
+        btn.onmouseenter = () => { if (!exploreRegions.has(k)) btn.style.background = '#f5f5f5'; };
+        btn.onmouseleave = () => { if (!exploreRegions.has(k)) btn.style.background = '#fff'; };
         btn.onclick = () => selectRegionMap(k);
         listEl.appendChild(btn);
       });
@@ -4910,10 +4930,10 @@ function initExplore() {
     }).openTooltip();
 
     marker.on('mouseover', function() {
-      if (exploreRegion !== k) this.setStyle({fillOpacity:0.4, radius:17});
+      if (exploreRegions.has(k)) this.setStyle({fillOpacity:0.4, radius:17});
     });
     marker.on('mouseout', function() {
-      if (exploreRegion !== k) this.setStyle({fillOpacity:0.18, radius:14});
+      if (exploreRegions.has(k)) this.setStyle({fillOpacity:0.18, radius:14});
     });
     marker.on('click', function() { selectRegionMap(k); });
 
@@ -4921,48 +4941,64 @@ function initExplore() {
   });
 }
 
+function updateRegionButtonStyle(k) {
+  const btn = document.getElementById(`rlist-${k}`);
+  const selected = exploreRegions.has(k);
+  if (!btn) return;
+  btn.style.background = selected ? '#1a1a1a' : '#fff';
+  btn.style.color = selected ? '#fff' : '#555';
+  btn.style.borderColor = selected ? '#1a1a1a' : '#eee';
+}
+
+function updateMapMarkerStyle(k) {
+  const marker = selectorMarkers[k];
+  if (!marker) return;
+  if (exploreRegions.has(k)) {
+    marker.setStyle({fillColor:'#1a1a1a', color:'#1a1a1a', fillOpacity:0.8, radius:16});
+  } else {
+    marker.setStyle({fillColor:'#2A7050', color:'#2A7050', fillOpacity:0.18, radius:14});
+  }
+}
+
 function selectRegionMap(k) {
   if (!REGIONS[k]) return;
-  exploreRegion = k;
 
-  // Reset anywhere button
+  // Reset anywhere button and state
   const anyBtn = document.getElementById('btn-anywhere');
   if (anyBtn) { anyBtn.style.background='#fff'; anyBtn.style.color='#444'; anyBtn.style.borderColor='#eee'; }
   if (REGIONS['anywhere']) delete REGIONS['anywhere'];
 
-  // Update Leaflet markers
-  Object.entries(selectorMarkers).forEach(([key, marker]) => {
-    if (key === k) {
-      marker.setStyle({fillColor:'#1a1a1a', color:'#1a1a1a', fillOpacity:0.8, radius:16});
-    } else {
-      marker.setStyle({fillColor:'#2A7050', color:'#2A7050', fillOpacity:0.18, radius:14});
-    }
-  });
+  // Toggle this region in/out of selection
+  if (exploreRegions.has(k)) {
+    exploreRegions.delete(k);
+  } else {
+    exploreRegions.add(k);
+  }
 
-  // Update list buttons
-  document.querySelectorAll('[id^="rlist-"]').forEach(btn => {
-    const isSelected = btn.id === `rlist-${k}`;
-    btn.style.background = isSelected ? '#1a1a1a' : '#fff';
-    btn.style.color = isSelected ? '#fff' : '#555';
-    btn.style.borderColor = isSelected ? '#1a1a1a' : '#eee';
-  });
+  updateRegionButtonStyle(k);
+  updateMapMarkerStyle(k);
 
-  renderExplore();
+  if (exploreRegions.size === 0) {
+    document.getElementById('explore-results-wrap').style.display = 'none';
+  } else {
+    renderExplore();
+  }
 }
 
 function selectAllRegions() {
   const btn = document.getElementById('btn-anywhere');
+  const isAnywhere = REGIONS['anywhere'] && exploreRegions.has('anywhere');
 
   // Toggle off if already active
-  if (exploreRegion === 'anywhere') {
-    exploreRegion = null;
+  if (isAnywhere) {
+    exploreRegions.clear();
     delete REGIONS['anywhere'];
     if (btn) { btn.style.background='#fff'; btn.style.color='#444'; btn.style.borderColor='#eee'; }
     document.getElementById('explore-results-wrap').style.display = 'none';
     return;
   }
 
-  // Collect every destination key from every real region (exclude 'anywhere' itself)
+  // Collect every destination key from every real region
   const allKeys = [];
   const seen = new Set();
   for (const [k, r] of Object.entries(REGIONS)) {
@@ -4971,39 +5007,41 @@ function selectAllRegions() {
   }
 
   REGIONS['anywhere'] = { label:'Anywhere', emoji:'🌍', keys: allKeys };
-  exploreRegion = 'anywhere';
 
-  // Style the button as active
+  // Clear all individual selections, select only 'anywhere'
+  exploreRegions.clear();
+  exploreRegions.add('anywhere');
+
   if (btn) { btn.style.background='#1a1a1a'; btn.style.color='#fff'; btn.style.borderColor='#1a1a1a'; }
 
-  // Deselect all map markers and region list buttons
-  Object.values(selectorMarkers).forEach(m =>
-    m.setStyle({fillColor:'#2A7050', color:'#2A7050', fillOpacity:0.18, radius:14})
-  );
+  // Reset all region list buttons and map markers
   document.querySelectorAll('[id^="rlist-"]').forEach(b => {
     b.style.background='#fff'; b.style.color='#555'; b.style.borderColor='#eee';
   });
+  Object.values(selectorMarkers).forEach(m =>
+    m.setStyle({fillColor:'#2A7050', color:'#2A7050', fillOpacity:0.18, radius:14})
+  );
 
   renderExplore();
 }
 
 function setExploreSort(s) {
   exploreSort = s;
-  if (exploreRegion) renderExplore();
+  if (exploreRegions.size > 0) renderExplore();
 }
 
 function setLen(el, n) {
   document.querySelectorAll('.lpill[data-n]').forEach(x=>x.classList.remove('on'));
   el.classList.add('on');
   exploreLen = n;
-  if (exploreRegion) renderExplore();
+  if (exploreRegions.size > 0) renderExplore();
 }
 
 function setSeason(el, s) {
   document.querySelectorAll('.lpill[data-s]').forEach(x=>x.classList.remove('on'));
   el.classList.add('on');
   exploreSeason = s;
-  if (exploreRegion) renderExplore();
+  if (exploreRegions.size > 0) renderExplore();
 }
 
 function crowdValueRank(key, season) {
@@ -5031,15 +5069,23 @@ function crowdValueRank(key, season) {
 }
 
 function renderExplore() {
-  const region = REGIONS[exploreRegion];
-  if (!region) return;
+  if (exploreRegions.size === 0) return;
 
   const wrap = document.getElementById('explore-results-wrap');
   const el = document.getElementById('explore-results');
   wrap.style.display = 'block';
 
-  // Base ranked list — all destinations in region scored for this season
-  const ranked = region.keys
+  // Combine keys from all selected regions, deduplicated
+  const combinedKeys = [];
+  const seen = new Set();
+  for (const regionKey of exploreRegions) {
+    const r = REGIONS[regionKey];
+    if (!r || !r.keys) continue;
+    r.keys.forEach(k => { if (!seen.has(k)) { seen.add(k); combinedKeys.push(k); } });
+  }
+
+  // Base ranked list — all destinations across selected regions
+  const ranked = combinedKeys
     .map(k => crowdValueRank(k, exploreSeason))
     .filter(Boolean);
 
@@ -5055,12 +5101,17 @@ function renderExplore() {
   const sorted = [...ranked].sort(SORTS[exploreSort].fn);
   const topN = sorted.slice(0, exploreLen);
 
+  // Build header label from selected regions
+  const regionLabel = exploreRegions.has('anywhere')
+    ? 'All Destinations'
+    : [...exploreRegions].map(k => REGIONS[k]?.label || k).join(' + ');
+
   const sortPills = Object.entries(SORTS).map(([k,v]) =>
     `<button onclick="setExploreSort('${k}')" style="padding:4px 10px;font-size:11px;font-weight:500;border-radius:20px;border:1px solid ${exploreSort===k?'#1a1a1a':'#ddd'};background:${exploreSort===k?'#1a1a1a':'#fff'};color:${exploreSort===k?'#fff':'#888'};cursor:pointer;white-space:nowrap">${v.label}</button>`
   ).join('');
 
   let h = `<div style="margin-bottom:10px">
-    <div class="sec-lbl" style="margin-bottom:8px">${region.label} · ${exploreSeason.charAt(0).toUpperCase()+exploreSeason.slice(1)} · showing ${exploreLen} stops</div>
+    <div class="sec-lbl" style="margin-bottom:8px">${regionLabel} · ${exploreSeason.charAt(0).toUpperCase()+exploreSeason.slice(1)} · showing ${exploreLen} stops</div>
     <div style="display:flex;gap:5px;flex-wrap:wrap">${sortPills}</div>
   </div>`;
 
@@ -5151,8 +5202,7 @@ function buildExploreMap(ranked, topN) {
   }
   mapEl.innerHTML = '';
 
-  // Center on region
-  const region = REGIONS[exploreRegion];
+  // Center on destinations in results
   const lats = topN.map(r => r.dest.lat).filter(Boolean);
   const lngs = topN.map(r => r.dest.lng).filter(Boolean);
   const centerLat = lats.reduce((a,b)=>a+b,0)/lats.length || 43;
@@ -5319,10 +5369,18 @@ async function generateAIItinerary() {
   status.style.display = 'block';
   status.textContent = '✦ Generating itinerary…';
 
-  // Build list of destination names we know about for this region
-  const region = REGIONS[exploreRegion];
-  const knownDests = region
-    ? region.keys.map(k => DESTS[k]?.name).filter(Boolean)
+  // Build list of destination names we know about for selected regions
+  const combinedKeys = [];
+  const seenKeys = new Set();
+  for (const rk of exploreRegions) {
+    const r = REGIONS[rk];
+    if (r?.keys) r.keys.forEach(k => { if (!seenKeys.has(k)) { seenKeys.add(k); combinedKeys.push(k); } });
+  }
+  const activeRegionLabel = exploreRegions.has('anywhere')
+    ? 'All Destinations'
+    : [...exploreRegions].map(k => REGIONS[k]?.label || k).join(' + ');
+  const knownDests = combinedKeys.length > 0
+    ? combinedKeys.map(k => DESTS[k]?.name).filter(Boolean)
     : Object.values(DESTS).map(d => d.name);
 
   try {
@@ -5334,7 +5392,7 @@ async function generateAIItinerary() {
         mode: 'generate',
         season: exploreSeason,
         days: exploreLen,
-        region: region ? region.label : null,
+        region: activeRegionLabel || null,
         availableDestinations: knownDests,
       }),
     });
