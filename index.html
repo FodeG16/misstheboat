@@ -425,6 +425,7 @@ const PORTS = {
     summer: [68,92,55,85,78,35,20],
     fall:   [48,75,38,70,62,22,12],
     excursions: ['florence','pisa','siena','san gimignano','lucca','volterra','bolgheri','chianti','cinque terre'],
+    peakShips: 4,
     notExcursions: ['volterra','montalcino','bolgheri','massa marittima','certaldo','san miniato'],
   },
   civitavecchia: {
@@ -433,6 +434,7 @@ const PORTS = {
     summer: [100,93,93,93,93,93,93],
     fall:   [92,100,100,100,100,100,92],
     excursions: ['rome','ostia antica','tivoli','orvieto','cerveteri','bracciano','tarquinia'],
+    peakShips: 8,
     notExcursions: ['calcata','sutri','bracciano','tarquinia','viterbo old town'],
   },
   naples: {
@@ -441,6 +443,7 @@ const PORTS = {
     summer: [87,100,100,100,65,100,100],
     fall:   [48,72,72,72,36,72,60],
     excursions: ['pompeii','herculaneum','amalfi','ravello','positano','sorrento','capri','paestum','vesuvius'],
+    peakShips: 6,
     notExcursions: ['ravello','cetara','maiori','vietri sul mare','paestum','cilento'],
   },
   venice: {
@@ -449,6 +452,7 @@ const PORTS = {
     summer: [73,43,29,43,29,100,100],
     fall:   [40,24,16,24,16,72,72],
     excursions: ['venice','murano','burano','verona','padua'],
+    peakShips: 7,
     notExcursions: ['vicenza','treviso','chioggia','bassano del grappa','asolo'],
   },
   catania: {
@@ -457,6 +461,7 @@ const PORTS = {
     summer: [48,100,44,15,15,96,11],
     fall:   [47,100,40,40,33,47,20],
     excursions: ['etna','taormina','syracuse','noto','ragusa','piazza armerina','agrigento'],
+    peakShips: 3,
     notExcursions: ['ragusa','modica','piazza armerina','caltagirone','marzamemi'],
   },
   malaga: {
@@ -465,6 +470,7 @@ const PORTS = {
     summer: [0,100,0,0,0,0,0],
     fall:   [63,54,45,54,45,72,18],
     excursions: ['granada','ronda','nerja','mijas','frigiliana','marbella','cordoba','antequera'],
+    peakShips: 4,
     notExcursions: ['frigiliana','nerja','antequera','ardales','zahara de la sierra'],
   },
   cadiz: {
@@ -473,6 +479,7 @@ const PORTS = {
     summer: [87,100,100,100,87,100,65],
     fall:   [48,72,60,72,48,60,36],
     excursions: ['seville','cordoba','jerez','cadiz old city','el puerto de santa maria','arcos de la frontera','tarifa'],
+    peakShips: 3,
     notExcursions: ['vejer de la frontera','arcos de la frontera','medina sidonia','chipiona'],
   },
   antalya: {
@@ -481,6 +488,7 @@ const PORTS = {
     summer: [0,0,100,0,0,25,0],
     fall:   [0,17,17,33,0,33,100],
     excursions: ['antalya','aspendos','side','perge','pamukkale'],
+    peakShips: 1,
     notExcursions: ['olympos','cirali','demre','kas','simena'],
   },
   dubrovnik: {
@@ -489,6 +497,7 @@ const PORTS = {
     summer: [90,100,97,100,77,80,83],
     fall:   [91,95,95,91,64,100,86],
     excursions: ['dubrovnik old town','lokrum island','cavtat','peljesac','kotor','mostar','hvar','split'],
+    peakShips: 5,
     notExcursions: ['ston','peljesac','mljet','cavtat','lastovo'],
   },
   split: {
@@ -497,6 +506,7 @@ const PORTS = {
     summer: [69,77,73,73,100,100,77],
     fall:   [70,87,83,70,100,87,74],
     excursions: ['split old town','hvar','trogir','salona','omis','plitvice lakes','brac','vis'],
+    peakShips: 4,
     notExcursions: ['vis','brac','imotski','sinj','omis'],
   },
   piraeus: {
@@ -505,6 +515,7 @@ const PORTS = {
     summer: [82,88,82,70,88,100,85],
     fall:   [87,77,80,73,80,100,83],
     excursions: ['athens','cape sounion','delphi','corinth','mycenae','epidaurus','nafplio','aegina','hydra'],
+    peakShips: 8,
     notExcursions: ['aegina','epidaurus','nemea','marathon','mount parnitha'],
   },
   mykonos: {
@@ -513,6 +524,7 @@ const PORTS = {
     summer: [93,100,93,93,90,86,93],
     fall:   [92,75,79,96,100,63,79],
     excursions: ['mykonos town','delos'],
+    peakShips: 6,
     notExcursions: ['ano mera','agios sostis'],
   },
   santorini: {
@@ -521,6 +533,7 @@ const PORTS = {
     summer: [100,100,96,96,93,96,96],
     fall:   [79,83,88,100,96,83,92],
     excursions: ['oia','fira','akrotiri','red beach'],
+    peakShips: 5,
     notExcursions: ['pyrgos','megalochori','emporio'],
   },
   barcelona: {
@@ -529,6 +542,7 @@ const PORTS = {
     summer: [100,93,93,93,93,93,93],
     fall:   [100,100,100,100,100,100,100],
     excursions: ['barcelona','montserrat','sitges','tarragona','penedes','colonia guell','costa brava','girona'],
+    peakShips: 9,
     notExcursions: ['penedes','vic','cardona','besalu'],
   },
   palma: {
@@ -537,6 +551,7 @@ const PORTS = {
     summer: [100,100,56,81,100,96,85],
     fall:   [96,92,72,88,80,100,100],
     excursions: ['palma old town','valldemossa','soller','formentor'],
+    peakShips: 4,
     notExcursions: ['alcudia','sineu','felanitx','ses salines'],
   },
   marseille: {
@@ -545,6 +560,7 @@ const PORTS = {
     summer: [93,73,73,77,87,93,100],
     fall:   [96,85,81,81,89,96,100],
     excursions: ['aix-en-provence','arles','cassis','avignon','les baux','saint remy','camargue','marseille calanques'],
+    peakShips: 5,
     notExcursions: ['luberon','les baux','cotignac','moustiers-sainte-marie'],
   },
   villefranche: {
@@ -553,6 +569,7 @@ const PORTS = {
     summer: [65,78,70,80,75,60,55],
     fall:   [42,52,46,56,52,40,35],
     excursions: ['nice','monaco','eze','cannes','antibes','saint-paul-de-vence','menton','grasse','ventimiglia'],
+    peakShips: 3,
     notExcursions: ['menton','peillon','cotignac','saint-paul-de-vence'],
   },
   valletta: {
@@ -561,6 +578,7 @@ const PORTS = {
     summer: [70,50,100,90,87,60,57],
     fall:   [61,57,100,75,86,68,61],
     excursions: ['valletta','mdina','three cities','gozo','blue lagoon','marsaxlokk','tarxien','hagar qim'],
+    peakShips: 4,
     notExcursions: ['dingli cliffs','hagar qim','marsaskala','gharb'],
   },
   kotor: {
@@ -569,6 +587,7 @@ const PORTS = {
     summer: [59,94,88,94,72,63,100],
     fall:   [78,83,87,91,96,52,100],
     excursions: ['kotor old town','perast','budva','sveti stefan','ostrog monastery','cetinje','skadar lake'],
+    peakShips: 4,
     notExcursions: ['lovcen','virpazar','ulcinj','lustica peninsula'],
   },
   genoa: {
@@ -577,6 +596,7 @@ const PORTS = {
     summer: [100,92,100,85,100,100,100],
     fall:   [100,85,92,92,100,92,100],
     excursions: ['portofino','cinque terre','santa margherita ligure','camogli','levanto','lerici','rapallo'],
+    peakShips: 6,
     notExcursions: ['recco','bogliasco','nervi','sestri levante'],
   },
   salerno: {
@@ -585,6 +605,7 @@ const PORTS = {
     summer: [100,9,64,36,55,100,45],
     fall:   [75,38,63,75,63,100,38],
     excursions: ['amalfi','positano','pompeii','paestum','sorrento'],
+    peakShips: 2,
     notExcursions: ['ravello','cetara','vietri sul mare','cilento','agropoli'],
   },
   palermo: {
@@ -593,6 +614,7 @@ const PORTS = {
     summer: [100,22,41,100,96,4,22],
     fall:   [81,15,54,100,92,27,31],
     excursions: ['palermo city','monreale','cefalu','agrigento','segesta','erice','selinunte','palermo street food'],
+    peakShips: 4,
     notExcursions: ['scopello','zingaro nature reserve','marsala','mazara del vallo','erice'],
   },
   messina: {
@@ -601,6 +623,7 @@ const PORTS = {
     summer: [60,100,90,100,100,80,60],
     fall:   [77,100,54,46,77,77,46],
     excursions: ['taormina','etna','syracuse','noto','ragusa'],
+    peakShips: 4,
     notExcursions: ['savoca','forza d\'agro','castiglione di sicilia','francavilla di sicilia'],
   },
   Rhodes: {
@@ -617,6 +640,7 @@ const PORTS = {
     summer: [100,29,14,100,100,29,100],
     fall:   [56,16,8,72,56,16,72],
     excursions: ['knossos','spinalonga','elounda','rethymno','chania','samaria gorge','matala'],
+    peakShips: 4,
     notExcursions: ['archanes','zaros','spinalonga','elounda hinterland','argyroupoli'],
   },
   kusadasi: {
@@ -625,6 +649,7 @@ const PORTS = {
     summer: [72,85,78,88,90,68,62],
     fall:   [42,55,48,58,62,45,38],
     excursions: ['ephesus','miletus','priene','didyma','selcuk','pamukkale','sirince'],
+    peakShips: 5,
     notExcursions: ['priene','miletus','didyma','sirince','bodrum'],
   },
   bodrum: {
@@ -634,6 +659,7 @@ const PORTS = {
     fall:   [25,38,42,48,52,35,28],
     winter: [5,8,10,10,12,8,5],
     excursions: ['bodrum peninsula','bodrum castle','gumbet','turgutreis','gumusluk','knidos'],
+    peakShips: 3,
     notExcursions: ['gumusluk','yalikavak','turgutreis'],
   },
   istanbul: {
@@ -642,6 +668,7 @@ const PORTS = {
     summer: [57,68,43,36,57,100,100],
     fall:   [67,71,95,86,76,95,100],
     excursions: ['istanbul','topkapi','hagia sophia','grand bazaar','blue mosque','princes islands','bosphorus','dolmabahce','spice bazaar'],
+    peakShips: 6,
     notExcursions: ['karakoy','balat','fener','princes islands','belgrade forest'],
   },
   'las palmas': {
@@ -650,6 +677,7 @@ const PORTS = {
     summer: [100,0,50,0,50,50,50],
     fall:   [88,25,50,50,88,88,100],
     excursions: ['las palmas','maspalomas','roque nublo'],
+    peakShips: 3,
     notExcursions: ['teror','agaete','arucas','guia'],
   },
   'santa cruz': {
@@ -658,6 +686,7 @@ const PORTS = {
     summer: [38,48,43,38,52,62,50],
     fall:   [60,70,65,60,75,85,70],
     excursions: ['santa cruz tenerife','teide','puerto de la cruz','loro parque'],
+    peakShips: 3,
     notExcursions: ['anaga','garachico','masca','el hierro'],
   },
   corfu: {
@@ -666,6 +695,7 @@ const PORTS = {
     summer: [81,92,100,81,100,100,69],
     fall:   [73,65,65,65,100,65,46],
     excursions: ['corfu old town','paleokastritsa','achillion palace','mouse island','kanoni','sidari','kassiopi'],
+    peakShips: 5,
     notExcursions: ['agios georgios','peroulades','kavos','gardiki'],
   },
   zakynthos: {
@@ -674,6 +704,7 @@ const PORTS = {
     summer: [0,100,0,60,20,0,100],
     fall:   [0,50,25,25,0,0,100],
     excursions: ['zakynthos','navagio','blue caves'],
+    peakShips: 2,
     notExcursions: ['keri','volimes','agios nikolaos village'],
   },
   skiathos: {
@@ -682,6 +713,7 @@ const PORTS = {
     summer: [0,100,67,0,0,0,0],
     fall:   [0,0,67,100,0,33,0],
     excursions: ['skiathos','koukounaries'],
+    peakShips: 1,
     notExcursions: ['kastro skiathos','lalaria beach'],
   },
   haifa: {
@@ -690,6 +722,7 @@ const PORTS = {
     summer: [0,20,0,80,20,0,100],
     fall:   [27,0,9,100,9,18,100],
     excursions: ['acre','rosh hanikra','caesarea','nazareth','sea of galilee','haifa bahai gardens','megiddo'],
+    peakShips: 3,
     notExcursions: ['isfiya','daliyat al-carmel','zichron yaakov'],
   },
   casablanca: {
@@ -698,6 +731,7 @@ const PORTS = {
     summer: [60,100,60,0,20,40,20],
     fall:   [82,100,91,82,55,73,82],
     excursions: ['casablanca','marrakech','rabat','fes','meknes'],
+    peakShips: 2,
     notExcursions: ['chefchaouen','essaouira','ouarzazate','azemmour'],
   },
   // ── NEWLY ADDED PORTS ──────────────────────────────────
@@ -707,6 +741,7 @@ const PORTS = {
     summer: [0,8,0,0,0,100,100],
     fall:   [25,8,25,50,8,92,100],
     excursions: ['genoa','cinque terre','portofino','sanremo'],
+    peakShips: 5,
     notExcursions: ['finale ligure','noli','spotorno','varigotti'],
   },
   'la spezia': {
@@ -715,6 +750,7 @@ const PORTS = {
     summer: [67,100,92,58,83,58,67],
     fall:   [70,90,100,50,80,50,70],
     excursions: ['cinque terre','portofino','lucca','pisa'],
+    peakShips: 3,
     notExcursions: ['lerici','tellaro','portovenere','montemarcello'],
   },
   trieste: {
@@ -723,6 +759,7 @@ const PORTS = {
     summer: [46,54,23,31,15,46,100],
     fall:   [38,63,63,38,63,100,100],
     excursions: ['trieste','piran','portoroz','venice','postojna'],
+    peakShips: 3,
     notExcursions: ['muggia','grignano','opicina','aquileia'],
   },
   bari: {
@@ -731,6 +768,7 @@ const PORTS = {
     summer: [31,54,31,38,38,92,100],
     fall:   [23,46,69,62,69,100,85],
     excursions: ['matera','alberobello','lecce','ostuni','otranto','castel del monte','polignano a mare'],
+    peakShips: 3,
     notExcursions: ['polignano a mare','locorotondo','cisternino','martina franca'],
   },
   zadar: {
@@ -739,6 +777,7 @@ const PORTS = {
     summer: [55,68,50,73,100,55,41],
     fall:   [81,88,44,63,100,81,25],
     excursions: ['zadar','plitvice lakes','sibenik','krka','split old town'],
+    peakShips: 3,
     notExcursions: ['nin','paklenica','telascica','kornati islands'],
   },
   katakolon: {
@@ -747,6 +786,7 @@ const PORTS = {
     summer: [62,77,100,88,65,35,46],
     fall:   [65,100,100,80,85,65,50],
     excursions: ['ancient olympia','olympia museum','bassae','andritsaina','pyrgos'],
+    peakShips: 3,
     notExcursions: ['pyrgos','andritsaina'],
   },
   kos: {
@@ -755,6 +795,7 @@ const PORTS = {
     summer: [0,50,0,100,0,25,25],
     fall:   [33,33,33,100,67,67,0],
     excursions: ['kos town','asklepion','nisyros','hippocrates tree','kefalos','agios fokas'],
+    peakShips: 2,
     notExcursions: ['kefalos','antimacheia','kardamena'],
   },
   thessaloniki: {
@@ -763,6 +804,7 @@ const PORTS = {
     summer: [56,33,0,100,22,11,11],
     fall:   [56,89,67,33,33,100,11],
     excursions: ['thessaloniki','vergina','meteora','mount olympus','kavala','philippi','ouranoupolis','dion'],
+    peakShips: 3,
     notExcursions: ['chalkidiki','stageira','dion','pella'],
   },
   patmos: {
@@ -771,6 +813,7 @@ const PORTS = {
     summer: [22,100,15,19,33,96,19],
     fall:   [22,100,13,22,9,100,39],
     excursions: ['patmos','monastery of st john','holy cave','leros'],
+    peakShips: 2,
     notExcursions: ['grikos','kampos','lampi'],
   },
   izmir: {
@@ -779,6 +822,7 @@ const PORTS = {
     summer: [60,40,20,0,20,20,100],
     fall:   [67,100,17,17,8,8,25],
     excursions: ['ephesus','pergamon','izmir','sardis','pamukkale'],
+    peakShips: 2,
     notExcursions: ['alacati','sigacik','sirince','teos','claros'],
   },
   marmaris: {
@@ -787,6 +831,7 @@ const PORTS = {
     summer: [70,100,11,0,4,4,0],
     fall:   [35,100,24,0,12,29,6],
     excursions: ['marmaris','dalyan','datca','rhodes old town','knidos'],
+    peakShips: 2,
     notExcursions: ['bozburun','selimiye','hisaronu','orhaniye'],
   },
   valencia: {
@@ -795,6 +840,7 @@ const PORTS = {
     summer: [35,69,88,100,35,62,42],
     fall:   [50,68,64,68,68,100,55],
     excursions: ['valencia','xativa','peniscola','albufera'],
+    peakShips: 3,
     notExcursions: ['bocairent','morella','forcall','chelva'],
   },
   cartagena: {
@@ -803,6 +849,7 @@ const PORTS = {
     summer: [67,83,67,83,50,67,100],
     fall:   [100,89,68,89,79,74,84],
     excursions: ['cartagena','murcia','lorca','mazarron'],
+    peakShips: 2,
     notExcursions: ['calblanque','cabo cope','puntas de calnegre'],
   },
   gibraltar: {
@@ -811,6 +858,7 @@ const PORTS = {
     summer: [55,68,62,72,75,68,62],
     fall:   [38,48,42,52,55,50,44],
     excursions: ['gibraltar','tarifa','tangier','algeciras','jerez'],
+    peakShips: 2,
     notExcursions: ['vejer de la frontera','bolonia','barbate','conil'],
   },
   ajaccio: {
@@ -819,6 +867,7 @@ const PORTS = {
     summer: [85,85,100,77,77,54,69],
     fall:   [62,46,100,69,92,38,54],
     excursions: ['ajaccio','bonifacio','porto','corte','calanche'],
+    peakShips: 2,
     notExcursions: ['sartene','propriano','zonza','bavella'],
   },
   limassol: {
@@ -827,6 +876,7 @@ const PORTS = {
     summer: [15,15,100,0,8,0,62],
     fall:   [67,58,100,17,67,75,67],
     excursions: ['limassol','paphos','nicosia','troodos','kyrenia'],
+    peakShips: 2,
     notExcursions: ['lefkara','omodos','lania','pissouri'],
   },
   tangier: {
@@ -835,6 +885,7 @@ const PORTS = {
     summer: [67,78,67,100,78,100,78],
     fall:   [87,100,100,60,73,93,33],
     excursions: ['tangier','chefchaouen','tetouan','asilah','ceuta'],
+    peakShips: 2,
     notExcursions: ['cap spartel','grottes d hercule','souk el had','ksar el kebir'],
   },
   // ── FINAL REMAINING PORTS ─────────────────────────────
@@ -844,6 +895,7 @@ const PORTS = {
     summer: [100,52,37,96,4,4,41],
     fall:   [24,24,29,100,12,12,53],
     excursions: ['argostoli','myrtos beach','melissani cave','fiskardo'],
+    peakShips: 2,
     notExcursions: ['assos','agia efimia','skala kefalonia','poros kefalonia'],
   },
   ashdod: {
@@ -852,6 +904,7 @@ const PORTS = {
     summer: [50,62,55,65,68,72,38],
     fall:   [38,48,42,52,55,58,30],
     excursions: ['jerusalem','bethlehem','tel aviv','jaffa old city','masada','dead sea','nazareth','caesarea'],
+    peakShips: 2,
     notExcursions: ['jaffa old city','caesarea','beit guvrin','ashkelon'],
   },
   larnaca: {
@@ -860,6 +913,7 @@ const PORTS = {
     summer: [13,0,0,0,75,100,0],
     fall:   [0,0,0,0,100,100,0],
     excursions: ['larnaca','paphos','nicosia','troodos','limassol'],
+    peakShips: 2,
     notExcursions: ['lefkara','choirokoitia','stavrovouni','kiti'],
   },
   agadir: {
@@ -868,6 +922,7 @@ const PORTS = {
     summer: [50,100,0,50,0,50,0],
     fall:   [67,100,67,100,67,100,50],
     excursions: ['agadir','essaouira','taroudant','paradise valley'],
+    peakShips: 1,
     notExcursions: ['tiznit','sidi ifni','immouzer','tafraout'],
   },
   arrecife: {
@@ -876,6 +931,7 @@ const PORTS = {
     summer: [45,58,52,62,65,70,68],
     fall:   [30,40,35,45,48,55,58],
     excursions: ['timanfaya','jameos del agua','papagayo','cesar manrique'],
+    peakShips: 2,
     notExcursions: ['el golfo','la geria','orzola','famara'],
   },
   'morro jable': {
@@ -884,6 +940,7 @@ const PORTS = {
     summer: [35,48,42,52,55,62,60],
     fall:   [22,32,26,34,38,46,50],
     excursions: ['corralejo','grandes playas','betancuria','cofete beach'],
+    peakShips: 1,
     notExcursions: ['el cotillo','la oliva','tindaya','ajuy'],
   },
   toulon: {
@@ -892,6 +949,7 @@ const PORTS = {
     summer: [94,53,35,29,29,100,47],
     fall:   [55,82,64,55,36,100,18],
     excursions: ['toulon','marseille','hyeres','iles d or','verdon gorge'],
+    peakShips: 3,
     notExcursions: ['bandol','sanary sur mer','six fours','ollioules'],
   },
   // ── PORTUGAL & ATLANTIC SPAIN ─────────────────────────
@@ -901,6 +959,7 @@ const PORTS = {
     summer: [85,95,88,95,98,82,75],
     fall:   [60,72,65,75,78,62,55],
     excursions: ['lisbon','sintra','cascais','obidos','setubal'],
+    peakShips: 5,
     notExcursions: ['evora','alentejo','nazare','batalha','fatima'],
   },
   porto: {
@@ -909,6 +968,7 @@ const PORTS = {
     summer: [68,80,72,82,85,72,65],
     fall:   [45,58,52,62,65,52,45],
     excursions: ['porto','guimaraes','braga','douro valley','viana do castelo'],
+    peakShips: 2,
     notExcursions: ['amarante','peso da regua','lamego','barcelos'],
   },
   funchal: {
@@ -917,6 +977,7 @@ const PORTS = {
     summer: [58,72,65,75,78,65,58],
     fall:   [38,50,44,55,58,48,42],
     excursions: ['funchal','monte','cabo girao','santana','pico do arieiro'],
+    peakShips: 3,
     notExcursions: ['porto moniz','sao vicente','calheta','machico'],
   },
   // ── IBIZA & BALEARICS ────────────────────────────────
@@ -926,6 +987,7 @@ const PORTS = {
     summer: [22,100,96,70,96,48,11],
     fall:   [29,62,100,43,76,24,29],
     excursions: ['ibiza town','dalt vila','ses salines','santa eularia'],
+    peakShips: 3,
     notExcursions: ['sant joan','portinatx','es vedra','cala conta'],
   },
   // ── ADRIATIC ADDITIONS ───────────────────────────────
@@ -935,6 +997,7 @@ const PORTS = {
     summer: [58,72,65,75,78,82,85],
     fall:   [28,40,34,45,48,52,55],
     excursions: ['rovinj','pula','porec','limska fjord'],
+    peakShips: 2,
     notExcursions: ['vrsar','bale','svetvincenat','labin'],
   },
   sibenik: {
@@ -943,6 +1006,7 @@ const PORTS = {
     summer: [52,65,58,68,72,75,78],
     fall:   [25,38,32,42,45,48,52],
     excursions: ['sibenik','krka waterfalls','kornati','trogir','split old town'],
+    peakShips: 2,
     notExcursions: ['primosten','skradin','knin','drnis'],
   },
   // ── EASTERN MED ADDITIONS ────────────────────────────
@@ -952,6 +1016,7 @@ const PORTS = {
     summer: [65,78,70,80,82,72,65],
     fall:   [45,58,52,62,65,55,48],
     excursions: ['cairo','giza pyramids','alexandria','luxor','abu simbel'],
+    peakShips: 3,
     notExcursions: ['el alamein','marsa matruh','siwa oasis'],
   },
 };
@@ -3827,21 +3892,104 @@ function scoreStop(key, date) {
 
   const cityVol = dest.cityByDay[dayIdx];
 
+  // Port city detection for scoring logic
+  const PORT_CITY_SET = new Set(['livorno','civitavecchia','naples','venice','dubrovnik old town',
+    'split old town','piraeus','mykonos town','santorini','barcelona','palma de mallorca',
+    'marseille','valletta','kotor old town','genoa','salerno','palermo','messina','catania',
+    'kusadasi','bodrum','istanbul','las palmas','santa cruz tenerife','corfu','haifa',
+    'casablanca','athens','rhodes old town','heraklion','zakynthos','skiathos',
+    'malaga','cadiz','antalya','zadar','bari','kos town','thessaloniki',
+    'izmir city','valencia city','cartagena city','lisbon','porto','funchal',
+    'limassol','tangier','ajaccio','larnaca','toulon','ibiza town','rovinj','sibenik']);
+  const isPortCity = PORT_CITY_SET.has(key);
+
+  // Population lookup (thousands) — used to compute cruise passenger pressure ratio
+  // cruise passengers ÷ resident population = practical "overrun" feel
+  // Tiny historic centers feel overwhelmed at ratios Rome never would
+  const POP_K = {
+    // Italy
+    'rome':2800, 'florence':370, 'naples':960, 'venice':250, 'genoa':580,
+    'palermo':680, 'catania':310, 'siena':54, 'san gimignano':8, 'volterra':10,
+    'lucca':90, 'cinque terre':5, 'portofino':0.4, 'amalfi':5, 'positano':4,
+    'ravello':2.5, 'sorrento':16, 'capri':14, 'pompeii':25, 'herculaneum':8,
+    'matera':60, 'alberobello':10, 'lecce':95, 'taormina':11, 'agrigento':55,
+    'syracuse':120, 'noto':24, 'ragusa':73, 'orvieto':21, 'assisi':28,
+    'trieste':205, 'bari':320, 'la spezia':95, 'savona':60, 'livorno':160,
+    'messina':235, 'salerno':135, 'civitavecchia':55, 'tivoli':55,
+    // Greece
+    'athens':660, 'thessaloniki':324, 'dubrovnik old town':2, 'corfu old town':28,
+    'rhodes old town':10, 'mykonos town':10, 'santorini':15, 'heraklion':175,
+    'chania':108, 'rethymno':55, 'knossos':1, 'delphi':1, 'olympia':1,
+    'nafplio':14, 'corinth':30, 'patmos':3, 'kos town':20, 'lindos':1,
+    'meteora':2, 'zakynthos':40, 'skiathos':6, 'argostoli':10,
+    // Croatia / Montenegro
+    'split old town':5, 'dubrovnik':43, 'kotor old town':1, 'hvar':4,
+    'zadar':76, 'trogir':1, 'rovinj':14, 'sibenik':46, 'mostar':105,
+    // Spain
+    'barcelona':1620, 'madrid':3300, 'seville':690, 'granada':232,
+    'malaga':578, 'cadiz':116, 'ronda':34, 'palma de mallorca':415,
+    'valldemossa':2, 'ibiza town':50, 'valencia city':790,
+    'montserrat':0.1, 'sitges':29,
+    // France
+    'marseille':870, 'nice':342, 'cannes':74, 'monaco':39, 'avignon':91,
+    'arles':52, 'eze':3, 'cassis':8, 'menton':29, 'antibes':78,
+    'ajaccio':70, 'villefranche':6,
+    // Turkey
+    'istanbul':15500, 'ephesus':1, 'kusadasi':70, 'pamukkale':3,
+    'bodrum':37, 'antalya':2400, 'cappadocia':70,
+    // Portugal
+    'lisbon':505, 'porto':237, 'sintra':25, 'funchal':112,
+    // Malta
+    'valletta':6, 'mdina':0.4,
+    // Israel
+    'jerusalem':970, 'tel aviv':460, 'haifa':285, 'acre':50,
+    'nazareth':80, 'masada':0.1, 'caesarea':5,
+    // Morocco
+    'marrakech':1070, 'casablanca':3750, 'fes':1200, 'tangier':993,
+    'chefchaouen':45, 'essaouira':77, 'agadir':600,
+    // Egypt
+    'cairo':10100, 'alexandria':5200,
+    // Canary Islands
+    'las palmas':380, 'santa cruz tenerife':210,
+  };
+
+  // Average cruise ship carries ~3,000 passengers ashore (not all disembark every port)
+  const AVG_PASSENGERS_PER_SHIP = 3000;
+  const peakShips = primaryPort?.peakShips || 3;
+  const estimatedShips = Math.round((maxCruise / 100) * peakShips * 10) / 10;
+
+  // Cruise pressure ratio: passengers per 1,000 residents
+  // Above 1.0 = more visitors than 0.1% of population arriving at once — noticeable
+  // Above 5.0 = severe overrun (Dubrovnik, Positano level)
+  const popK = POP_K[key] || POP_K[dest.name?.toLowerCase()] || 100; // default 100k
+  const cruisePassengers = estimatedShips * AVG_PASSENGERS_PER_SHIP;
+  const pressureRatio = cruisePassengers / popK; // passengers per 1,000 residents
+
   // Composite crowd score for this specific day (0-100)
   const crowdScore = Math.round(cityVol * 0.20 + maxCruise * 0.80);
 
   let status;
-  // Red: known cruise excursion dest with heavy port day OR extreme combined score
-  if ((maxCruise >= 65 && isExcursionDest) || crowdScore >= 75) status = 'red';
-  // Amber: moderate excursion pressure OR elevated combined score
-  else if (crowdScore >= 55 || (maxCruise >= 45 && isExcursionDest) || maxCruise >= 60) status = 'amber';
-  else if (crowdScore >= 35 || maxCruise >= 30) status = 'amber';
-  else status = 'green';
+  if (isExcursionDest || isPortCity) {
+    // Use both ship count AND population pressure ratio
+    const highPressure = pressureRatio >= 30 || estimatedShips >= 3;  // overwhelmed
+    const modPressure  = pressureRatio >= 10 || estimatedShips >= 1.5; // busy
+    const lowPressure  = pressureRatio >= 3  || estimatedShips >= 0.5; // noticeable
+
+    if (highPressure || crowdScore >= 75) status = 'red';
+    else if (modPressure || crowdScore >= 50) status = 'amber';
+    else if (lowPressure) status = 'amber';
+    else status = 'green';
+  } else {
+    // Non-excursion, non-port: combined score + mild pressure check
+    if (crowdScore >= 70 || pressureRatio >= 20) status = 'red';
+    else if (crowdScore >= 40 || pressureRatio >= 8) status = 'amber';
+    else status = 'green';
+  }
 
   return {
     key, date, dest, dayIdx, season,
     status, cityVol, maxCruise, cruiseByDay, crowdScore,
-    primaryPort, isExcursionDest,
+    primaryPort, isExcursionDest, estimatedShips, pressureRatio, popK,
   };
 }
 
