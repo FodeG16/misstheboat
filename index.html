@@ -383,6 +383,11 @@ textarea:focus{border-color:#999;background:#fff}
       <div class="li"><div class="ls ls-g"></div>Cruise-free</div>
     </div>
 
+    <!-- Itinerary map — color-coded pins matching card status -->
+    <div id="itinerary-map-wrap" style="margin:0 0 1rem;border-radius:12px;overflow:hidden;border:1px solid #dce8f0;display:none">
+      <div id="itinerary-map" style="height:280px;width:100%"></div>
+    </div>
+
     <div class="sec-lbl" id="sec-lbl">Loading destinations…</div>
     <div class="cards" id="cards"></div>
 
@@ -3817,10 +3822,16 @@ function updateCardStatus(idx, status, label) {
   if (red) red.textContent = counts.r;
   if (amb) amb.textContent = counts.a;
   if (grn) grn.textContent = counts.g;
+
+  // Debounced map re-render after live updates settle
+  clearTimeout(updateCardStatus._mapTimer);
+  updateCardStatus._mapTimer = setTimeout(() => {
+    if (currentStops && currentStops.length > 0) {
+      const rescored = currentStops.map(s => scoreStop(s.key, s.date)).filter(Boolean);
+      renderItineraryMap(rescored);
+    }
+  }, 1200);
 }
-
-
-const wxCache = {};
 
 async function fetchWeather(lat, lng, date) {
   const proxyDate = new Date(date);
@@ -4280,6 +4291,9 @@ function renderResults(stops) {
 
   document.getElementById('cards').innerHTML = scored.map((s,i) => renderCard(s,i)).join('');
 
+  // Render itinerary map with color-coded pins
+  renderItineraryMap(scored);
+
   // Fire async enrichments in parallel — weather + live port schedule + fallback geocoding
   scored.forEach((s,i) => {
     if (s.date) loadWeather(s, i);
@@ -4318,6 +4332,90 @@ function toggleCard(idx) {
 
 // ─────────────────────────────────────────────────────────
 // MINIMIZE CROWDS
+// ─────────────────────────────────────────────────────────
+// ITINERARY MAP — color-coded pins on results page
+// ─────────────────────────────────────────────────────────
+let itineraryMapInstance = null;
+
+function renderItineraryMap(scored) {
+  if (typeof L === 'undefined') return;
+  const wrap = document.getElementById('itinerary-map-wrap');
+  const mapEl = document.getElementById('itinerary-map');
+  if (!wrap || !mapEl) return;
+
+  const validStops = scored.filter(s => s.dest && s.dest.lat && s.dest.lng);
+  if (validStops.length === 0) { wrap.style.display = 'none'; return; }
+  wrap.style.display = 'block';
+
+  // Destroy previous instance
+  if (itineraryMapInstance) { itineraryMapInstance.remove(); itineraryMapInstance = null; }
+  mapEl.innerHTML = '';
+
+  // Center on average of stop coordinates
+  const avgLat = validStops.reduce((a, s) => a + s.dest.lat, 0) / validStops.length;
+  const avgLng = validStops.reduce((a, s) => a + s.dest.lng, 0) / validStops.length;
+
+  itineraryMapInstance = L.map('itinerary-map', {
+    center: [avgLat, avgLng],
+    zoom: 6,
+    zoomControl: true,
+    attributionControl: false,
+    scrollWheelZoom: false,
+  });
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap',
+    maxZoom: 13,
+  }).addTo(itineraryMapInstance);
+
+  const colors = { red: '#B83232', amber: '#B87820', green: '#2A7050' };
+  const bounds = [];
+
+  validStops.forEach((s, i) => {
+    const color = colors[s.status] || '#888';
+    const dateStr = s.date ? s.date.toLocaleDateString('en-US', {month:'short', day:'numeric'}) : '';
+    const label = i + 1;
+
+    // Numbered circle marker matching card color
+    const icon = L.divIcon({
+      className: '',
+      html: `<div style="
+        width:28px;height:28px;border-radius:50%;
+        background:${color};color:#fff;
+        font-size:12px;font-weight:700;
+        display:flex;align-items:center;justify-content:center;
+        border:2px solid rgba(255,255,255,0.8);
+        box-shadow:0 2px 6px rgba(0,0,0,0.3);
+        ">${label}</div>`,
+      iconSize: [28, 28],
+      iconAnchor: [14, 14],
+    });
+
+    const marker = L.marker([s.dest.lat, s.dest.lng], { icon })
+      .addTo(itineraryMapInstance)
+      .bindPopup(`<strong>${s.dest.name}</strong><br>${dateStr}${dateStr ? ' · ' : ''}${s.status === 'red' ? '⚠ Avoid' : s.status === 'amber' ? '⚠ Caution' : '✓ Clear'}`, { maxWidth: 160 });
+
+    bounds.push([s.dest.lat, s.dest.lng]);
+  });
+
+  // Draw route line connecting stops in date order
+  if (bounds.length > 1) {
+    const sortedStops = [...validStops].sort((a, b) => {
+      if (!a.date) return 1;
+      if (!b.date) return -1;
+      return a.date - b.date;
+    });
+    const latlngs = sortedStops.map(s => [s.dest.lat, s.dest.lng]);
+    L.polyline(latlngs, { color: '#1a1a1a', weight: 1.5, opacity: 0.35, dashArray: '5,6' })
+      .addTo(itineraryMapInstance);
+  }
+
+  // Fit map to show all pins with padding
+  if (bounds.length > 1) {
+    itineraryMapInstance.fitBounds(bounds, { padding: [24, 24] });
+  }
+}
+
 // ─────────────────────────────────────────────────────────
 // Per-stop alt toggle state (key → true=useAlt, false=useOriginal)
 let _altToggles = {};
@@ -4539,10 +4637,33 @@ function applyRearrangement(withAlts) {
   _altToggles = {}; // reset toggle state
   closeMinimize();
   renderResults(currentStops);
+  showToast('✓ Itinerary updated');
 }
 
 function closeMinimize() {
   document.getElementById('minimize-modal').classList.remove('open');
+}
+
+function showToast(msg, duration = 2200) {
+  let toast = document.getElementById('app-toast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'app-toast';
+    toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:#1a1a1a;color:#fff;padding:10px 20px;border-radius:24px;font-size:13px;font-weight:600;pointer-events:none;opacity:0;transition:opacity .2s,transform .2s;z-index:9999;white-space:nowrap';
+    document.body.appendChild(toast);
+  }
+  toast.textContent = msg;
+  // Animate in
+  requestAnimationFrame(() => {
+    toast.style.opacity = '1';
+    toast.style.transform = 'translateX(-50%) translateY(0)';
+  });
+  // Animate out
+  clearTimeout(toast._timer);
+  toast._timer = setTimeout(() => {
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateX(-50%) translateY(20px)';
+  }, duration);
 }
 
 // ─────────────────────────────────────────────────────────
