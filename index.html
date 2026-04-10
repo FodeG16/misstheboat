@@ -29,213 +29,171 @@
 </script>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap');
 *{box-sizing:border-box;margin:0;padding:0}
 html{font-size:16px}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;background:#f7f6f3;color:#1a1a1a;min-height:100vh}
-
-/* Layout */
+body{font-family:'Source Serif 4',-apple-system,Georgia,serif;background:#f4f0e8;color:#1a1a1a;min-height:100vh}
 .page{max-width:720px;margin:0 auto;padding:0 0 4rem}
-.hdr{padding:2rem 1.5rem 1.25rem;border-bottom:1px solid #e8e6e0}
-.logo{font-size:22px;font-weight:600;letter-spacing:-.04em;color:#1a1a1a}
+.hdr{padding:1.75rem 1.5rem 1.25rem;border-bottom:1px solid #ddd8cc}
+.logo{font-family:'Playfair Display',Georgia,serif;font-size:24px;font-weight:700;letter-spacing:-.02em;color:#1a1a1a}
 .logo span{color:#2A7050}
-.tagline{font-size:13px;color:#666;margin-top:4px}
-
-/* Navigation tabs */
-.nav{display:flex;gap:0;border-bottom:1px solid #e8e6e0;padding:0 1.5rem;background:#fff}
-.ntab{padding:11px 16px 12px;font-size:13px;color:#888;cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;margin-bottom:-1px;font-weight:500;transition:color .15s}
+.tagline{font-size:12px;color:#666;margin-top:4px;font-family:-apple-system,sans-serif;letter-spacing:.02em}
+.nav{display:flex;gap:0;border-bottom:1px solid #ddd8cc;padding:0 1.5rem;background:#f4f0e8}
+.ntab{padding:11px 16px 12px;font-size:12px;color:#777;cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;margin-bottom:-1px;font-weight:400;font-family:-apple-system,sans-serif;letter-spacing:.04em;text-transform:uppercase;transition:color .15s}
 .ntab:hover{color:#444}
-.ntab.on{color:#1a1a1a;border-bottom-color:#1a1a1a}
-
-/* Main panels */
+.ntab.on{color:#1a1a1a;border-bottom-color:#2A7050;font-weight:600}
 .panel{padding:1.5rem}
-
-/* Input view */
 .modetog{display:flex;gap:6px;margin-bottom:1.25rem}
-.mbtn{padding:5px 14px;font-size:12px;border-radius:20px;border:1px solid #ddd;cursor:pointer;background:#fff;color:#888;font-weight:500;transition:all .15s}
-.mbtn.on{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
-.field-lbl{font-size:11px;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:.07em;margin-bottom:7px}
-textarea{width:100%;height:130px;padding:12px 13px;font-size:13px;font-family:'SF Mono',Monaco,monospace;border:1px solid #ddd;border-radius:10px;background:#fafaf8;color:#1a1a1a;resize:none;line-height:1.7;outline:none;transition:border .15s}
-textarea:focus{border-color:#999;background:#fff}
-.hint{font-size:11px;color:#777;margin-top:7px;line-height:1.6}
+.mbtn{padding:5px 14px;font-size:12px;border-radius:3px;border:1px solid #ccc8be;cursor:pointer;background:#f4f0e8;color:#666;font-weight:400;font-family:-apple-system,sans-serif;transition:all .15s}
+.mbtn.on{background:#1a1a1a;color:#f4f0e8;border-color:#1a1a1a}
+.field-lbl{font-size:10px;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:.1em;margin-bottom:7px;font-family:-apple-system,sans-serif}
+textarea{width:100%;height:130px;padding:12px 13px;font-size:13px;font-family:'SF Mono',Monaco,monospace;border:1px solid #ccc8be;border-radius:4px;background:#faf8f3;color:#1a1a1a;resize:none;line-height:1.7;outline:none;transition:border .15s}
+textarea:focus{border-color:#8b7355;background:#fff}
+.hint{font-size:11px;color:#777;margin-top:7px;line-height:1.6;font-family:-apple-system,sans-serif}
 .hint a{color:#2A7050;text-decoration:none}
-
-/* Manual stops */
 .stop-list{margin-bottom:10px}
-.stop-row{display:flex;align-items:center;gap:8px;padding:9px 12px;background:#fafaf8;border-radius:8px;margin-bottom:5px;border:1px solid #eee}
+.stop-row{display:flex;align-items:center;gap:8px;padding:9px 12px;background:#faf8f3;border-radius:4px;margin-bottom:5px;border:1px solid #e8e3d8}
 .stop-row .sname{flex:1;font-size:13px;color:#1a1a1a}
 .stop-row .sdate{font-size:12px;color:#666}
-.stop-rem{background:none;border:none;color:#ccc;cursor:pointer;font-size:18px;line-height:1;padding:0 2px;transition:color .15s}
-.stop-rem:hover{color:#999}
-.add-row{display:flex;gap:6px}
-.add-row input{padding:9px 11px;font-size:13px;border:1px solid #ddd;border-radius:8px;background:#fff;color:#1a1a1a;outline:none}
-.add-row input:focus{border-color:#999}
+.stop-rem{background:none;border:none;color:#bbb;cursor:pointer;font-size:18px;line-height:1;padding:0 2px;transition:color .15s}
+.stop-rem:hover{color:#777}
 .add-row{display:flex;gap:6px;margin-top:8px;align-items:flex-start}
 .add-row>div{flex:1}
-.add-row input.idest{width:100%;box-sizing:border-box}
+.add-row input{padding:9px 11px;font-size:13px;border:1px solid #ccc8be;border-radius:4px;background:#fff;color:#1a1a1a;outline:none;font-family:-apple-system,sans-serif;width:100%;box-sizing:border-box}
+.add-row input:focus{border-color:#8b7355}
 .add-row input.idate{width:140px}
-.add-btn{padding:9px 14px;font-size:12px;border:1px solid #ddd;border-radius:8px;background:#fff;color:#666;cursor:pointer;white-space:nowrap;font-weight:500}
-.add-btn:hover{background:#f5f5f5}
-
-.analyze-btn{width:100%;padding:12px;font-size:14px;font-weight:600;border:none;border-radius:10px;background:#1a1a1a;color:#fff;cursor:pointer;margin-top:1.25rem;letter-spacing:-.01em;transition:background .15s}
+.add-btn{padding:9px 14px;font-size:12px;border:1px solid #ccc8be;border-radius:4px;background:#f4f0e8;color:#555;cursor:pointer;white-space:nowrap;font-weight:500;font-family:-apple-system,sans-serif}
+.add-btn:hover{background:#ede9e0}
+.analyze-btn{width:100%;padding:13px;font-size:13px;font-weight:600;border:none;border-radius:4px;background:#1a1a1a;color:#f4f0e8;cursor:pointer;margin-top:1.25rem;letter-spacing:.04em;text-transform:uppercase;font-family:-apple-system,sans-serif;transition:background .15s}
 .analyze-btn:hover{background:#333}
 .analyze-btn:disabled{background:#ccc;cursor:not-allowed}
-
-/* Results */
 .trip-hdr{padding:1.25rem 1.5rem .75rem}
-.trip-title{font-size:20px;font-weight:600;letter-spacing:-.03em;color:#1a1a1a}
-.trip-sub{font-size:12px;color:#666;margin-top:3px}
-
-/* Summary strip */
+.trip-title{font-family:'Playfair Display',Georgia,serif;font-size:22px;font-weight:700;letter-spacing:-.01em;color:#1a1a1a}
+.trip-sub{font-size:12px;color:#666;margin-top:3px;font-family:-apple-system,sans-serif}
 .summary{display:flex;gap:8px;margin:0 1.5rem 1.25rem}
-.sc{flex:1;padding:12px;text-align:center;background:#fff;border-radius:10px;border:1px solid #eee}
-.snum{font-size:24px;font-weight:700;line-height:1}
-.slbl{font-size:11px;color:#666;margin-top:3px;font-weight:500;text-transform:uppercase;letter-spacing:.05em}
-.nred{color:#B83232}.namb{color:#B87820}.ngrn{color:#2A7050}
-
-/* Action buttons */
+.sc{flex:1;padding:12px;text-align:center;background:#fff;border-radius:4px;border:1px solid #e8e3d8}
+.snum{font-family:'Playfair Display',Georgia,serif;font-size:26px;font-weight:700;line-height:1}
+.slbl{font-size:10px;color:#666;margin-top:4px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;font-family:-apple-system,sans-serif}
+.nred{color:#9B2020}.namb{color:#8B5A00}.ngrn{color:#2A7050}
 .action-row{display:flex;gap:8px;margin:0 1.5rem 1.25rem}
-.act-btn{display:flex;align-items:center;gap:6px;padding:8px 14px;font-size:12px;font-weight:500;border:1px solid #ddd;border-radius:8px;background:#fff;color:#555;cursor:pointer;transition:all .15s}
-.act-btn:hover{background:#f5f5f5;border-color:#ccc}
-.act-btn.primary{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
+.act-btn{display:flex;align-items:center;gap:6px;padding:8px 14px;font-size:12px;font-weight:500;border:1px solid #ccc8be;border-radius:4px;background:#f4f0e8;color:#555;cursor:pointer;font-family:-apple-system,sans-serif;transition:all .15s}
+.act-btn:hover{background:#ede9e0;border-color:#bbb6ac}
+.act-btn.primary{background:#1a1a1a;color:#f4f0e8;border-color:#1a1a1a}
 .act-btn.primary:hover{background:#333}
-
-/* Legend */
 .legend{display:flex;gap:16px;margin:0 1.5rem 1rem;flex-wrap:wrap}
-.li{display:flex;align-items:center;gap:6px;font-size:12px;color:#666}
+.li{display:flex;align-items:center;gap:6px;font-size:11px;color:#666;font-family:-apple-system,sans-serif}
 .ls{width:18px;height:3px;border-radius:2px}
-.ls-r{background:#E24B4A}.ls-a{background:#EF9F27}.ls-g{background:#639922}
-
-.sec-lbl{font-size:11px;font-weight:600;color:#777;letter-spacing:.07em;text-transform:uppercase;margin:0 1.5rem .75rem}
-
-/* Destination cards */
+.ls-r{background:#C0392B}.ls-a{background:#D4830A}.ls-g{background:#2A7050}
+.sec-lbl{font-size:10px;font-weight:600;color:#777;letter-spacing:.1em;text-transform:uppercase;margin:0 1.5rem .75rem;font-family:-apple-system,sans-serif}
 .cards{padding:0 1.5rem}
-.card{background:#fff;border:1px solid #eee;border-radius:12px;margin-bottom:8px;overflow:hidden;transition:box-shadow .15s}
-.card:hover{box-shadow:0 2px 8px rgba(0,0,0,.06)}
-
+.card{background:#fff;border:1px solid #e8e3d8;border-radius:4px;margin-bottom:10px;overflow:hidden;transition:border-color .15s}
+.card:hover{border-color:#bbb6ac}
 .card-hdr{display:flex;align-items:center;cursor:pointer}
-.card-hdr:hover .ci{background:#fafaf8}
-.stripe{width:9px;align-self:stretch;flex-shrink:0}
-.st-r{background:#E24B4A}.st-a{background:#EF9F27}.st-g{background:#639922}
-.ci{flex:1;display:flex;align-items:center;gap:12px;padding:13px 14px;transition:background .1s}
+.card-hdr:hover .ci{background:#faf8f3}
+.stripe{width:6px;align-self:stretch;flex-shrink:0}
+.st-r{background:#C0392B}.st-a{background:#D4830A}.st-g{background:#2A7050}
+.ci{flex:1;display:flex;align-items:center;gap:12px;padding:14px 16px;transition:background .1s}
 .ct{flex:1;min-width:0}
-.cname{font-size:15px;font-weight:600;letter-spacing:-.02em;color:#1a1a1a;margin-bottom:2px}
-.csub{font-size:12px;color:#666}
-.cr{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0}
-.cdate{font-size:11px;color:#777}
-
-.badge{display:inline-flex;align-items:center;font-size:11px;font-weight:700;letter-spacing:.05em;padding:4px 11px;border-radius:20px;min-width:68px;justify-content:center}
-.b-r{background:#FCEBEB;color:#7A1A1A;border:1px solid #F09595}
-.b-a{background:#FDF3E0;color:#7A4A08;border:1px solid #FAC775}
-.b-g{background:#EAF3DE;color:#164030;border:1px solid #C0DD97}
-
+.cname{font-family:'Playfair Display',Georgia,serif;font-size:17px;font-weight:700;letter-spacing:-.01em;color:#1a1a1a;margin-bottom:3px}
+.csub{font-size:11px;color:#666;font-family:-apple-system,sans-serif;letter-spacing:.01em}
+.cr{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0}
+.cdate{font-size:11px;color:#777;font-family:-apple-system,sans-serif}
+.badge{display:inline-flex;align-items:center;font-size:11px;font-weight:700;letter-spacing:.08em;padding:6px 14px;border-radius:3px;min-width:76px;justify-content:center;text-transform:uppercase;font-family:-apple-system,sans-serif}
+.b-r{background:#C0392B;color:#fff}
+.b-a{background:#D4830A;color:#fff}
+.b-g{background:#2A7050;color:#fff}
 .chev{font-size:11px;color:#888;flex-shrink:0;transition:transform .15s;margin-left:6px}
 .chev.open{transform:rotate(180deg)}
-
-/* Expanded detail */
-.det{display:none;border-top:1px solid #f0f0f0}
-
-/* Traffic charts */
-.traf-wrap{padding:14px 14px 12px;background:#fafaf8;border-bottom:1px solid #f0f0f0}
+.det{display:none;border-top:1px solid #eee8dc}
+.traf-wrap{padding:14px 16px 12px;background:#faf8f3;border-bottom:1px solid #eee8dc}
 .traf-block{margin-bottom:12px}
 .traf-block:last-child{margin-bottom:0}
-.traf-ttl{font-size:10px;font-weight:600;color:#777;text-transform:uppercase;letter-spacing:.07em;margin-bottom:12px;display:block}
+.traf-ttl{font-size:10px;font-weight:600;color:#777;text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px;display:block;font-family:-apple-system,sans-serif}
 .bar-chart{display:flex;gap:4px;align-items:flex-end;height:44px;margin-top:4px}
 .bc{display:flex;flex-direction:column;align-items:center;flex:1;min-width:0}
-.bbar{width:100%;border-radius:2px 2px 0 0;min-height:3px;background:#eee;transition:opacity .2s}
-.bbar.hi-r{background:#E24B4A}.bbar.hi-a{background:#EF9F27}.bbar.hi-g{background:#639922}
-.bbar.lo-r{background:#F7C1C1}.bbar.lo-a{background:#FAC775}.bbar.lo-g{background:#C0DD97}
-.bbar.lo-n{background:#e5e5e5}
-.bdl{font-size:9px;margin-top:3px;color:#999;font-weight:500}
+.bbar{width:100%;border-radius:2px 2px 0 0;min-height:3px;background:#e8e3d8;transition:opacity .2s}
+.bbar.hi-r{background:#C0392B}.bbar.hi-a{background:#D4830A}.bbar.hi-g{background:#2A7050}
+.bbar.lo-r{background:#e8b0a8}.bbar.lo-a{background:#e8c888}.bbar.lo-g{background:#a8d0b8}
+.bbar.lo-n{background:#ddd8cc}
+.bdl{font-size:9px;margin-top:3px;color:#999;font-weight:500;font-family:-apple-system,sans-serif}
 .bdl.act{color:#1a1a1a;font-weight:700}
-.no-cruise{font-size:12px;color:#2A7050;font-weight:500;padding:4px 0}
-
-/* Weather row */
-.wx-row{display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid #f0f0f0;font-size:12px;background:#fff}
+.no-cruise{font-size:12px;color:#2A7050;font-weight:500;padding:4px 0;font-family:-apple-system,sans-serif}
+.wx-row{display:flex;align-items:center;gap:8px;padding:10px 16px;border-bottom:1px solid #eee8dc;font-size:12px;background:#fff;font-family:-apple-system,sans-serif}
 .wx-ico{font-size:16px;flex-shrink:0}
-.wx-txt{color:#666;flex:1}
+.wx-txt{color:#555;flex:1}
 .wx-loading{color:#999;font-style:italic}
-
-/* Info rows */
-.info-rows{padding:4px 14px 10px}
-.irow{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid #f5f5f5;font-size:12px}
+.info-rows{padding:4px 16px 10px}
+.irow{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px solid #f0ece4;font-size:12px;font-family:-apple-system,sans-serif}
 .irow:last-child{border-bottom:none}
 .iico{color:#888;flex-shrink:0;width:14px;margin-top:1px;font-size:14px}
-.ibody{color:#666;line-height:1.6;flex:1}
+.ibody{color:#555;line-height:1.6;flex:1}
 .ibody strong{color:#1a1a1a;font-weight:600}
-.pill{display:inline-block;font-size:10px;background:#f5f5f3;border:1px solid #eee;border-radius:6px;padding:2px 7px;margin:2px 2px 0 0;color:#888}
-.altbox{background:#EAF3DE;border-radius:8px;padding:8px 11px;margin-top:6px;color:#164030;line-height:1.6;font-size:12px}
+.pill{display:inline-block;font-size:10px;background:#f4f0e8;border:1px solid #e8e3d8;border-radius:3px;padding:2px 7px;margin:2px 2px 0 0;color:#777;font-family:-apple-system,sans-serif}
+.altbox{background:#EAF3DE;border-radius:4px;padding:8px 11px;margin-top:6px;color:#164030;line-height:1.6;font-size:12px}
 .altbox strong{color:#2A7050;font-weight:600}
-.aff-btn{display:inline-block;padding:3px 9px;border-radius:6px;font-size:11px;font-weight:500;text-decoration:none;transition:opacity .15s}
+.aff-btn{display:inline-block;padding:4px 10px;border-radius:3px;font-size:11px;font-weight:600;text-decoration:none;transition:opacity .15s;font-family:-apple-system,sans-serif;letter-spacing:.02em}
 .aff-btn:hover{opacity:.8}
 .aff-btn.booking{background:#003580;color:#fff}
-.aff-btn.gyg{background:#FF5533;color:#fff}
-.shldbox{background:#FDF3E0;border-radius:8px;padding:8px 11px;margin-top:6px;color:#7A4A08;line-height:1.6;font-size:12px}
-
-/* Share bar */
-.share-row{margin:1.25rem 1.5rem 0;padding:10px 13px;background:#fff;border-radius:10px;border:1px solid #eee;display:flex;align-items:center;gap:10px}
-.share-url{flex:1;font-size:11px;font-family:monospace;color:#999;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
-.copy-btn{padding:5px 12px;font-size:11px;border:1px solid #ddd;border-radius:6px;background:#fff;color:#555;cursor:pointer;flex-shrink:0;font-weight:500;transition:all .15s}
-.copy-btn:hover{background:#f5f5f5}
-.share-pill{padding:6px 13px;font-size:12px;font-weight:500;border:1px solid #ddd;border-radius:20px;background:#fff;color:#555;cursor:pointer;transition:all .15s}
-.share-pill:hover{background:#f5f5f5;border-color:#ccc}
+.aff-btn.gyg{background:#C0392B;color:#fff}
+.aff-btn.viator{background:#1a1a1a;color:#f4f0e8}
+.shldbox{background:#fdf5e4;border:1px solid #e8d8b0;border-radius:4px;padding:8px 11px;margin-top:6px;color:#7A4A08;line-height:1.6;font-size:12px}
+.share-row{margin:1.25rem 1.5rem 0;padding:10px 13px;background:#fff;border-radius:4px;border:1px solid #e8e3d8;display:flex;align-items:center;gap:10px}
+.share-url{flex:1;font-size:11px;font-family:monospace;color:#777;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.copy-btn{padding:5px 12px;font-size:11px;border:1px solid #ccc8be;border-radius:3px;background:#f4f0e8;color:#555;cursor:pointer;flex-shrink:0;font-weight:500;font-family:-apple-system,sans-serif;transition:all .15s}
+.copy-btn:hover{background:#ede9e0}
+.share-pill{padding:6px 13px;font-size:12px;font-weight:500;border:1px solid #ccc8be;border-radius:3px;background:#f4f0e8;color:#555;cursor:pointer;font-family:-apple-system,sans-serif;transition:all .15s}
+.share-pill:hover{background:#ede9e0;border-color:#bbb6ac}
 .share-pill.wa{background:#25D366;color:#fff;border-color:#25D366}
 .share-pill.wa:hover{background:#1ebe5d}
-.share-pill.sms{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
+.share-pill.sms{background:#1a1a1a;color:#f4f0e8;border-color:#1a1a1a}
 .share-pill.sms:hover{background:#333}
-.lpill{padding:5px 12px;font-size:12px;font-weight:500;border:1px solid #ddd;border-radius:20px;background:#fff;color:#888;cursor:pointer;transition:all .15s}
-.lpill.on{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
-.rpill{padding:7px 14px;font-size:12px;font-weight:500;border:1px solid #ddd;border-radius:20px;background:#fff;color:#555;cursor:pointer;transition:all .15s}
-.rpill:hover{background:#f5f5f5}
-.rpill.on{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
-.region-tooltip{background:#fff;border:1px solid #ddd;border-radius:6px;font-size:11px;font-weight:600;color:#1a1a1a;padding:3px 7px;box-shadow:0 1px 4px rgba(0,0,0,.12);white-space:nowrap}
+.lpill{padding:5px 12px;font-size:12px;font-weight:500;border:1px solid #ccc8be;border-radius:3px;background:#f4f0e8;color:#666;cursor:pointer;font-family:-apple-system,sans-serif;transition:all .15s}
+.lpill.on{background:#1a1a1a;color:#f4f0e8;border-color:#1a1a1a}
+.rpill{padding:7px 14px;font-size:12px;font-weight:500;border:1px solid #ccc8be;border-radius:3px;background:#f4f0e8;color:#555;cursor:pointer;font-family:-apple-system,sans-serif;transition:all .15s}
+.rpill:hover{background:#ede9e0}
+.rpill.on{background:#1a1a1a;color:#f4f0e8;border-color:#1a1a1a}
+.region-tooltip{background:#fff;border:1px solid #ccc8be;border-radius:3px;font-size:11px;font-weight:600;color:#1a1a1a;padding:3px 7px;box-shadow:0 1px 4px rgba(0,0,0,.10);white-space:nowrap;font-family:-apple-system,sans-serif}
 .region-tooltip::before{display:none}
-.excard{background:#fff;border:1px solid #eee;border-radius:12px;margin-bottom:8px;padding:13px 14px;display:flex;align-items:center;gap:12px}
-.excard:hover{box-shadow:0 2px 8px rgba(0,0,0,.06)}
-.exrank{font-size:18px;font-weight:700;color:#ddd;width:28px;flex-shrink:0;text-align:center}
+.excard{background:#fff;border:1px solid #e8e3d8;border-radius:4px;margin-bottom:8px;padding:13px 14px;display:flex;align-items:center;gap:12px}
+.excard:hover{border-color:#bbb6ac}
+.exrank{font-family:'Playfair Display',Georgia,serif;font-size:20px;font-weight:700;color:#ccc;width:28px;flex-shrink:0;text-align:center}
 .exmain{flex:1;min-width:0}
-.exname{font-size:14px;font-weight:600;color:#1a1a1a;margin-bottom:3px}
-.exsub{font-size:11px;color:#666}
+.exname{font-family:'Playfair Display',Georgia,serif;font-size:15px;font-weight:700;color:#1a1a1a;margin-bottom:3px}
+.exsub{font-size:11px;color:#666;font-family:-apple-system,sans-serif}
 .exbars{display:flex;flex-direction:column;gap:4px;min-width:140px}
-.exbar-row{display:flex;align-items:center;gap:6px;font-size:10px;color:#777}
-.exbar-track{flex:1;height:5px;background:#f0f0f0;border-radius:3px;overflow:hidden}
-.exbar-fill{height:100%;border-radius:3px}
-.exbtn{padding:5px 12px;font-size:11px;font-weight:600;border:1px solid #ddd;border-radius:6px;background:#fff;color:#555;cursor:pointer;white-space:nowrap;flex-shrink:0}
-.exbtn:hover{background:#f5f5f5}
-.ex-use-btn{margin-top:1rem;width:100%;padding:10px;font-size:13px;font-weight:600;border:none;border-radius:8px;background:#1a1a1a;color:#fff;cursor:pointer}
+.exbar-row{display:flex;align-items:center;gap:6px;font-size:10px;color:#777;font-family:-apple-system,sans-serif}
+.exbar-track{flex:1;height:5px;background:#e8e3d8;border-radius:2px;overflow:hidden}
+.exbar-fill{height:100%;border-radius:2px}
+.exbtn{padding:5px 12px;font-size:11px;font-weight:600;border:1px solid #ccc8be;border-radius:3px;background:#f4f0e8;color:#555;cursor:pointer;white-space:nowrap;flex-shrink:0;font-family:-apple-system,sans-serif}
+.exbtn:hover{background:#ede9e0}
+.ex-use-btn{margin-top:1rem;width:100%;padding:11px;font-size:12px;font-weight:600;border:none;border-radius:4px;background:#1a1a1a;color:#f4f0e8;cursor:pointer;letter-spacing:.04em;text-transform:uppercase;font-family:-apple-system,sans-serif}
 .ex-use-btn:hover{background:#333}
-
-/* Minimize modal overlay */
 .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000;align-items:center;justify-content:center}
 .modal-bg.open{display:flex}
-.modal{background:#fff;border-radius:16px;padding:1.75rem;max-width:500px;width:calc(100% - 2rem);max-height:80vh;overflow-y:auto}
-.modal h2{font-size:17px;font-weight:600;letter-spacing:-.02em;margin-bottom:6px}
-.modal .msub{font-size:13px;color:#666;margin-bottom:1.25rem;line-height:1.5}
-.modal-card{background:#fafaf8;border:1px solid #eee;border-radius:10px;padding:12px 14px;margin-bottom:8px}
-.modal-card .mc-name{font-size:14px;font-weight:600;margin-bottom:3px}
-.modal-card .mc-cur{font-size:12px;color:#666;margin-bottom:6px}
+.modal{background:#f4f0e8;border-radius:4px;padding:1.75rem;max-width:500px;width:calc(100% - 2rem);max-height:80vh;overflow-y:auto;border:1px solid #ddd8cc}
+.modal h2{font-family:'Playfair Display',Georgia,serif;font-size:19px;font-weight:700;letter-spacing:-.01em;margin-bottom:6px}
+.modal .msub{font-size:13px;color:#666;margin-bottom:1.25rem;line-height:1.5;font-family:-apple-system,sans-serif}
+.modal-card{background:#fff;border:1px solid #e8e3d8;border-radius:4px;padding:12px 14px;margin-bottom:8px}
+.modal-card .mc-name{font-family:'Playfair Display',Georgia,serif;font-size:15px;font-weight:700;margin-bottom:3px}
+.modal-card .mc-cur{font-size:12px;color:#666;margin-bottom:6px;font-family:-apple-system,sans-serif}
 .mc-days{display:flex;gap:4px;flex-wrap:wrap}
-.mc-day{padding:4px 9px;font-size:11px;border-radius:6px;border:1px solid #eee;cursor:pointer;font-weight:500;background:#fff;transition:all .15s}
-.mc-day:hover{border-color:#aaa}
-.mc-day.best{background:#EAF3DE;color:#164030;border-color:#C0DD97}
-.mc-day.worst{background:#FCEBEB;color:#7A1A1A;border-color:#F09595}
-.modal-close{width:100%;padding:10px;font-size:13px;font-weight:600;border:1px solid #eee;border-radius:8px;background:#fff;cursor:pointer;margin-top:1rem;transition:background .15s}
-.modal-close:hover{background:#f5f5f5}
-
-/* Loading spinner */
-.spinner{display:inline-block;width:12px;height:12px;border:2px solid #eee;border-top-color:#999;border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;margin-right:5px}
+.mc-day{padding:4px 9px;font-size:11px;border-radius:3px;border:1px solid #ccc8be;cursor:pointer;font-weight:500;background:#f4f0e8;font-family:-apple-system,sans-serif;transition:all .15s}
+.mc-day:hover{border-color:#8b7355}
+.mc-day.best{background:#EAF3DE;color:#164030;border-color:#2A7050}
+.mc-day.worst{background:#fde8e8;color:#7A1A1A;border-color:#C0392B}
+.modal-close{width:100%;padding:10px;font-size:12px;font-weight:600;border:1px solid #ccc8be;border-radius:4px;background:#f4f0e8;cursor:pointer;margin-top:1rem;font-family:-apple-system,sans-serif;letter-spacing:.04em;text-transform:uppercase;transition:background .15s}
+.modal-close:hover{background:#ede9e0}
+.spinner{display:inline-block;width:12px;height:12px;border:2px solid #e8e3d8;border-top-color:#8b7355;border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;margin-right:5px}
 @keyframes spin{to{transform:rotate(360deg)}}
-
-/* Mobile */
 @media(max-width:520px){
   .panel,.cards,.summary,.action-row,.legend,.sec-lbl,.trip-hdr,.share-row{padding-left:1rem;padding-right:1rem}
   .summary,.action-row,.legend,.share-row{margin-left:1rem;margin-right:1rem}
   .hdr,.nav{padding-left:1rem;padding-right:1rem}
-  .badge{min-width:60px;font-size:10px}
-  .cname{font-size:14px}
+  .badge{min-width:64px;font-size:10px;padding:5px 10px}
+  .cname{font-size:15px}
   .bar-chart{height:36px}
   .action-row{flex-wrap:wrap}
-}
-</style>
+}</style>
 </head>
 <body>
 <div class="page">
@@ -425,6 +383,7 @@ const PORTS = {
     summer: [68,92,55,85,78,35,20],
     fall:   [48,75,38,70,62,22,12],
     excursions: ['florence','pisa','siena','san gimignano','lucca','volterra','bolgheri','chianti','cinque terre'],
+    peakShips: 4,
     notExcursions: ['volterra','montalcino','bolgheri','massa marittima','certaldo','san miniato'],
   },
   civitavecchia: {
@@ -433,6 +392,7 @@ const PORTS = {
     summer: [98,98,65,100,100,98,98],
     fall:   [54,54,36,72,72,54,54],
     excursions: ['rome','ostia antica','tivoli','orvieto','cerveteri','bracciano','tarquinia'],
+    peakShips: 8,
     notExcursions: ['calcata','sutri','bracciano','tarquinia','viterbo old town'],
   },
   naples: {
@@ -441,6 +401,7 @@ const PORTS = {
     summer: [87,100,100,100,65,100,100],
     fall:   [48,72,72,72,36,72,60],
     excursions: ['pompeii','herculaneum','amalfi','ravello','positano','sorrento','capri','paestum','vesuvius'],
+    peakShips: 6,
     notExcursions: ['ravello','cetara','maiori','vietri sul mare','paestum','cilento'],
   },
   venice: {
@@ -449,6 +410,7 @@ const PORTS = {
     summer: [73,43,29,43,29,100,100],
     fall:   [40,24,16,24,16,72,72],
     excursions: ['venice','murano','burano','verona','padua'],
+    peakShips: 7,
     notExcursions: ['vicenza','treviso','chioggia','bassano del grappa','asolo'],
   },
   catania: {
@@ -457,6 +419,7 @@ const PORTS = {
     summer: [65,78,70,80,82,68,60],
     fall:   [38,48,42,52,55,45,38],
     excursions: ['etna','taormina','syracuse','noto','ragusa','piazza armerina','agrigento'],
+    peakShips: 3,
     notExcursions: ['ragusa','modica','piazza armerina','caltagirone','marzamemi'],
   },
   malaga: {
@@ -465,6 +428,7 @@ const PORTS = {
     summer: [0,100,0,0,0,0,0],
     fall:   [63,54,45,54,45,72,18],
     excursions: ['granada','ronda','nerja','mijas','frigiliana','marbella','cordoba','antequera'],
+    peakShips: 4,
     notExcursions: ['frigiliana','nerja','antequera','ardales','zahara de la sierra'],
   },
   cadiz: {
@@ -473,6 +437,7 @@ const PORTS = {
     summer: [87,100,100,100,87,100,65],
     fall:   [48,72,60,72,48,60,36],
     excursions: ['seville','cordoba','jerez','cadiz old city','el puerto de santa maria','arcos de la frontera','tarifa'],
+    peakShips: 3,
     notExcursions: ['vejer de la frontera','arcos de la frontera','medina sidonia','chipiona'],
   },
   antalya: {
@@ -481,6 +446,7 @@ const PORTS = {
     summer: [0,0,0,0,0,100,0],
     fall:   [0,20,20,20,0,40,100],
     excursions: ['antalya','aspendos','side','perge','pamukkale'],
+    peakShips: 1,
     notExcursions: ['olympos','cirali','demre','kas','simena'],
   },
   dubrovnik: {
@@ -489,6 +455,7 @@ const PORTS = {
     summer: [65,100,100,100,65,43,65],
     fall:   [36,72,72,72,36,24,36],
     excursions: ['dubrovnik old town','lokrum island','cavtat','peljesac','kotor','mostar','hvar','split'],
+    peakShips: 5,
     notExcursions: ['ston','peljesac','mljet','cavtat','lastovo'],
   },
   split: {
@@ -497,6 +464,7 @@ const PORTS = {
     summer: [69,77,73,73,100,100,77],
     fall:   [70,87,83,70,100,87,74],
     excursions: ['split old town','hvar','trogir','salona','omis','plitvice lakes','brac','vis'],
+    peakShips: 4,
     notExcursions: ['vis','brac','imotski','sinj','omis'],
   },
   piraeus: {
@@ -505,6 +473,7 @@ const PORTS = {
     summer: [100,100,100,100,100,100,78],
     fall:   [58,58,58,58,72,58,43],
     excursions: ['athens','cape sounion','delphi','corinth','mycenae','epidaurus','nafplio','aegina','hydra'],
+    peakShips: 8,
     notExcursions: ['aegina','epidaurus','nemea','marathon','mount parnitha'],
   },
   mykonos: {
@@ -513,6 +482,7 @@ const PORTS = {
     summer: [100,100,65,100,100,87,100],
     fall:   [60,60,36,60,72,48,60],
     excursions: ['mykonos town','delos'],
+    peakShips: 6,
     notExcursions: ['ano mera','agios sostis'],
   },
   santorini: {
@@ -521,6 +491,7 @@ const PORTS = {
     summer: [85,90,88,92,95,98,95],
     fall:   [45,50,48,55,60,68,72],
     excursions: ['oia','fira','akrotiri','red beach'],
+    peakShips: 5,
     notExcursions: ['pyrgos','megalochori','emporio'],
   },
   barcelona: {
@@ -529,6 +500,7 @@ const PORTS = {
     summer: [100,100,0,100,100,100,100],
     fall:   [72,72,0,72,72,72,72],
     excursions: ['barcelona','montserrat','sitges','tarragona','penedes','colonia guell','costa brava','girona'],
+    peakShips: 9,
     notExcursions: ['penedes','vic','cardona','besalu'],
   },
   palma: {
@@ -537,6 +509,7 @@ const PORTS = {
     summer: [70,80,75,82,88,90,85],
     fall:   [45,52,48,55,60,65,62],
     excursions: ['palma old town','valldemossa','soller','formentor'],
+    peakShips: 4,
     notExcursions: ['alcudia','sineu','felanitx','ses salines'],
   },
   marseille: {
@@ -545,6 +518,7 @@ const PORTS = {
     summer: [100,65,98,65,98,100,100],
     fall:   [72,36,54,36,54,72,72],
     excursions: ['aix-en-provence','arles','cassis','avignon','les baux','saint remy','camargue','marseille calanques'],
+    peakShips: 5,
     notExcursions: ['luberon','les baux','cotignac','moustiers-sainte-marie'],
   },
   villefranche: {
@@ -553,6 +527,7 @@ const PORTS = {
     summer: [65,78,70,80,75,60,55],
     fall:   [42,52,46,56,52,40,35],
     excursions: ['nice','monaco','eze','cannes','antibes','saint-paul-de-vence','menton','grasse','ventimiglia'],
+    peakShips: 3,
     notExcursions: ['menton','peillon','cotignac','saint-paul-de-vence'],
   },
   valletta: {
@@ -561,6 +536,7 @@ const PORTS = {
     summer: [74,74,100,100,56,74,74],
     fall:   [41,41,72,72,31,41,41],
     excursions: ['valletta','mdina','three cities','gozo','blue lagoon','marsaxlokk','tarxien','hagar qim'],
+    peakShips: 4,
     notExcursions: ['dingli cliffs','hagar qim','marsaskala','gharb'],
   },
   kotor: {
@@ -569,6 +545,7 @@ const PORTS = {
     summer: [100,100,87,100,87,87,100],
     fall:   [60,60,48,72,48,48,72],
     excursions: ['kotor old town','perast','budva','sveti stefan','ostrog monastery','cetinje','skadar lake'],
+    peakShips: 4,
     notExcursions: ['lovcen','virpazar','ulcinj','lustica peninsula'],
   },
   genoa: {
@@ -577,6 +554,7 @@ const PORTS = {
     summer: [100,92,100,85,100,100,100],
     fall:   [100,85,92,92,100,92,100],
     excursions: ['portofino','cinque terre','santa margherita ligure','camogli','levanto','lerici','rapallo'],
+    peakShips: 6,
     notExcursions: ['recco','bogliasco','nervi','sestri levante'],
   },
   salerno: {
@@ -585,6 +563,7 @@ const PORTS = {
     summer: [100,9,64,36,55,100,45],
     fall:   [75,38,63,75,63,100,38],
     excursions: ['amalfi','positano','pompeii','paestum','sorrento'],
+    peakShips: 2,
     notExcursions: ['ravello','cetara','vietri sul mare','cilento','agropoli'],
   },
   palermo: {
@@ -593,6 +572,7 @@ const PORTS = {
     summer: [65,75,68,78,80,65,58],
     fall:   [42,52,46,54,58,44,38],
     excursions: ['palermo city','monreale','cefalu','agrigento','segesta','erice','selinunte','palermo street food'],
+    peakShips: 4,
     notExcursions: ['scopello','zingaro nature reserve','marsala','mazara del vallo','erice'],
   },
   messina: {
@@ -601,6 +581,7 @@ const PORTS = {
     summer: [60,100,90,100,100,80,60],
     fall:   [77,100,54,46,77,77,46],
     excursions: ['taormina','etna','syracuse','noto','ragusa'],
+    peakShips: 4,
     notExcursions: ['savoca','forza d\'agro','castiglione di sicilia','francavilla di sicilia'],
   },
   Rhodes: {
@@ -617,6 +598,7 @@ const PORTS = {
     summer: [100,29,14,100,100,29,100],
     fall:   [56,16,8,72,56,16,72],
     excursions: ['knossos','spinalonga','elounda','rethymno','chania','samaria gorge','matala'],
+    peakShips: 4,
     notExcursions: ['archanes','zaros','spinalonga','elounda hinterland','argyroupoli'],
   },
   kusadasi: {
@@ -625,6 +607,7 @@ const PORTS = {
     summer: [72,85,78,88,90,68,62],
     fall:   [42,55,48,58,62,45,38],
     excursions: ['ephesus','miletus','priene','didyma','selcuk','pamukkale','sirince'],
+    peakShips: 5,
     notExcursions: ['priene','miletus','didyma','sirince','bodrum'],
   },
   bodrum: {
@@ -634,6 +617,7 @@ const PORTS = {
     fall:   [25,38,42,48,52,35,28],
     winter: [5,8,10,10,12,8,5],
     excursions: ['bodrum peninsula','bodrum castle','gumbet','turgutreis','gumusluk','knidos'],
+    peakShips: 3,
     notExcursions: ['gumusluk','yalikavak','turgutreis'],
   },
   istanbul: {
@@ -642,6 +626,7 @@ const PORTS = {
     summer: [0,50,50,50,50,100,50],
     fall:   [72,48,48,72,60,60,60],
     excursions: ['istanbul','topkapi','hagia sophia','grand bazaar','blue mosque','princes islands','bosphorus','dolmabahce','spice bazaar'],
+    peakShips: 6,
     notExcursions: ['karakoy','balat','fener','princes islands','belgrade forest'],
   },
   'las palmas': {
@@ -650,6 +635,7 @@ const PORTS = {
     summer: [100,0,50,0,50,50,50],
     fall:   [88,25,50,50,88,88,100],
     excursions: ['las palmas','maspalomas','roque nublo'],
+    peakShips: 3,
     notExcursions: ['teror','agaete','arucas','guia'],
   },
   'santa cruz': {
@@ -658,6 +644,7 @@ const PORTS = {
     summer: [38,48,43,38,52,62,50],
     fall:   [60,70,65,60,75,85,70],
     excursions: ['santa cruz tenerife','teide','puerto de la cruz','loro parque'],
+    peakShips: 3,
     notExcursions: ['anaga','garachico','masca','el hierro'],
   },
   corfu: {
@@ -666,6 +653,7 @@ const PORTS = {
     summer: [81,92,100,81,100,100,69],
     fall:   [73,65,65,65,100,65,46],
     excursions: ['corfu old town','paleokastritsa','achillion palace','mouse island','kanoni','sidari','kassiopi'],
+    peakShips: 5,
     notExcursions: ['agios georgios','peroulades','kavos','gardiki'],
   },
   zakynthos: {
@@ -674,6 +662,7 @@ const PORTS = {
     summer: [0,100,0,60,20,0,100],
     fall:   [0,50,25,25,0,0,100],
     excursions: ['zakynthos','navagio','blue caves'],
+    peakShips: 2,
     notExcursions: ['keri','volimes','agios nikolaos village'],
   },
   skiathos: {
@@ -682,6 +671,7 @@ const PORTS = {
     summer: [0,100,67,0,0,0,0],
     fall:   [0,0,67,100,0,33,0],
     excursions: ['skiathos','koukounaries'],
+    peakShips: 1,
     notExcursions: ['kastro skiathos','lalaria beach'],
   },
   haifa: {
@@ -690,6 +680,7 @@ const PORTS = {
     summer: [65,0,65,100,0,65,0],
     fall:   [50,0,50,50,0,100,0],
     excursions: ['acre','rosh hanikra','caesarea','nazareth','sea of galilee','haifa bahai gardens','megiddo'],
+    peakShips: 3,
     notExcursions: ['isfiya','daliyat al-carmel','zichron yaakov'],
   },
   casablanca: {
@@ -698,6 +689,7 @@ const PORTS = {
     summer: [100,50,50,0,0,50,0],
     fall:   [60,100,80,60,20,100,60],
     excursions: ['casablanca','marrakech','rabat','fes','meknes'],
+    peakShips: 2,
     notExcursions: ['chefchaouen','essaouira','ouarzazate','azemmour'],
   },
   // ── NEWLY ADDED PORTS ──────────────────────────────────
@@ -707,6 +699,7 @@ const PORTS = {
     summer: [0,8,0,0,0,100,100],
     fall:   [25,8,25,50,8,92,100],
     excursions: ['genoa','cinque terre','portofino','sanremo'],
+    peakShips: 5,
     notExcursions: ['finale ligure','noli','spotorno','varigotti'],
   },
   'la spezia': {
@@ -715,6 +708,7 @@ const PORTS = {
     summer: [67,100,92,58,83,58,67],
     fall:   [70,90,100,50,80,50,70],
     excursions: ['cinque terre','portofino','lucca','pisa'],
+    peakShips: 3,
     notExcursions: ['lerici','tellaro','portovenere','montemarcello'],
   },
   trieste: {
@@ -723,6 +717,7 @@ const PORTS = {
     summer: [46,54,23,31,15,46,100],
     fall:   [38,63,63,38,63,100,100],
     excursions: ['trieste','piran','portoroz','venice','postojna'],
+    peakShips: 3,
     notExcursions: ['muggia','grignano','opicina','aquileia'],
   },
   bari: {
@@ -731,6 +726,7 @@ const PORTS = {
     summer: [31,54,31,38,38,92,100],
     fall:   [23,46,69,62,69,100,85],
     excursions: ['matera','alberobello','lecce','ostuni','otranto','castel del monte','polignano a mare'],
+    peakShips: 3,
     notExcursions: ['polignano a mare','locorotondo','cisternino','martina franca'],
   },
   zadar: {
@@ -739,6 +735,7 @@ const PORTS = {
     summer: [55,68,50,73,100,55,41],
     fall:   [81,88,44,63,100,81,25],
     excursions: ['zadar','plitvice lakes','sibenik','krka','split old town'],
+    peakShips: 3,
     notExcursions: ['nin','paklenica','telascica','kornati islands'],
   },
   katakolon: {
@@ -747,6 +744,7 @@ const PORTS = {
     summer: [62,77,100,88,65,35,46],
     fall:   [65,100,100,80,85,65,50],
     excursions: ['ancient olympia','olympia museum','bassae','andritsaina','pyrgos'],
+    peakShips: 3,
     notExcursions: ['pyrgos','andritsaina'],
   },
   kos: {
@@ -755,6 +753,7 @@ const PORTS = {
     summer: [0,50,0,100,0,25,25],
     fall:   [33,33,33,100,67,67,0],
     excursions: ['kos town','asklepion','nisyros','hippocrates tree','kefalos','agios fokas'],
+    peakShips: 2,
     notExcursions: ['kefalos','antimacheia','kardamena'],
   },
   thessaloniki: {
@@ -763,6 +762,7 @@ const PORTS = {
     summer: [56,33,0,100,22,11,11],
     fall:   [56,89,67,33,33,100,11],
     excursions: ['thessaloniki','vergina','meteora','mount olympus','kavala','philippi','ouranoupolis','dion'],
+    peakShips: 3,
     notExcursions: ['chalkidiki','stageira','dion','pella'],
   },
   patmos: {
@@ -771,6 +771,7 @@ const PORTS = {
     summer: [22,100,15,19,33,96,19],
     fall:   [22,100,13,22,9,100,39],
     excursions: ['patmos','monastery of st john','holy cave','leros'],
+    peakShips: 2,
     notExcursions: ['grikos','kampos','lampi'],
   },
   izmir: {
@@ -779,6 +780,7 @@ const PORTS = {
     summer: [67,67,0,0,33,33,100],
     fall:   [40,100,20,0,0,20,40],
     excursions: ['ephesus','pergamon','izmir','sardis','pamukkale'],
+    peakShips: 2,
     notExcursions: ['alacati','sigacik','sirince','teos','claros'],
   },
   marmaris: {
@@ -787,6 +789,7 @@ const PORTS = {
     summer: [21,100,21,0,7,7,0],
     fall:   [38,100,38,0,13,25,0],
     excursions: ['marmaris','dalyan','datca','rhodes old town','knidos'],
+    peakShips: 2,
     notExcursions: ['bozburun','selimiye','hisaronu','orhaniye'],
   },
   valencia: {
@@ -795,6 +798,7 @@ const PORTS = {
     summer: [35,69,88,100,35,62,42],
     fall:   [50,68,64,68,68,100,55],
     excursions: ['valencia','xativa','peniscola','albufera'],
+    peakShips: 3,
     notExcursions: ['bocairent','morella','forcall','chelva'],
   },
   cartagena: {
@@ -803,6 +807,7 @@ const PORTS = {
     summer: [67,83,67,75,42,67,100],
     fall:   [100,83,67,89,83,72,89],
     excursions: ['cartagena','murcia','lorca','mazarron'],
+    peakShips: 2,
     notExcursions: ['calblanque','cabo cope','puntas de calnegre'],
   },
   gibraltar: {
@@ -811,6 +816,7 @@ const PORTS = {
     summer: [55,68,62,72,75,68,62],
     fall:   [38,48,42,52,55,50,44],
     excursions: ['gibraltar','tarifa','tangier','algeciras','jerez'],
+    peakShips: 2,
     notExcursions: ['vejer de la frontera','bolonia','barbate','conil'],
   },
   ajaccio: {
@@ -819,6 +825,7 @@ const PORTS = {
     summer: [85,85,100,77,77,54,69],
     fall:   [62,46,100,69,92,38,54],
     excursions: ['ajaccio','bonifacio','porto','corte','calanche'],
+    peakShips: 2,
     notExcursions: ['sartene','propriano','zonza','bavella'],
   },
   limassol: {
@@ -827,6 +834,7 @@ const PORTS = {
     summer: [0,8,100,0,0,0,15],
     fall:   [20,0,100,10,20,0,30],
     excursions: ['limassol','paphos','nicosia','troodos','kyrenia'],
+    peakShips: 2,
     notExcursions: ['lefkara','omodos','lania','pissouri'],
   },
   tangier: {
@@ -835,6 +843,7 @@ const PORTS = {
     summer: [40,20,60,40,60,100,40],
     fall:   [100,0,0,33,0,67,0],
     excursions: ['tangier','chefchaouen','tetouan','asilah','ceuta'],
+    peakShips: 2,
     notExcursions: ['cap spartel','grottes d hercule','souk el had','ksar el kebir'],
   },
   // ── FINAL REMAINING PORTS ─────────────────────────────
@@ -844,6 +853,7 @@ const PORTS = {
     summer: [100,52,37,96,4,4,41],
     fall:   [24,24,29,100,12,12,53],
     excursions: ['argostoli','myrtos beach','melissani cave','fiskardo'],
+    peakShips: 2,
     notExcursions: ['assos','agia efimia','skala kefalonia','poros kefalonia'],
   },
   ashdod: {
@@ -852,6 +862,7 @@ const PORTS = {
     summer: [50,62,55,65,68,72,38],
     fall:   [38,48,42,52,55,58,30],
     excursions: ['jerusalem','bethlehem','tel aviv','jaffa old city','masada','dead sea','nazareth','caesarea'],
+    peakShips: 2,
     notExcursions: ['jaffa old city','caesarea','beit guvrin','ashkelon'],
   },
   larnaca: {
@@ -860,6 +871,7 @@ const PORTS = {
     summer: [50,62,56,68,70,72,70],
     fall:   [30,40,34,44,48,52,50],
     excursions: ['larnaca','paphos','nicosia','troodos','limassol'],
+    peakShips: 2,
     notExcursions: ['lefkara','choirokoitia','stavrovouni','kiti'],
   },
   agadir: {
@@ -868,6 +880,7 @@ const PORTS = {
     summer: [100,0,0,100,0,0,0],
     fall:   [25,75,0,50,0,100,50],
     excursions: ['agadir','essaouira','taroudant','paradise valley'],
+    peakShips: 1,
     notExcursions: ['tiznit','sidi ifni','immouzer','tafraout'],
   },
   arrecife: {
@@ -876,6 +889,7 @@ const PORTS = {
     summer: [45,58,52,62,65,70,68],
     fall:   [30,40,35,45,48,55,58],
     excursions: ['timanfaya','jameos del agua','papagayo','cesar manrique'],
+    peakShips: 2,
     notExcursions: ['el golfo','la geria','orzola','famara'],
   },
   'morro jable': {
@@ -884,6 +898,7 @@ const PORTS = {
     summer: [35,48,42,52,55,62,60],
     fall:   [22,32,26,34,38,46,50],
     excursions: ['corralejo','grandes playas','betancuria','cofete beach'],
+    peakShips: 1,
     notExcursions: ['el cotillo','la oliva','tindaya','ajuy'],
   },
   toulon: {
@@ -892,6 +907,7 @@ const PORTS = {
     summer: [94,53,35,29,29,100,47],
     fall:   [55,82,64,55,36,100,18],
     excursions: ['toulon','marseille','hyeres','iles d or','verdon gorge'],
+    peakShips: 3,
     notExcursions: ['bandol','sanary sur mer','six fours','ollioules'],
   },
   // ── PORTUGAL & ATLANTIC SPAIN ─────────────────────────
@@ -901,6 +917,7 @@ const PORTS = {
     summer: [85,95,88,95,98,82,75],
     fall:   [60,72,65,75,78,62,55],
     excursions: ['lisbon','sintra','cascais','obidos','setubal'],
+    peakShips: 5,
     notExcursions: ['evora','alentejo','nazare','batalha','fatima'],
   },
   porto: {
@@ -909,6 +926,7 @@ const PORTS = {
     summer: [68,80,72,82,85,72,65],
     fall:   [45,58,52,62,65,52,45],
     excursions: ['porto','guimaraes','braga','douro valley','viana do castelo'],
+    peakShips: 2,
     notExcursions: ['amarante','peso da regua','lamego','barcelos'],
   },
   funchal: {
@@ -917,6 +935,7 @@ const PORTS = {
     summer: [58,72,65,75,78,65,58],
     fall:   [38,50,44,55,58,48,42],
     excursions: ['funchal','monte','cabo girao','santana','pico do arieiro'],
+    peakShips: 3,
     notExcursions: ['porto moniz','sao vicente','calheta','machico'],
   },
   // ── IBIZA & BALEARICS ────────────────────────────────
@@ -926,6 +945,7 @@ const PORTS = {
     summer: [22,100,96,70,96,48,11],
     fall:   [29,62,100,43,76,24,29],
     excursions: ['ibiza town','dalt vila','ses salines','santa eularia'],
+    peakShips: 3,
     notExcursions: ['sant joan','portinatx','es vedra','cala conta'],
   },
   // ── ADRIATIC ADDITIONS ───────────────────────────────
@@ -935,6 +955,7 @@ const PORTS = {
     summer: [58,72,65,75,78,82,85],
     fall:   [28,40,34,45,48,52,55],
     excursions: ['rovinj','pula','porec','limska fjord'],
+    peakShips: 2,
     notExcursions: ['vrsar','bale','svetvincenat','labin'],
   },
   sibenik: {
@@ -943,6 +964,7 @@ const PORTS = {
     summer: [52,65,58,68,72,75,78],
     fall:   [25,38,32,42,45,48,52],
     excursions: ['sibenik','krka waterfalls','kornati','trogir','split old town'],
+    peakShips: 2,
     notExcursions: ['primosten','skradin','knin','drnis'],
   },
   // ── EASTERN MED ADDITIONS ────────────────────────────
@@ -952,6 +974,7 @@ const PORTS = {
     summer: [65,78,70,80,82,72,65],
     fall:   [45,58,52,62,65,55,48],
     excursions: ['cairo','giza pyramids','alexandria','luxor','abu simbel'],
+    peakShips: 3,
     notExcursions: ['el alamein','marsa matruh','siwa oasis'],
   },
 };
@@ -3442,8 +3465,9 @@ const REGIONS = {
 // GetYourGuide: partner.getyourguide.com (free, 8% commission)
 // ─────────────────────────────────────────────────────────
 const AFFILIATE = {
-  bookingAid: '2839562',  // e.g. '1234567'
-  gygPid:     'VKYN0SM',       // e.g. 'ABCD1234'
+  bookingAid: '2839562',
+  gygPid:     'VKYN0SM',
+  viatorPid:  'P00296371',
 };
 
 function bookingLink(cityName, countryName, checkin, checkout) {
@@ -3457,6 +3481,11 @@ function bookingLink(cityName, countryName, checkin, checkout) {
 function gygLink(cityName) {
   const q = encodeURIComponent(cityName);
   return `https://www.getyourguide.com/s/?q=${q}&partner_id=${AFFILIATE.gygPid}`;
+}
+
+function viatorLink(cityName) {
+  const q = encodeURIComponent(cityName);
+  return `https://www.viator.com/search/${q}?pid=${AFFILIATE.viatorPid}&mcid=42383&medium=link`;
 }
 
 function affiliateActive() {
@@ -3756,7 +3785,7 @@ function getDestOrFallback(key) {
     lng: null,
     nearPorts: [],
     cityByDay: [25,30,27,30,33,40,38],
-    sub: 'Not in our database — checking location…',
+    sub: 'Checking location…',
     note: null,
     shoulder: null,
     alt: null,
@@ -3774,7 +3803,7 @@ async function enrichFallbackDest(key, onEnriched) {
     _fallbackCache[key] = {
       name, country: 'Unknown', lat: null, lng: null,
       nearPorts: [], cityByDay: [25,30,27,30,33,40,38],
-      sub: 'City not found — check spelling',
+      sub: 'Location not found',
       note: null, shoulder: null, alt: null, tips: null, isFallback: true,
     };
     onEnriched && onEnriched(_fallbackCache[key]);
@@ -3825,7 +3854,6 @@ async function enrichFallbackDest(key, onEnriched) {
 
 function scoreStop(key, date) {
   const dest = getDestOrFallback(key);
-
   const dayIdx = getDayIdx(date);
   const season = getSeason(date);
 
@@ -3848,21 +3876,82 @@ function scoreStop(key, date) {
 
   const cityVol = dest.cityByDay[dayIdx];
 
-  // Composite crowd score for this specific day (0-100)
+  // Port city detection
+  const PORT_CITY_SET = new Set(['livorno','civitavecchia','naples','venice','dubrovnik old town',
+    'split old town','piraeus','mykonos town','santorini','barcelona','palma de mallorca',
+    'marseille','valletta','kotor old town','genoa','salerno','palermo','messina','catania',
+    'kusadasi','bodrum','istanbul','las palmas','santa cruz tenerife','corfu','haifa',
+    'casablanca','athens','rhodes old town','heraklion','zakynthos','skiathos',
+    'malaga','cadiz','antalya','zadar','bari','kos town','thessaloniki',
+    'izmir city','valencia city','cartagena city','lisbon','porto','funchal',
+    'limassol','tangier','ajaccio','larnaca','toulon','ibiza town','rovinj','sibenik']);
+  const isPortCity = PORT_CITY_SET.has(key);
+
+  // Population lookup (thousands) — cruise passengers ÷ residents = practical overrun feel
+  const POP_K = {
+    'rome':2800,'florence':370,'naples':960,'venice':250,'genoa':580,
+    'palermo':680,'catania':310,'siena':54,'san gimignano':8,'volterra':10,
+    'lucca':90,'cinque terre':5,'portofino':0.4,'amalfi':5,'positano':4,
+    'ravello':2.5,'sorrento':16,'capri':14,'pompeii':25,'herculaneum':8,
+    'matera':60,'alberobello':10,'lecce':95,'taormina':11,'agrigento':55,
+    'syracuse':120,'noto':24,'ragusa':73,'orvieto':21,'assisi':28,
+    'trieste':205,'bari':320,'la spezia':95,'savona':60,'livorno':160,
+    'messina':235,'salerno':135,'civitavecchia':55,
+    'athens':660,'thessaloniki':324,'dubrovnik old town':2,'corfu old town':28,
+    'rhodes old town':10,'mykonos town':10,'santorini':15,'heraklion':175,
+    'chania':108,'rethymno':55,'knossos':1,'delphi':1,'olympia':1,
+    'nafplio':14,'patmos':3,'kos town':20,'lindos':1,'meteora':2,
+    'zakynthos':40,'skiathos':6,'argostoli':10,
+    'split old town':5,'dubrovnik':43,'kotor old town':1,'hvar':4,
+    'zadar':76,'trogir':1,'rovinj':14,'sibenik':46,
+    'barcelona':1620,'seville':690,'granada':232,'malaga':578,'cadiz':116,
+    'ronda':34,'palma de mallorca':415,'valldemossa':2,'ibiza town':50,'valencia city':790,
+    'montserrat':0.1,'sitges':29,
+    'marseille':870,'nice':342,'cannes':74,'monaco':39,'avignon':91,
+    'arles':52,'eze':3,'cassis':8,'menton':29,'antibes':78,
+    'ajaccio':70,'villefranche':6,
+    'istanbul':15500,'ephesus':1,'kusadasi':70,'pamukkale':3,
+    'bodrum':37,'antalya':2400,
+    'lisbon':505,'porto':237,'sintra':25,'funchal':112,
+    'valletta':6,'mdina':0.4,
+    'jerusalem':970,'tel aviv':460,'haifa':285,'masada':0.1,
+    'marrakech':1070,'casablanca':3750,'fes':1200,'tangier':993,
+    'chefchaouen':45,'essaouira':77,'agadir':600,
+    'cairo':10100,'alexandria':5200,
+    'las palmas':380,'santa cruz tenerife':210,
+  };
+
+  // peakShips = max ships at this port on peak day — converts normalized 0-100 to real count
+  const peakShips = primaryPort?.peakShips || 3;
+  const estimatedShips = Math.round((maxCruise / 100) * peakShips * 10) / 10;
+
+  // Cruise pressure ratio: passengers per 1,000 residents
+  const AVG_PASSENGERS = 3000;
+  const popK = POP_K[key] || 100;
+  const pressureRatio = (estimatedShips * AVG_PASSENGERS) / popK;
+
+  // Composite crowd score (0-100)
   const crowdScore = Math.round(cityVol * 0.20 + maxCruise * 0.80);
 
   let status;
-  // Red: known cruise excursion dest with heavy port day OR extreme combined score
-  if ((maxCruise >= 65 && isExcursionDest) || crowdScore >= 75) status = 'red';
-  // Amber: moderate excursion pressure OR elevated combined score
-  else if (crowdScore >= 55 || (maxCruise >= 45 && isExcursionDest) || maxCruise >= 60) status = 'amber';
-  else if (crowdScore >= 35 || maxCruise >= 30) status = 'amber';
-  else status = 'green';
+  if (isExcursionDest || isPortCity) {
+    const highPressure = pressureRatio >= 30 || estimatedShips >= 3;
+    const modPressure  = pressureRatio >= 10 || estimatedShips >= 1.5;
+    const lowPressure  = pressureRatio >= 3  || estimatedShips >= 0.5;
+    if (highPressure || crowdScore >= 75) status = 'red';
+    else if (modPressure || crowdScore >= 50) status = 'amber';
+    else if (lowPressure) status = 'amber';
+    else status = 'green';
+  } else {
+    if (crowdScore >= 70 || pressureRatio >= 20) status = 'red';
+    else if (crowdScore >= 40 || pressureRatio >= 8) status = 'amber';
+    else status = 'green';
+  }
 
   return {
     key, date, dest, dayIdx, season,
     status, cityVol, maxCruise, cruiseByDay, crowdScore,
-    primaryPort, isExcursionDest,
+    primaryPort, isExcursionDest, estimatedShips, pressureRatio, popK,
   };
 }
 
@@ -4245,6 +4334,12 @@ function renderCard(scored, idx) {
         </div>` : ''}
       </div>
       <div class="wx-row" id="wx-${idx}" ${!scored.date ? 'style="display:none"' : ''}><span class="wx-loading"><span class="spinner"></span>Loading historical weather…</span></div>
+      ${affiliateActive() ? `
+      <div style="padding:10px 16px;border-top:1px solid #eee8dc;display:flex;gap:6px;flex-wrap:wrap;background:#faf8f3">
+        <a href="${bookingLink(dest.name, dest.country)}" target="_blank" rel="noopener" class="aff-btn booking">🏨 Hotels</a>
+        <a href="${gygLink(dest.name)}" target="_blank" rel="noopener" class="aff-btn gyg">🎟️ GYG Tours</a>
+        <a href="${viatorLink(dest.name)}" target="_blank" rel="noopener" class="aff-btn viator">🎫 Viator Tours</a>
+      </div>` : ''}
       <div class="info-rows">
         ${primaryPort && isExcursionDest ? `
         <div class="irow">
@@ -4279,7 +4374,8 @@ function renderCard(scored, idx) {
               ${affiliateActive() ? `
               <div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap">
                 <a href="${bookingLink(dest.alt.split('—')[0].trim(), dest.country)}" target="_blank" rel="noopener" class="aff-btn booking">🏨 Hotels</a>
-                <a href="${gygLink(dest.alt.split('—')[0].trim())}" target="_blank" rel="noopener" class="aff-btn gyg">🎟️ Activities</a>
+                <a href="${gygLink(dest.alt.split('—')[0].trim())}" target="_blank" rel="noopener" class="aff-btn gyg">🎟️ GYG</a>
+                <a href="${viatorLink(dest.alt.split('—')[0].trim())}" target="_blank" rel="noopener" class="aff-btn viator">🎫 Viator</a>
               </div>` : ''}
             </div>
           </div>
@@ -4726,7 +4822,8 @@ function openMinimize(withAlts) {
         <span style="color:#2A7050;font-weight:600">Alt for ${s.dest.name}:</span> ${s.dest.alt}
         ${affiliateActive() ? `<div style="margin-top:4px;display:flex;gap:5px">
           <a href="${bookingLink(altCity, s.dest.country)}" target="_blank" rel="noopener" class="aff-btn booking" style="font-size:10px">🏨 Hotels</a>
-          <a href="${gygLink(altCity)}" target="_blank" rel="noopener" class="aff-btn gyg" style="font-size:10px">🎟️ Tours</a>
+          <a href="${gygLink(altCity)}" target="_blank" rel="noopener" class="aff-btn gyg" style="font-size:10px">🎟️ GYG</a>
+          <a href="${viatorLink(altCity)}" target="_blank" rel="noopener" class="aff-btn viator" style="font-size:10px">🎫 Viator</a>
         </div>` : ''}
       </div>` : ''}
       <div class="mc-cur">
@@ -5406,7 +5503,8 @@ function renderExplore() {
         ${isTop ? `<div style="font-size:10px;color:#2A7050;margin-top:3px;font-weight:500">↓ Least crowded: ${r.bestDayName}</div>` : ''}
         ${isTop && affiliateActive() ? `<div style="display:flex;gap:5px;margin-top:5px;flex-wrap:wrap">
           <a href="${bookingLink(r.dest.name, r.dest.country)}" target="_blank" rel="noopener" class="aff-btn booking" style="font-size:10px">🏨 Hotels</a>
-          <a href="${gygLink(r.dest.name)}" target="_blank" rel="noopener" class="aff-btn gyg" style="font-size:10px">🎟️ Tours</a>
+          <a href="${gygLink(r.dest.name)}" target="_blank" rel="noopener" class="aff-btn gyg" style="font-size:10px">🎟️ GYG</a>
+          <a href="${viatorLink(r.dest.name)}" target="_blank" rel="noopener" class="aff-btn viator" style="font-size:10px">🎫 Viator</a>
         </div>` : ''}
       </div>
       <div class="exbars">
