@@ -2989,6 +2989,118 @@ const DESTS = {
     alt:null,
     tips:['El Palmar village: eat paella in its birthplace, rice grown 500m from the restaurant','Boat trip on the lagoon at sunset: extraordinary light, herons and egrets, local fishermen — hire a flat-bottomed boat from El Palmar'],
   },
+  'modena': {
+    name:'Modena', country:'Italy', lat:44.647, lng:10.925,
+    nearPorts:[],
+    cityByDay:[40,50,45,52,55,70,75],
+    sub:'Emilia-Romagna · Food & motor valley · No cruise excursions',
+    note: null, shoulder: null, alt: null, tips: null,
+  },
+  'bologna': {
+    name:'Bologna', country:'Italy', lat:44.494, lng:11.342,
+    nearPorts:[],
+    cityByDay:[40,50,45,52,55,70,75],
+    sub:'Emilia-Romagna · La Grassa · No cruise excursions',
+    note: null, shoulder: null, alt: null, tips: null,
+  },
+  'parma': {
+    name:'Parma', country:'Italy', lat:44.801, lng:10.328,
+    nearPorts:[],
+    cityByDay:[40,50,45,52,55,70,75],
+    sub:'Emilia-Romagna · Prosciutto & Parmigiano · No cruise excursions',
+    note: null, shoulder: null, alt: null, tips: null,
+  },
+  'milan': {
+    name:'Milan', country:'Italy', lat:45.464, lng:9.19,
+    nearPorts:[],
+    cityByDay:[40,50,45,52,55,70,75],
+    sub:'Lombardy · Design & fashion capital · No cruise excursions',
+    note: null, shoulder: null, alt: null, tips: null,
+  },
+  'bergamo': {
+    name:'Bergamo', country:'Italy', lat:45.695, lng:9.67,
+    nearPorts:[],
+    cityByDay:[40,50,45,52,55,70,75],
+    sub:'Lombardy · Città Alta · No cruise excursions',
+    note: null, shoulder: null, alt: null, tips: null,
+  },
+  'ravenna': {
+    name:'Ravenna', country:'Italy', lat:44.416, lng:12.203,
+    nearPorts:[],
+    cityByDay:[40,50,45,52,55,70,75],
+    sub:'Emilia-Romagna · Byzantine mosaics · No cruise excursions',
+    note: null, shoulder: null, alt: null, tips: null,
+  },
+  'ferrara': {
+    name:'Ferrara', country:'Italy', lat:44.836, lng:11.62,
+    nearPorts:[],
+    cityByDay:[40,50,45,52,55,70,75],
+    sub:'Emilia-Romagna · Renaissance city · No cruise excursions',
+    note: null, shoulder: null, alt: null, tips: null,
+  },
+  'mantua': {
+    name:'Mantua', country:'Italy', lat:45.156, lng:10.791,
+    nearPorts:[],
+    cityByDay:[40,50,45,52,55,70,75],
+    sub:'Lombardy · Gonzaga seat · No cruise excursions',
+    note: null, shoulder: null, alt: null, tips: null,
+  },
+  'bologna centro': {
+    name:'Bologna', country:'Italy', lat:44.494, lng:11.342,
+    nearPorts:[],
+    cityByDay:[40,50,45,52,55,70,75],
+    sub:'Emilia-Romagna · No cruise excursions',
+    note: null, shoulder: null, alt: null, tips: null,
+  },
+  'perugia': {
+    name:'Perugia', country:'Italy', lat:43.11, lng:12.391,
+    nearPorts:[],
+    cityByDay:[40,50,45,52,55,70,75],
+    sub:'Umbria · Medieval hilltop city · No cruise excursions',
+    note: null, shoulder: null, alt: null, tips: null,
+  },
+  'urbino': {
+    name:'Urbino', country:'Italy', lat:43.726, lng:12.636,
+    nearPorts:[],
+    cityByDay:[40,50,45,52,55,70,75],
+    sub:'Marche · Renaissance ducal city · No cruise excursions',
+    note: null, shoulder: null, alt: null, tips: null,
+  },
+  'vienna': {
+    name:'Vienna', country:'Austria', lat:48.208, lng:16.373,
+    nearPorts:[],
+    cityByDay:[40,50,45,52,55,70,75],
+    sub:'Austria · No cruise excursions',
+    note: null, shoulder: null, alt: null, tips: null,
+  },
+  'salzburg': {
+    name:'Salzburg', country:'Austria', lat:47.802, lng:13.045,
+    nearPorts:[],
+    cityByDay:[40,50,45,52,55,70,75],
+    sub:'Austria · No cruise excursions',
+    note: null, shoulder: null, alt: null, tips: null,
+  },
+  'bruges': {
+    name:'Bruges', country:'Belgium', lat:51.209, lng:3.224,
+    nearPorts:[],
+    cityByDay:[40,50,45,52,55,70,75],
+    sub:'Belgium · Medieval canal city · No cruise excursions',
+    note: null, shoulder: null, alt: null, tips: null,
+  },
+  'lyon': {
+    name:'Lyon', country:'France', lat:45.75, lng:4.845,
+    nearPorts:[],
+    cityByDay:[40,50,45,52,55,70,75],
+    sub:'France · Gastronomic capital · No cruise excursions',
+    note: null, shoulder: null, alt: null, tips: null,
+  },
+  'bordeaux': {
+    name:'Bordeaux', country:'France', lat:44.837, lng:-0.58,
+    nearPorts:[],
+    cityByDay:[40,50,45,52,55,70,75],
+    sub:'France · Wine country · No cruise excursions',
+    note: null, shoulder: null, alt: null, tips: null,
+  },
 };
 
 // ─────────────────────────────────────────────────────────
@@ -3666,6 +3778,21 @@ function matchDestination(text) {
     // Kefalonia
     'kefalonia island':'kefalonia','cephalonia':'kefalonia',
     'melissani lake':'melissani cave','melissani grotto':'melissani cave',
+    'bologna italy':'bologna',
+    'modena italy':'modena',
+    'parma italy':'parma',
+    'milan italy':'milan',
+    'milano':'milan',
+    'bergamo italy':'bergamo',
+    'ravenna italy':'ravenna',
+    'ferrara italy':'ferrara',
+    'mantova':'mantua',
+    'mantua italy':'mantua',
+    'padova':'padua',
+    'perugia italy':'perugia',
+    'sevilla':'seville',
+    'bordeaux france':'bordeaux',
+    'lyon france':'lyon',
   };
   for (const [alias, key] of Object.entries(aliases)) {
     if (normText.includes(normalizeText(alias)) && !found.includes(key) && DESTS[key]) {
@@ -3811,7 +3938,8 @@ async function enrichFallbackDest(key, onEnriched) {
   }
 
   // Find nearest ports
-  const nearby = nearestPorts(geo.lat, geo.lng);
+  // Only assign nearPorts within 80km — inland cities beyond excursion range should not inherit cruise data
+  const nearby = nearestPorts(geo.lat, geo.lng, 80);
   const nearPortKeys = nearby.map(n => n.key);
   const closestPort = nearby[0];
 
@@ -3830,8 +3958,8 @@ async function enrichFallbackDest(key, onEnriched) {
   ];
 
   const portNote = closestPort
-    ? `~${Math.round(closestPort.km)}km from ${closestPort.port.name}`
-    : 'No major cruise port within 200km';
+    ? `~${Math.round(closestPort.km)}km from ${closestPort.port.name} (nearest cruise port)`
+    : 'No cruise ports within 80km — inland destination';
 
   _fallbackCache[key] = {
     name: geo.displayName || name,
@@ -4079,30 +4207,35 @@ function updateCardStatus(idx, status, label) {
   }, 1200);
 }
 
+const wxCache = {};
 async function fetchWeather(lat, lng, date) {
-  if (!lat || !lng || !date) return null;
-  // Use 2-year-ago proxy — guarantees archive availability (Open Meteo lags ~6 months)
-  const proxyDate = new Date(date);
-  proxyDate.setFullYear(proxyDate.getFullYear() - 2);
-  const fmt = d => d.toISOString().split('T')[0];
-  const cacheKey = `${lat}_${lng}_${fmt(proxyDate)}`;
+  if (!lat || !lng) return null;
+  // Use Open-Meteo climate normals (1991–2020 ERA5 reanalysis) — always available, no date lag
+  const cacheKey = `${Math.round(lat*10)/10}_${Math.round(lng*10)/10}`;
   if (wxCache[cacheKey] !== undefined) return wxCache[cacheKey];
 
   try {
     const controller = new AbortController();
-    const timeout = setTimeout(() => { controller.abort(); }, 6000);
-    const url = `https://archive-api.open-meteo.com/v1/archive?latitude=${lat}&longitude=${lng}&start_date=${fmt(proxyDate)}&end_date=${fmt(proxyDate)}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,weather_code&timezone=auto`;
-    const res = await fetch(url, {signal: controller.signal});
+    const timeout = setTimeout(() => controller.abort(), 8000);
+    const url = `https://climate-api.open-meteo.com/v1/climate?latitude=${lat}&longitude=${lng}&start_date=1991-01-01&end_date=2020-12-31&models=ERA5&monthly=temperature_2m_mean,precipitation_sum`;
+    const res = await fetch(url, { signal: controller.signal });
     clearTimeout(timeout);
     if (!res.ok) { wxCache[cacheKey] = null; return null; }
     const data = await res.json();
-    if (!data.daily || !data.daily.temperature_2m_max?.[0]) { wxCache[cacheKey] = null; return null; }
-    const result = {
-      tempMax: Math.round(data.daily.temperature_2m_max[0]),
-      tempMin: Math.round(data.daily.temperature_2m_min[0]),
-      precip: Math.round((data.daily.precipitation_sum[0] || 0) * 10) / 10,
-      code: data.daily.weather_code[0] || 0,
-    };
+    if (!data.monthly) { wxCache[cacheKey] = null; return null; }
+
+    // Pick the right month from the 12-value array
+    const month = date ? new Date(date).getMonth() : 5; // default June
+    const temps = data.monthly.temperature_2m_mean || [];
+    const precips = data.monthly.precipitation_sum || [];
+    const tempMean = temps[month] != null ? Math.round(temps[month]) : null;
+    const precip   = precips[month] != null ? Math.round(precips[month]) : 0;
+
+    if (tempMean == null) { wxCache[cacheKey] = null; return null; }
+
+    // Derive a weather code from temp + precip for icon display
+    const code = precip > 80 ? 61 : precip > 30 ? 51 : tempMean > 25 ? 0 : tempMean > 15 ? 2 : 3;
+    const result = { tempMax: tempMean + 4, tempMin: tempMean - 4, precip, code };
     wxCache[cacheKey] = result;
     return result;
   } catch(e) {
@@ -4418,7 +4551,7 @@ async function loadWeather(scored, idx) {
   const el = document.getElementById(`wx-${idx}`);
   if (!el) return;
   if (wx) {
-    el.innerHTML = `<span class="wx-ico">${wxIcon(wx.code)}</span><span class="wx-txt">Historical avg this week: ${wxDesc(wx.code, wx.tempMax, wx.precip)}</span>`;
+    el.innerHTML = `<span class="wx-ico">${wxIcon(wx.code)}</span><span class="wx-txt">Typical for this month: ${wxDesc(wx.code, wx.tempMax, wx.precip)}</span>`;
   } else {
     el.style.display = 'none';
   }
