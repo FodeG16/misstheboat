@@ -137,6 +137,10 @@ textarea:focus{border-color:#8b7355;background:#fff}
 .aff-btn.gyg{background:#C0392B;color:#fff}
 .aff-btn.viator{background:#1a1a1a;color:#f4f0e8}
 .shldbox{background:#fdf5e4;border:1px solid #e8d8b0;border-radius:4px;padding:8px 11px;margin-top:6px;color:#7A4A08;line-height:1.6;font-size:12px}
+.daytripbox{background:#fef0e0;border:1px solid #e8c090;border-radius:4px;padding:8px 11px;margin-top:6px;color:#7A3A00;line-height:1.6;font-size:12px}
+.daytripbox strong{color:#C05000;font-weight:600}
+.daytripalt{background:#EAF3DE;border-radius:4px;padding:7px 10px;margin-top:7px;color:#164030;font-size:12px;line-height:1.5}
+.daytripalt strong{color:#2A7050;font-weight:600}
 .share-row{margin:1.25rem 1.5rem 0;padding:10px 13px;background:#fff;border-radius:4px;border:1px solid #e8e3d8;display:flex;align-items:center;gap:10px}
 .share-url{flex:1;font-size:11px;font-family:monospace;color:#777;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 .copy-btn{padding:5px 12px;font-size:11px;border:1px solid #ccc8be;border-radius:3px;background:#f4f0e8;color:#555;cursor:pointer;flex-shrink:0;font-weight:500;font-family:-apple-system,sans-serif;transition:all .15s}
@@ -1013,7 +1017,10 @@ const DESTS = {
     shoulder:'Before 9am or after 4:30pm the crowds thin substantially.',
     alt:'Volterra — 30 min away, same medieval hilltop character, Etruscan museum, alabaster workshops, and zero presence on cruise excursion menus.',
     tips:['Rocca di Montestaffoli — free, panoramic views, almost no visitors even on busy days','Vernaccia di San Gimignano wine tasting at Cantina del Vecchio — local winery not on tour routes','Walk the Via Francigena pilgrim trail south of town — empty even in summer','Museo della Tortura is tourist-trap — skip it'],
-  },
+  
+    dayTripRisk: 3,
+    dayTripNote: 'Population of 8,000 receives 3-4 million visitors annually — mostly day-trippers from Florence, Siena, and cruise excursions from Livorno. The main square and gelato shops are genuinely shoulder-to-shoulder 10am–4pm in summer. One of the highest visitor-to-resident ratios in Europe.',
+    dayTripAlt: 'Volterra — 30 min away. Same medieval hilltop DNA, Etruscan museum far superior to San Gimignano\'s, alabaster workshops, zero presence on cruise excursion menus and almost no organised day-trip buses.',},
   'volterra': {
     name:'Volterra', country:'Italy', lat:43.401, lng:10.860,
     nearPorts:[],
@@ -1053,7 +1060,10 @@ const DESTS = {
     shoulder:'Take the first morning train from La Spezia (6:30am) before day-tripper coaches arrive. Manarola at dusk after the crowds leave is exceptional.',
     alt:'Portovenere — 20 min from La Spezia by ferry, same dramatic coastline, far fewer visitors, Byron\'s Grotto worth seeing.',
     tips:['Corniglia is the only village with no boat access — most cruise groups skip it, dramatically quieter','Take the ferry between villages rather than the trail — trail requires a paid pass and gets extremely busy','Manarola for sunset after 5pm when the day-trippers leave — the harbour views are extraordinary and manageable','Portovenere is 20 min south and gets a fraction of the visitors — same colourful houses, no crowd quotas'],
-  },
+  
+    dayTripRisk: 3,
+    dayTripNote: 'The five villages collectively receive ~2.5 million visitors a year in an area with fewer than 4,000 permanent residents. Monterosso and Vernazza are the most crowded. Corniglia (no ferry access) is the quietest. Entry fees and timed passes now required on the coastal trail in peak season.',
+    dayTripAlt: 'Portofino promontory via Camogli — same Ligurian cliff scenery, a fraction of the visitors. Or Portovenere, dramatically beautiful, far less discovered.',},
   'portofino': {
     name:'Portofino', country:'Italy', lat:44.303, lng:9.210,
     nearPorts:['livorno'],
@@ -1162,7 +1172,10 @@ const DESTS = {
     shoulder:'Early morning or after 5pm. The town is genuinely beautiful when the day-trippers leave.',
     alt:'Ravello — 7km above Amalfi, no cruise buses, same coastline views, substantially better dining.',
     tips:['Take the ferry rather than the road — avoids SS163 completely and adds a stunning coastal approach','Atrani (5 min walk from Amalfi) has one small piazza and almost no tourists','Villa Rufolo gardens in Ravello open at 9am — extraordinary views, minimal crowds before 10am','The Paper Museum (Museo della Carta) is free with a Campania Artecard and rarely visited'],
-  },
+  
+    dayTripRisk: 2,
+    dayTripNote: 'Both cruise excursion destination and heavy day-tripper traffic from Naples and Salerno by ferry and bus. The cathedral square and main street gridlock by late morning in peak season.',
+    dayTripAlt: 'Ravello — 7km above by winding road, no ferries or cruise buses, same coastline views, dramatically better quality of experience.',},
   'positano': {
     name:'Positano', country:'Italy', lat:40.628, lng:14.485,
     nearPorts:['naples'],
@@ -1172,7 +1185,10 @@ const DESTS = {
     shoulder:'Ferry from Naples or Amalfi avoids road congestion. Before 9am the staircase streets are walkable.',
     alt:'Praiano — 10 min west by ferry, half the people, same dramatic clifftop views, no cruise buses.',
     tips:['Spiaggia Grande beach is the most crowded — walk 10 min to Fornillo beach instead','Take the SITA bus from Amalfi rather than a tour coach — local bus, local experience','The church of Santa Maria Assunta is free and usually quiet even when the town is packed','Leave by 2pm or stay until 6pm — the 2–5pm window is the absolute worst for crowds'],
-  },
+  
+    dayTripRisk: 3,
+    dayTripNote: 'Day-trippers arrive by ferry from Naples, Salerno, and Amalfi from 10am onwards, compounding cruise excursion buses. The single main street and beach become impassable 11am–4pm in July and August. Population of 4,000 receives up to 10,000 visitors on peak days.',
+    dayTripAlt: 'Praiano — 10 min west by ferry. Same cliff setting, one-tenth the visitors, no cruise buses, excellent restaurants.',},
   'sorrento': {
     name:'Sorrento', country:'Italy', lat:40.626, lng:14.376,
     nearPorts:['naples'],
@@ -1223,7 +1239,10 @@ const DESTS = {
     shoulder:'Before 10am or after 6pm. The port-side cafes are peaceful at breakfast.',
     alt:'Ano Mera — 8km inland, actual village, monastery, local tavernas. No cruise groups.',
     tips:['Ano Mera village 8km away — monastery, local taverna, zero cruise presence','Fokos beach on the north coast: 15 min by scooter, no beach clubs, no cruise visitors','Little Venice at 7am for coffee with a view before the crowds arrive','Windmills area is manageable before 9am — after that, very crowded'],
-  },
+  
+    dayTripRisk: 3,
+    dayTripNote: 'Little Venice and the windmills area: severe day-tripper congestion from Athens ferries layered on cruise ship arrivals. The narrow lanes in the Chora are impassable at peak. The island is small — there is no escape within Mykonos Town.',
+    dayTripAlt: 'Paros — 45 min ferry. Similar Cycladic whitewash, fraction of the crowds, excellent beaches, no cruise calls.',},
   'santorini': {
     name:'Santorini (Oia)', country:'Greece', lat:36.393, lng:25.461,
     nearPorts:['santorini'],
@@ -1233,7 +1252,10 @@ const DESTS = {
     shoulder:'Fira (the capital) is less impacted than Oia. Pyrgos village for sunset is a well-kept local secret.',
     alt:'Pyrgos village — highest point on the island, panoramic sunset, no cruise buses, excellent wine.',
     tips:['Pyrgos village for sunset — local restaurants, no crowds, better view than Oia','Akrotiri archaeological site (Minoan city) is extraordinary and rarely visited by cruise groups','Vlychada beach on the south — lunar landscape, no beach clubs, completely different Santorini','Assyrtiko wine tasting at a small winery in Megalochori — skip the tourist wineries in Oia','Watch the Oia sunset from the Kastro ruins not the main terrace — same view, fraction of the people'],
-  },
+  
+    dayTripRisk: 3,
+    dayTripNote: 'Receives cruise ships AND massive day-tripper ferry traffic from Athens (Piraeus). Oia at sunset: 1,500 people on a 50m cliff edge. Fira cable car queues exceed 45 minutes in peak season. The island has ~15,000 residents and receives over 2 million visitors annually.',
+    dayTripAlt: 'Sifnos — 2.5hr fast ferry from Piraeus. Same Cycladic architecture, far fewer tourists, exceptional food culture, no cruise calls.',},
   'delphi': {
     name:'Delphi', country:'Greece', lat:38.482, lng:22.501,
     nearPorts:['piraeus'],
@@ -1254,7 +1276,10 @@ const DESTS = {
     shoulder:'City walls at 8am (opening). Old Town after 6pm when cruise groups reboard.',
     alt:'Ston — 50 min north, 14th-century salt pans, Europe\'s second-longest walls, zero cruise traffic.',
     tips:['Walk the city walls at 8am when they open — the difference vs. 11am is extraordinary','Lokrum island (10 min ferry) has peacocks, a botanical garden, and almost no day-trippers','Mt Srđ cable car for panoramic views — cruise groups rarely use it','Buža bar (cliff bar outside the walls) is accessible only through a hole in the wall — most tourists never find it','Cavtat 20 min south by ferry: beautiful and completely cruise-free'],
-  },
+  
+    dayTripRisk: 3,
+    dayTripNote: 'Receives cruise ships AND massive day-tripper buses from Sarajevo, Mostar, Split, and Montenegro. The walled city has <1,500 permanent residents. City has imposed tourist caps multiple times. Wall walk: genuinely unbearable 10am–2pm in July–August.',
+    dayTripAlt: 'Ston — 50 min north. 14th-century salt town with Europe\'s second-longest walls, essentially no tourists, extraordinary seafood.',},
   'split old town': {
     name:'Split (Diocletian\'s Palace)', country:'Croatia', lat:43.508, lng:16.440,
     nearPorts:['split'],
@@ -1304,7 +1329,10 @@ const DESTS = {
     note:'Accessible by rack railway and cable car — both have limited capacity. Cruise excursion groups book in advance and fill early time slots.',
     shoulder:'Noon midweek after cruise groups leave. The trails above the monastery are quiet even when the plaza is crowded.',
     alt:null,
-  },
+  
+    dayTripRisk: 3,
+    dayTripNote: 'Day-trip destination from Barcelona (1.5h by rack railway). The cable car and rack railway platform at the top is mobbed from 11am. The mountain is large — hikers who go beyond the cable car arrival point find it largely empty.',
+    dayTripAlt: 'Take the Sant Joan funicular to the top rather than stopping at the main plaza. Or visit on a Tuesday or Wednesday morning in shoulder season.',},
 
 
   'eze': {
@@ -1315,7 +1343,10 @@ const DESTS = {
     note:'Villefranche cruise excursion staple — appears on most French Riviera shore excursion menus. The single road in means the village becomes genuinely congested when buses arrive 10am–2pm.',
     shoulder:'Before 9:30am or after 4pm. The exotic garden at the top is quieter than the main street even on busy days.',
     alt:'Peillon — 30 min inland, equally dramatic perched village, not on any cruise itinerary, almost no tourists at all.',
-  },
+  
+    dayTripRisk: 2,
+    dayTripNote: 'Tiny perched village (population ~400) receiving heavy day-tripper buses from Nice and Monaco. The village lane from the gate to the Jardin Exotique is genuinely impassable at peak times.',
+    dayTripAlt: 'Peillon — 30 min inland from Nice. Equally dramatic, population 1,200, almost no tourist infrastructure, completely off the bus-tour circuit.',},
   'saint-paul-de-vence': {
     name:'Saint-Paul-de-Vence', country:'France', lat:43.697, lng:7.121,
     nearPorts:['villefranche'],
@@ -1897,7 +1928,10 @@ const DESTS = {
     shoulder:'First train from Lisbon Rossio at 7:30am. Quinta da Regaleira opens at 9:30am and is less crowded than Pena Palace.',
     alt:'Cascais — 40 min from Lisbon, Atlantic fishing town, beaches, no cruise buses, excellent seafood.',
     tips:['Take the train from Rossio (not a coach) — arrive before 9am to beat the crowd wave','Quinta da Regaleira for the initiation well — cruise groups go to Pena Palace, not here','Monserrate Palace is 4km from the centre — practically no visitors, extraordinary gardens and architecture','Moorish Castle above the town is often skipped for Pena Palace — better views, fewer people'],
-  },
+  
+    dayTripRisk: 3,
+    dayTripNote: 'Day-trip destination from Lisbon (40 min train) that has become severely overcrowded. Pena Palace queues reach 2–3 hours in summer. The town centre and castle approaches are gridlocked by coaches by 11am.',
+    dayTripAlt: 'Óbidos — 1hr from Lisbon. Medieval walled village, fraction of the visitors, excellent medieval wine served from ceramic cups.',},
   'porto': {
     name:'Porto', country:'Portugal', lat:41.149, lng:-8.611,
     nearPorts:['porto'],
@@ -2332,7 +2366,10 @@ const DESTS = {
     shoulder:'First entry (9am), or sunset when day-tripper coaches have left.',
     alt:null,
     tips:['Great Meteoron monastery is the busiest — start with Varlaam or Roussanou instead, same views and fewer crowds','Sunrise from the Psaropetra viewpoint (opposite the main monasteries): no tour buses at 7am, extraordinary light on the rocks','The hiking trails between the monasteries take 2–3 hours and are almost entirely tourist-free','Kalambaka town below has good local restaurants — eat here, not in the tourist tavernas at the monastery car parks'],
-  },
+  
+    dayTripRisk: 2,
+    dayTripNote: 'Day-trip buses from Thessaloniki (3h) and Athens (4h) mean the main monastery viewing platforms are crowded 10am–3pm. The site is extraordinary; the experience is better early morning or late afternoon when buses have left.',
+    dayTripAlt: 'Visit on a weekday in shoulder season (May, October). Stay overnight in Kalambaka — completely different experience once day-trippers leave.',},
   'thessaloniki': {
     name:'Thessaloniki', country:'Greece', lat:40.629, lng:22.952,
     nearPorts:['thessaloniki'],
@@ -2934,7 +2971,10 @@ const DESTS = {
     shoulder:null,
     alt:null,
     tips:['Hot air balloon at sunrise: the most spectacular balloon experience in the world — book months ahead in summer','Göreme Open Air Museum: Byzantine cave churches with extraordinary frescoes — arrive at opening','Ihlara Valley walk: 14km through a canyon with rock-cut churches, almost no tourists do the full walk','Underground cities (Derinkuyu, Kaymakli): vast subterranean cities carved by early Christians — Derinkuyu goes 8 storeys deep','Avanos pottery: the oldest pottery tradition in Anatolia (from Hittite times), buy directly from a working studio'],
-  },
+  
+    dayTripRisk: 2,
+    dayTripNote: 'Göreme and the balloon-launch area receive heavy day-tripper bus traffic from Ankara and Istanbul (domestic flights). The rock churches are crowded 10am–3pm. Balloon flights require booking weeks ahead in peak season.',
+    dayTripAlt: 'Stay in Ürgüp or Uçhisar rather than Göreme — same landscape access, substantially fewer organised tour groups.',},
 
   // ── ADDITIONAL FRANCE ────────────────────────────────
   'saint paul de vence': {
@@ -3100,6 +3140,123 @@ const DESTS = {
     cityByDay:[40,50,45,52,55,70,75],
     sub:'France · Wine country · No cruise excursions',
     note: null, shoulder: null, alt: null, tips: null,
+  },
+  'varenna': {
+    name:'Varenna', country:'Italy', lat:46.013, lng:9.284,
+    nearPorts:[],
+    cityByDay:[30,55,50,60,65,95,90],
+    sub:'Lake Como · Day-tripper hotspot',
+    note:'One of Italy\'s most scenic lake villages. Population ~800.',
+    shoulder:'Arrive before 10am or after 4pm. Weekdays in May or September are manageable.',
+    alt:'Bellano — 10 min north by ferry, same lake, no tourist infrastructure, virtually zero day-trippers.',
+    dayTripRisk: 3,
+    dayTripNote: 'Extreme day-tripper pressure from Milan (90 min by train) and Como ferries. Peak season Saturdays: population multiplies 10-15x. July–August weekends are genuinely overwhelming.',
+    dayTripAlt: 'Bellano — 10 min north by ferry. Same dramatic lake setting, almost no tourists. Or Lierna, even smaller.',
+    tips: null,
+  },
+  'bellagio': {
+    name:'Bellagio', country:'Italy', lat:45.983, lng:9.258,
+    nearPorts:[],
+    cityByDay:[35,60,55,65,70,95,92],
+    sub:'Lake Como · Original day-trip victim',
+    note:'The most famous Lake Como village. Population ~3,000.',
+    shoulder:'Early morning before 9am or evening after 6pm. Off-season (November–March) is a different place entirely.',
+    alt:'Varenna — opposite shore, same views, somewhat fewer visitors.',
+    dayTripRisk: 3,
+    dayTripNote: 'The original Lake Como day-trip victim. Ferries deposit thousands daily in summer. The historic centre is 400m wide — there is nowhere to escape the crowd at peak hours (10am–5pm).',
+    dayTripAlt: 'Varenna — opposite shore, same views. Menaggio for a real local town experience with actual residents.',
+    tips: null,
+  },
+  'pisa': {
+    name:'Pisa', country:'Italy', lat:43.722, lng:10.401,
+    nearPorts:['livorno'],
+    cityByDay:[55,68,62,70,72,85,82],
+    sub:'Tuscany · Tower crowds, hidden city',
+    note:'The Campo dei Miracoli is extraordinary. The rest of the city — Borgo Stretto, the Arno banks, the university quarter — is almost entirely tourist-free.',
+    shoulder:'Campo dei Miracoli before 9am. The baptistery acoustics are best experienced in small groups — wait for an organ demonstration.',
+    alt:'Lucca — 30 min. Walled city with intact Renaissance ramparts you can cycle, excellent food market, no tower crowds.',
+    dayTripRisk: 2,
+    dayTripNote: 'Massive day-tripper volumes from Florence (1h), cruise groups from Livorno (30 min), and independent visitors all concentrate on a single square. The rest of the city is peaceful.',
+    dayTripAlt: 'Lucca — 30 min by train. Walled Renaissance city, genuinely used by locals, excellent food market, zero leaning tower crowds.',
+    tips: null,
+  },
+  'hallstatt': {
+    name:'Hallstatt', country:'Austria', lat:47.562, lng:13.649,
+    nearPorts:[],
+    cityByDay:[25,55,50,60,65,98,95],
+    sub:'Austrian Alps · UNESCO village, extreme overtourism',
+    note:'Population of 780. The town now charges for car access and is trying to limit visitors. A Chinese developer literally built a full-scale replica of this village.',
+    shoulder:'Stay overnight — the experience after day-trippers leave at 6pm is completely different. Visit in November–March for snow and no crowds.',
+    alt:'Gmunden on Traunsee — less dramatic but genuinely lived-in Austrian lake town, no crowds, excellent.',
+    dayTripRisk: 3,
+    dayTripNote: 'Up to 10,000 visitors on summer peak days in a town of 780 residents — one of the highest visitor-to-resident ratios in Europe. Buses from Salzburg (1.5h) and Vienna (3h) arrive continuously 10am–5pm.',
+    dayTripAlt: 'Gmunden on Traunsee — 1.5hr from Salzburg. Genuinely lived-in lake town, Schloss Ort, no crowds. Or stay overnight in Hallstatt itself.',
+    tips: null,
+  },
+  'bled': {
+    name:'Bled', country:'Slovenia', lat:46.368, lng:14.110,
+    nearPorts:[],
+    cityByDay:[30,58,52,62,68,95,92],
+    sub:'Slovenia · Alpine lake, extreme day-tripper pressure',
+    note:'The most Instagrammed lake in the Alps. Beautiful and genuinely crowded in summer.',
+    shoulder:'Rowboats to the island at dawn. The cliff castle at sunrise before buses arrive.',
+    alt:'Bohinj Lake — 30 min by bus. Larger, quieter, locals swim here, same mountain backdrop, no island church ticket queues.',
+    dayTripRisk: 3,
+    dayTripNote: 'Buses from Ljubljana (1h), Zagreb (2h), and Salzburg (2.5h) converge here daily. The lakeside walk and island church are severely congested Jul–Aug. Instagram has made this significantly worse since 2018.',
+    dayTripAlt: 'Bohinj Lake — 30 min by bus. Larger, quieter, locals actually swim here, no crowds, same mountain backdrop.',
+    tips: null,
+  },
+  'sintra': {
+    name:'Sintra', country:'Portugal', lat:38.798, lng:-9.390,
+    nearPorts:['lisbon'],
+    cityByDay:[40,68,62,72,75,92,90],
+    sub:'Portugal · Fairytale palaces, severe overtourism',
+    note:'Extraordinary concentration of Romantic architecture in a small area. Genuinely worth visiting — the challenge is the crowds.',
+    shoulder:'Take the first train from Lisbon (Rossio station, departs ~7am). Palace queues are manageable before 9am. Leave by 1pm.',
+    alt:'Óbidos — 1hr from Lisbon. Medieval walled village, fraction of the visitors, excellent ginja cherry liqueur.',
+    dayTripRisk: 3,
+    dayTripNote: 'Day-trip from Lisbon (40 min by train) that has become severely overcrowded. Pena Palace queues reach 2–3 hours in summer. The town centre and castle approaches are gridlocked by coaches by 11am.',
+    dayTripAlt: 'Óbidos — 1hr from Lisbon. Medieval walled village, almost no crowds, excellent. Or take the first morning train to Sintra before the buses arrive.',
+    tips: null,
+  },
+  'mont saint-michel': {
+    name:'Mont Saint-Michel', country:'France', lat:48.636, lng:-1.512,
+    nearPorts:[],
+    cityByDay:[30,55,50,58,62,92,90],
+    sub:'Normandy · 3.5 million visitors, 40 permanent residents',
+    note:'One of France\'s most extraordinary sites. The tidal island and Gothic abbey are genuinely unmissable. The experience depends entirely on timing.',
+    shoulder:'Arrive before 9am or stay overnight. High tide transforms the approach — check tide tables before visiting.',
+    alt:'Stay overnight on the mount itself (book 3+ months ahead) — completely different atmosphere after day-trippers leave after 6pm.',
+    dayTripRisk: 3,
+    dayTripNote: '3.5 million visitors annually from Paris (4h by TGV+bus) and Rennes (1.5h). The main street to the abbey is a single lane of souvenir shops and shoulder-to-shoulder tourists. 40 permanent residents.',
+    dayTripAlt: 'Book an overnight stay on the mount — the evening and dawn experience is entirely different. Or visit on a January weekday.',
+    tips: null,
+  },
+  'cappadocia': {
+    name:'Cappadocia', country:'Turkey', lat:38.644, lng:34.828,
+    nearPorts:[],
+    cityByDay:[30,50,45,55,58,75,70],
+    sub:'Turkey · Fairy chimneys · Balloon capital',
+    note:'Göreme and the Devrent Valley are genuinely extraordinary. The hot air balloon experience requires booking 3-6 weeks ahead in peak season.',
+    shoulder:'Base in Ürgüp or Uçhisar rather than Göreme — same landscape access, substantially fewer organised tour groups.',
+    alt:'Ihlara Valley — 45 min drive. Gorge carved through volcanic rock, Byzantine cave churches, almost no tourists, exceptional hiking.',
+    dayTripRisk: 2,
+    dayTripNote: 'Göreme and the balloon-launch area receive heavy day-tripper bus traffic from Ankara and domestic flights from Istanbul. The rock churches are crowded 10am–3pm in season.',
+    dayTripAlt: 'Stay in Ürgüp or Uçhisar — same landscape, fewer tour groups. Or visit Ihlara Valley (45 min away) instead of the main Göreme sites.',
+    tips: null,
+  },
+  'montserrat': {
+    name:'Montserrat', country:'Spain', lat:41.593, lng:1.838,
+    nearPorts:['barcelona'],
+    cityByDay:[20,60,55,65,68,95,93],
+    sub:'Catalonia · Day-trip from Barcelona',
+    note:'The monastery and dramatic serrated peaks are worth seeing. The experience depends entirely on avoiding the main plaza.',
+    shoulder:'Take the Sant Joan funicular to the top rather than staying at the cable car arrival point. The mountain is large — go beyond and it\'s quiet.',
+    alt:'Take the Sant Joan funicular to the top: same mountain, fraction of the visitors. Tuesday or Wednesday morning in shoulder season.',
+    dayTripRisk: 3,
+    dayTripNote: 'Day-trip from Barcelona (1.5h by rack railway). The cable car and rack railway platform are mobbed from 11am. On summer weekends the mountain receives 10,000+ visitors concentrated in 200m of walkway.',
+    dayTripAlt: 'Sant Joan funicular to the summit area: 10 min above the crowds, same views, almost nobody. Or Montserrat in January–February.',
+    tips: null,
   },
 };
 
@@ -3456,6 +3613,7 @@ const VALUE_SCORES = new Proxy({}, {
 // ─────────────────────────────────────────────────────────
 // REGIONS — destination keys grouped for the Explore tab
 // ─────────────────────────────────────────────────────────
+
 const REGIONS = {
   tuscany: {
     label:'Tuscany & Liguria', emoji:'🍷',
@@ -4152,10 +4310,23 @@ function scoreStop(key, date) {
   // Population-adjusted cruise pressure score for display (0-100)
   const pressureScore = calcPressureScore(pressureRatio, estimatedShips, popK, crowdScore);
 
+  // Day-tripper risk — independent of cruise ships
+  const dayTripRisk = dest.dayTripRisk || 0;
+  // Day-trip multiplier: risk 1=+10pts, 2=+25pts, 3=+40pts on top of cruise pressure
+  const dayTripBoost = [0, 10, 25, 40][dayTripRisk];
+  const combinedScore = Math.min(99, pressureScore + dayTripBoost);
+  // Upgrade status if day-trip risk alone warrants it
+  let finalStatus = status;
+  if (dayTripRisk >= 3 && finalStatus === 'green') finalStatus = 'amber';
+  if (dayTripRisk >= 3 && finalStatus === 'amber') finalStatus = 'red';
+  if (dayTripRisk === 2 && finalStatus === 'green') finalStatus = 'amber';
+
   return {
     key, date, dest, dayIdx, season,
-    status, cityVol, maxCruise, cruiseByDay, crowdScore, pressureScore,
+    status: finalStatus, cityVol, maxCruise, cruiseByDay, crowdScore,
+    pressureScore: combinedScore,
     primaryPort, isExcursionDest, estimatedShips, pressureRatio, popK,
+    dayTripRisk,
   };
 }
 
@@ -4516,6 +4687,7 @@ function renderCard(scored, idx) {
               </div>
             </div>
             <span class="badge b-${status[0]}" id="badge-${idx}">${bl}</span>
+            ${scored.dayTripRisk >= 2 ? `<span style="font-size:9px;font-weight:700;color:#C05000;letter-spacing:.04em;text-transform:uppercase;display:block;text-align:right;margin-top:2px">${scored.dayTripRisk >= 3 ? '⚡ Day trips' : '⚠ Day trips'}</span>` : ''}
           </div>
           <span id="live-tag-${idx}" style="display:none;font-size:9px;color:#2A7050;font-weight:600;letter-spacing:.05em">LIVE</span>
         </div>
@@ -4578,6 +4750,23 @@ function renderCard(scored, idx) {
           <div class="iico">⏱</div>
           <div class="ibody"><div class="shldbox"><strong>Shoulder strategy:</strong> ${dest.shoulder}</div></div>
         </div>` : ''}
+        ${scored.dayTripRisk >= 1 ? `
+        <div class="irow">
+          <div class="iico">${scored.dayTripRisk >= 3 ? '⚡' : '⚠'}</div>
+          <div class="ibody">
+            <div class="daytripbox">
+              <strong>${scored.dayTripRisk >= 3 ? '⚡ Extreme day-tripper pressure' : scored.dayTripRisk === 2 ? '⚠ Heavy day-tripper traffic' : '⚠ Day-tripper crowds'}</strong><br>
+              ${dest.dayTripNote || ''}
+              ${dest.dayTripAlt ? `<div class="daytripalt"><strong>Quieter alternative:</strong> ${dest.dayTripAlt}
+                ${affiliateActive() ? `<div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap">
+                  <a href="${bookingLink(dest.dayTripAlt.split('—')[0].trim(), dest.country)}" target="_blank" rel="noopener" class="aff-btn booking">🏨 Hotels</a>
+                  <a href="${gygLink(dest.dayTripAlt.split('—')[0].trim())}" target="_blank" rel="noopener" class="aff-btn gyg">🎟️ GYG</a>
+                  <a href="${viatorLink(dest.dayTripAlt.split('—')[0].trim())}" target="_blank" rel="noopener" class="aff-btn viator">🎫 Viator</a>
+                </div>` : ''}
+              </div>` : ''}
+            </div>
+          </div>
+        </div>` : ''}
         ${dest.alt ? `
         <div class="irow">
           <div class="iico">↗</div>
@@ -4603,7 +4792,7 @@ function renderCard(scored, idx) {
             </ul>
           </div>
         </div>` : ''}
-        ${!dest.note && !dest.shoulder && !dest.alt ? `
+        ${!dest.note && !dest.shoulder && !dest.alt && !scored.dayTripRisk ? `
         <div class="irow">
           <div class="iico">✓</div>
           <div class="ibody" style="color:#2A7050;">No cruise traffic in port schedule or excursion database.</div>
