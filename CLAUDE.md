@@ -7,17 +7,17 @@
 - **Stack:** Single HTML file (vanilla JS), Vercel hosting, serverless functions in `/api/`
 
 ## Current File State
-- **Main app:** `index.html` — ~5,800 lines
+- **Main app:** `index.html` — ~5,820 lines
 - **Key APIs:** `/api/schedule.js` (CruiseDig port schedules), `/api/parse.js` (Claude itinerary parser)
 - **Vercel env vars:** `ANTHROPIC_API_KEY`, `BOOKING_AID=2839562`, `GYG_PID=VKYN0SM`, `GA=G-LCQ0RJ1LR6`
 
 ## Affiliate IDs (hardcoded in JS, not env vars)
-- **Booking.com:** AID `2839562` — **DENIED** by Booking.com, links still live but may not pay out
+- **Booking.com:** AID `2839562` — DENIED, links live but may not pay out
 - **GetYourGuide:** PID `VKYN0SM` ✅ active
-- **Viator:** PID `P00296371` ✅ active — added session 6
-- Pending: Rentalcars.com, WithLocals, Kiwitaxi (apply when ready)
+- **Viator:** PID `P00296371` ✅ active
+- Pending: Rentalcars.com, WithLocals, Kiwitaxi
 
-## Affiliate Button Placement — Current State
+## Affiliate Button Placement
 | Location | Hotels | GYG | Viator |
 |---|---|---|---|
 | Main card (expanded) | ✅ | ✅ | ✅ |
@@ -25,130 +25,102 @@
 | Minimize modal alt | ✅ | ✅ | ✅ |
 | Explore tab top results | ✅ | ✅ | ✅ |
 
-## Product Roadmap
-**Current scope:** Mediterranean (Europe)
-**Planned expansion:** Scandinavia, SE Asia (Klook affiliate), South America
-**Architecture:** DESTS, PORTS, REGIONS must stay modular — no hardcoded Med assumptions.
-
 ## Architecture Decisions (Do Not Revisit)
 - Single HTML file — no build step, no React, no npm
-- Scoring uses `peakShips` per port + `POP_K` population table for cruise pressure ratio
+- Scoring: `peakShips` per port + `POP_K` population table → pressureRatio
 - `pressureRatio = (estimatedShips × 3000) / popK` — passengers per 1,000 residents
 - Red: pressureRatio ≥ 30 OR estimatedShips ≥ 3 OR crowdScore ≥ 75
 - Amber: pressureRatio ≥ 10 OR estimatedShips ≥ 1.5 OR crowdScore ≥ 50
-- Green: only if truly minimal ships + low pressure
-- Affiliates: Booking.com AID 2839562, GYG PID VKYN0SM, Viator PID P00296371
-- `exploreRegions` is a Set (multi-select) — do not revert to single string
-- `peakShips` field on every PORTS entry — max ships on a single peak day
-- `POP_K` lookup table inside `scoreStop()` — population in thousands
+- Green: minimal ships + low pressure
+- `exploreRegions` is a Set (multi-select) — do not revert to string
+- Fallback geocoding: unknown cities geocoded via Nominatim, 80km port radius
 
-## UI Theme — Direction B (current)
+## UI Theme — Direction B
 - Background: warm parchment `#f4f0e8`
 - Font: Source Serif 4 (body) + Playfair Display (headings, city names, logo)
-- Badges: solid filled rectangles — red `#C0392B`, amber `#D4830A`, green `#2A7050` with white text
-- Corners: square `4px` (editorial feel, not pill/rounded)
-- Cards: white `#fff` on parchment background, `#e8e3d8` borders
-- Nav tabs: small-caps uppercase, green underline on active
-- Loaded via Google Fonts `@import` at top of `<style>` block
+- Badges: solid filled — red `#C0392B`, amber `#D4830A`, green `#2A7050`, white text
+- Corners: square `4px`, cards white `#fff` on parchment, `#e8e3d8` borders
+- Nav tabs: Plan / Results / Explore (shortened for mobile)
 
 ## Data Status
-
-### cruiseVolume — PORTS[key][season][dayOfWeek] — 0=Mon, 6=Sun
-- ✅ All 66 ports have real or screenshot-derived data — zero invented values
-- Real scraped (cruisetimetables.com): ajaccio, bari, genoa, la spezia, las palmas, messina,
-  salerno, savona, trieste, civitavecchia, barcelona, santorini, antalya + 15 earlier ports
-- Original CruiseDig data: remaining ~37 ports
-- Ports with sparse but real data (≤25 dates): antalya, kos, skiathos, larnaca, izmir, marmaris
-- Ports needing live API for better accuracy: venice, dubrovnik, istanbul, mykonos, lisbon, valletta
-  (cruisetimetables.com 404s — add when live cruise API is affordable)
-
-### cityByDay — Mon–Sun crowd index (0–100)
-- ALL destinations: manually estimated (20% of score weight)
-- Google Popular Times scrape failed — revisit post-beta
-
-### Excursion Data — excursions: [] on each PORTS entry
-- ✅ 66 ports, 0 empty — sourced from 46 Viator PDF screenshots (processed session 4)
-- Current accuracy: ~90% — GYG Partner API will replace when token arrives
-- GYG Partner API request submitted — awaiting response
-
-### Population Data — POP_K lookup inside scoreStop()
-- ~150 destinations with real population figures (thousands)
-- Used for cruise pressure ratio calculation
-- Default fallback: 100k for unknown destinations
+- ✅ All 66 ports: real cruise volume data (cruisetimetables.com + screenshots)
+- ✅ All 66 ports: peakShips field
+- ✅ All 66 ports: excursion data (Viator PDFs, ~90% accuracy)
+- ✅ POP_K table: ~150 destinations with real population data
+- ⚠ cityByDay: manually estimated (20% weight) — revisit post-beta
+- ⚠ Ports needing live API: venice, dubrovnik, istanbul, mykonos, lisbon, valletta
 
 ## Key Functions (Do Not Break)
-- `scoreStop(key, date)` — main scoring, returns estimatedShips, pressureRatio, popK
-- `getDestOrFallback(key)` — returns DESTS entry or geocodes unknown city
-- `enrichFallbackDest(key, callback)` — async geocoding + nearest port
-- `haversine(lat1,lng1,lat2,lng2)` — distance in km
-- `nearestPorts(lat,lng,maxKm)` — finds nearest ports within radius
-- `openMinimize(withAlts)` — Minimize Crowds modal
-- `renderResults(stops)` — main results renderer
-- `renderItineraryMap(scored)` — color-coded pin map on results page
-- `updateCardStatus(idx, status, label)` — updates card + syncs summary + debounced map re-render
-- `selectAllRegions()` — Anywhere button
-- `exploreRegions` — Set of active region keys (multi-select)
-- `_flexDays` — Minimize modal flexibility (1/2/3 days)
-- `bookingLink(city, country)` — Booking.com affiliate URL
-- `gygLink(city)` — GetYourGuide affiliate URL
-- `viatorLink(city)` — Viator affiliate URL (PID P00296371)
+- `scoreStop(key, date)` → status, estimatedShips, pressureRatio, popK
+- `getDestOrFallback(key)` — DESTS entry or geocoded placeholder
+- `enrichFallbackDest(key, callback)` — async geocoding + 80km port scan
+- `renderResults(stops)` — main results renderer, shows share row
+- `renderItineraryMap(scored)` — map with crowd-status colored pins
+- `openMinimize(withAlts)` — crowd optimization modal
+- `updateCardStatus(idx, status, label)` — syncs card + summary + map
+- `parsePastedItinerary(text)` — with fallback for unknown cities
+- `matchDestination(text)` — DESTS lookup + alias map
+- `bookingLink / gygLink / viatorLink` — affiliate URL builders
 
-## Syntax Check Method
+## Syntax Check
 ```javascript
 const html = require('fs').readFileSync('index.html', 'utf8');
 const script = html.slice(html.lastIndexOf('<script>') + 8, html.lastIndexOf('</script>'));
 require('fs').writeFileSync('/tmp/test.mjs', script);
-// then: node --check /tmp/test.mjs
+// node --check /tmp/test.mjs
 ```
-**Always use `lastIndexOf` not `indexOf`.**
+Always use `lastIndexOf` not `indexOf`.
 
 ## Completed Features
-- ✅ Google Analytics (G-LCQ0RJ1LR6)
-- ✅ Booking.com + GYG + Viator affiliate links on every card (expanded), alt suggestions, modal, explore tab
-- ✅ OG/Twitter meta tags, emoji favicon ⛵
-- ✅ Google Maps ↗ links on result cards
-- ✅ Nearest-port geocoding for unknown cities
-- ✅ Minimize Crowds modal with ±flex toggle
-- ✅ Auto-fix duplicate dates in renderResults
-- ✅ Anywhere button (full-width below map)
-- ✅ Multi-select regions (Set-based, toggle on/off)
-- ✅ Itinerary map (color-coded numbered pins, dashed route line)
-- ✅ Summary count sync after live data loads
-- ✅ Date required error on manual entry
-- ✅ All 66 ports with real cruise volume data
-- ✅ All 66 ports with excursion data (Viator PDFs)
-- ✅ peakShips per port for absolute ship count scoring
-- ✅ Population-aware crowd pressure scoring (POP_K table)
-- ✅ Direction B UI theme (warm parchment, Playfair Display, solid badges)
-- ✅ Solid color badges (AVOID/CAUTION/CLEAR) — prominent, high contrast
+- ✅ Direction B UI (Playfair Display, parchment, solid badges)
+- ✅ peakShips + POP_K population-aware scoring
+- ✅ Hotels + GYG + Viator on all cards, modal, explore tab
+- ✅ Unknown city fallback (geocoding + 80km port radius)
+- ✅ Inline parse error message (no more silent failures)
+- ✅ Share row hidden until results load
+- ✅ Modal score renamed "crowd index" + explanatory note
+- ✅ Nav labels shortened: Plan / Results / Explore
+- ✅ Empty manual submit guard
+- ✅ Weather: 2yr proxy, hides on failure (no more spinner)
+- ✅ Map pins colored by AVOID/CAUTION/CLEAR status
+- ✅ All 66 ports cruise volume data
+- ✅ Minimize Crowds modal with ±flex, conflict-free date suggestions
+- ✅ Itinerary map with numbered pins + dashed route line
+- ✅ Google Analytics, OG/Twitter meta tags, emoji favicon
+
+## Known Issues / Watchlist
+- **Bug 4 (phantom card):** Kotor manual entry may generate an extra Dubrovnik Old Town card. Needs Cowork re-test to confirm whether it's fixed by current dedup logic or still occurs.
+- **Bug 1 (root cause):** Modal "crowd index" scores are raw seasonal values; card badges use population-adjusted logic. The explanatory note addresses confusion but they are intentionally different metrics. Evaluate whether to fully unify after user testing.
+- **Map pin colors:** Pins use `s.status` (red/amber/green) — should be correct with current scoring. If audit still shows wrong colors, the issue is score data not rendering before map draws. Consider adding a brief debounce.
+- **Weather API:** open-meteo archive, 2yr proxy. If still unreliable, replace with Open Meteo climate normals endpoint (no date dependency).
+- **Booking.com:** denied affiliate — links live but may not pay. Consider Hotels.com or Expedia affiliate.
 
 ## Pre-Beta Checklist
-- ⬜ OG image (og-image.png 1200×630) — screenshot results page → GitHub root
-- ⬜ Mobile layout audit
+- ⬜ OG image (og-image.png 1200×630) → GitHub root
+- ⬜ Mobile layout re-audit after nav label fix
 - ⬜ User testing (5-10 cruise travelers)
 - ⬜ Custom domain misstheboat.app (~$12)
-- ⬜ GYG API integration when token arrives → replace excursion data
+- ⬜ GYG API token when it arrives → replace excursion data
+- ⬜ Confirm Bug 4 (phantom Kotor card) resolved via Cowork re-test
 
 ## Backlog (Priority Order)
-1. **[UX]** OG image for social sharing (screenshot results, crop 1200×630, upload to GitHub root)
-2. **[UX]** Mobile layout audit — load on phone, screenshot anything broken
-3. **[MONETIZATION]** Apply for Rentalcars.com affiliate → add 🚗 Cars button to cards
-4. **[MONETIZATION]** Apply for Kiwitaxi/GetTransfer affiliate → add ✈ Transfers button
-5. **[MONETIZATION]** Apply for WithLocals/ToursByLocals → private tour affiliate (8-15% commission)
-6. **[DATA]** GYG Partner API when token arrives → 99%+ excursion accuracy
-7. **[UX]** Toast after Apply in Minimize modal (minor)
+1. **[UX]** OG image for social sharing
+2. **[UX]** Mobile re-audit (375px) after nav fix
+3. **[BUG]** Confirm Bug 4 phantom card fixed via Cowork
+4. **[MONETIZATION]** Rentalcars.com affiliate → Cars button
+5. **[MONETIZATION]** Kiwitaxi/GetTransfer → Transfers button
+6. **[MONETIZATION]** WithLocals/ToursByLocals → private tours
+7. **[DATA]** GYG API when token arrives
 8. **[PRODUCT]** Custom domain misstheboat.app (~$12)
-9. **[PRODUCT]** User testing (5-10 cruise travelers)
-10. **[EXPANSION]** Scandinavia region — ports + dests + regions block
-11. **[EXPANSION]** SE Asia region + Klook affiliate
-12. **[EXPANSION]** South America region
-13. **[LATER]** Stripe + Pro tier ($9/mo)
-14. **[LATER]** SEO landing pages per destination
-15. **[LATER]** Live cruise API (MarineTraffic ~$50/mo) — fixes Venice, Dubrovnik, Istanbul, etc.
+9. **[PRODUCT]** User testing
+10. **[EXPANSION]** Scandinavia, SE Asia + Klook, South America
+11. **[LATER]** Stripe + Pro tier ($9/mo)
+12. **[LATER]** SEO landing pages
+13. **[LATER]** Live cruise API (MarineTraffic ~$50/mo)
 
 ## Session Notes
-- Greg uploads files to GitHub via website only — no local repo clone
-- Greg is non-technical — explain every terminal step explicitly
-- All outputs → /mnt/user-data/outputs/ → present_files for download
-- Start each session: read this file, confirm what Greg wants to work on
+- Greg uploads to GitHub via website only — no local clone
+- Non-technical — explain every terminal step explicitly
+- All outputs → /mnt/user-data/outputs/ → present_files
+- Start each session: read this file, confirm what to work on
 - CLAUDE.md lives in GitHub root — upload updated version each session

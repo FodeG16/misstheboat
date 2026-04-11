@@ -203,9 +203,9 @@ textarea:focus{border-color:#8b7355;background:#fff}
   </header>
 
   <nav class="nav">
-    <button class="ntab on" onclick="showView('input')">Plan a trip</button>
+    <button class="ntab on" onclick="showView('input')">Plan</button>
     <button class="ntab" id="results-tab" onclick="showView('results')" style="display:none">Results</button>
-    <button class="ntab" onclick="showView('explore')">Explore regions</button>
+    <button class="ntab" onclick="showView('explore')">Explore</button>
   </nav>
 
   <!-- INPUT VIEW -->
@@ -349,7 +349,7 @@ textarea:focus{border-color:#8b7355;background:#fff}
     <div class="sec-lbl" id="sec-lbl">Loading destinations…</div>
     <div class="cards" id="cards"></div>
 
-    <div class="share-row">
+    <div class="share-row" id="share-row" style="display:none">
       <div class="share-url" id="share-url">misstheboat.app/trip/...</div>
       <button class="copy-btn" id="copy-btn" onclick="copyShareLink()">Copy link</button>
       <button class="copy-btn" onclick="nativeShare()" id="native-share-btn" style="display:none;background:#1a1a1a;color:#fff;border-color:#1a1a1a">Share ↗</button>
@@ -362,7 +362,7 @@ textarea:focus{border-color:#8b7355;background:#fff}
 <div class="modal-bg" id="minimize-modal" onclick="if(event.target===this)closeMinimize()">
   <div class="modal">
     <h2 id="minimize-title">Minimize Crowds</h2>
-    <div class="msub" id="modal-sub">For each stop, the best and worst days to visit based on cruise patterns and city traffic. Green = lowest crowd day for that destination.</div>
+    <div class="msub" id="modal-sub">For each stop, the best and worst days to visit based on cruise patterns and city traffic. Green = lowest crowd day for that destination.<div style="font-size:11px;color:#8B5A00;background:#fdf5e4;border:1px solid #e8d8b0;border-radius:4px;padding:7px 10px;margin-top:8px;font-family:-apple-system,sans-serif;line-height:1.5"><strong>Note:</strong> Crowd index (0–100) shows raw seasonal traffic. Card badges use population-adjusted scoring — a city of 4,000 residents and 3 ships is AVOID even if its raw index looks moderate.</div></div>
     <div id="modal-content"></div>
     <button class="modal-close" onclick="closeMinimize()">Close</button>
   </div>
@@ -3934,7 +3934,11 @@ function scoreStop(key, date) {
   const crowdScore = Math.round(cityVol * 0.20 + maxCruise * 0.80);
 
   let status;
-  if (isExcursionDest || isPortCity) {
+  // Fallback (geocoded, not in DESTS) cities that aren't known cruise excursion dests
+  // should default to green — they have no verified cruise traffic
+  if (dest.isFallback && !isExcursionDest) {
+    status = 'green';
+  } else if (isExcursionDest || isPortCity) {
     const highPressure = pressureRatio >= 30 || estimatedShips >= 3;
     const modPressure  = pressureRatio >= 10 || estimatedShips >= 1.5;
     const lowPressure  = pressureRatio >= 3  || estimatedShips >= 0.5;
@@ -4076,29 +4080,33 @@ function updateCardStatus(idx, status, label) {
 }
 
 async function fetchWeather(lat, lng, date) {
+  if (!lat || !lng || !date) return null;
+  // Use 2-year-ago proxy — guarantees archive availability (Open Meteo lags ~6 months)
   const proxyDate = new Date(date);
-  proxyDate.setFullYear(proxyDate.getFullYear() - 1);
+  proxyDate.setFullYear(proxyDate.getFullYear() - 2);
   const fmt = d => d.toISOString().split('T')[0];
   const cacheKey = `${lat}_${lng}_${fmt(proxyDate)}`;
-  if (wxCache[cacheKey]) return wxCache[cacheKey];
+  if (wxCache[cacheKey] !== undefined) return wxCache[cacheKey];
 
   try {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 8000);
+    const timeout = setTimeout(() => { controller.abort(); }, 6000);
     const url = `https://archive-api.open-meteo.com/v1/archive?latitude=${lat}&longitude=${lng}&start_date=${fmt(proxyDate)}&end_date=${fmt(proxyDate)}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,weather_code&timezone=auto`;
     const res = await fetch(url, {signal: controller.signal});
     clearTimeout(timeout);
+    if (!res.ok) { wxCache[cacheKey] = null; return null; }
     const data = await res.json();
-    if (!data.daily) return null;
+    if (!data.daily || !data.daily.temperature_2m_max?.[0]) { wxCache[cacheKey] = null; return null; }
     const result = {
       tempMax: Math.round(data.daily.temperature_2m_max[0]),
       tempMin: Math.round(data.daily.temperature_2m_min[0]),
       precip: Math.round((data.daily.precipitation_sum[0] || 0) * 10) / 10,
-      code: data.daily.weather_code[0],
+      code: data.daily.weather_code[0] || 0,
     };
     wxCache[cacheKey] = result;
     return result;
   } catch(e) {
+    wxCache[cacheKey] = null;
     return null;
   }
 }
@@ -4401,18 +4409,25 @@ function renderCard(scored, idx) {
 }
 
 async function loadWeather(scored, idx) {
+  if (!scored.dest.lat || !scored.dest.lng || !scored.date) {
+    const el = document.getElementById(`wx-${idx}`);
+    if (el) el.style.display = 'none';
+    return;
+  }
   const wx = await fetchWeather(scored.dest.lat, scored.dest.lng, scored.date);
   const el = document.getElementById(`wx-${idx}`);
   if (!el) return;
   if (wx) {
     el.innerHTML = `<span class="wx-ico">${wxIcon(wx.code)}</span><span class="wx-txt">Historical avg this week: ${wxDesc(wx.code, wx.tempMax, wx.precip)}</span>`;
   } else {
-    el.innerHTML = `<span class="wx-txt" style="color:#999">Weather data unavailable</span>`;
+    el.style.display = 'none';
   }
 }
 
 function renderResults(stops) {
   currentStops = stops;
+  const shareRowEl = document.getElementById('share-row');
+  if (shareRowEl) shareRowEl.style.display = 'flex';
 
   // ── AUTO-FIX: resolve duplicate dates before scoring ────
   // Only applies to stops that have dates assigned
@@ -4828,10 +4843,10 @@ function openMinimize(withAlts) {
       </div>` : ''}
       <div class="mc-cur">
         ${usingAlt
-          ? `<span style="color:#555">${s.dest.name} score: <strong>${curScore}</strong></span>
+          ? `<span style="color:#555">${s.dest.name} crowd index: <strong>${curScore}</strong></span>
              <span style="margin:0 4px;color:#999">→</span>
              <strong style="color:#2A7050">${altCity} on ${suggestedDateStr}${altScore !== null ? ' · score ' + altScore : ''}</strong>`
-          : `${s.date.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})} · score <strong>${curScore}</strong>
+          : `${s.date.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})} · crowd index <strong>${curScore}</strong>
              ${changed
                ? ` <span style="margin:0 4px;color:#999">→</span> <strong style="color:#2A7050">${suggestedDateStr} · score ${bestScore}</strong>`
                : ' <span style="color:#aaa;font-size:11px">already optimal within ±'+_flexDays+'d</span>'}`
@@ -5030,14 +5045,21 @@ function runAnalysis() {
 
   if (inputMode === 'paste') {
     const text = document.getElementById('paste-input').value.trim();
-    if (!text) { alert('Please enter your itinerary first.'); return; }
+    if (!text) {
+      showInputError('Enter at least one destination — e.g. "Florence June 14" or "Santorini July 3".');
+      return;
+    }
     stops = parsePastedItinerary(text);
     if (stops.length === 0) {
-      alert('No recognizable destinations found. Try listing cities by name, e.g. "May 13 – Florence, Pisa".');
+      showInputError('No destinations found. Try: city name + date on each line, e.g. "June 14 Florence".');
       return;
     }
   } else {
     const rows = document.querySelectorAll('#stop-list .stop-row');
+    if (rows.length === 0) {
+      showInputError('Add at least one destination using the fields above.');
+      return;
+    }
     let missingDate = false;
     rows.forEach(row => {
       const name = row.querySelector('.sname').textContent.trim().toLowerCase();
@@ -5048,12 +5070,30 @@ function runAnalysis() {
       keys.forEach(key => stops.push({ key, date }));
     });
     if (missingDate) {
-      alert('Please select a date for each destination. Click the "—" next to any stop to set its date.');
+      showInputError('Please set a date for each stop — click the "—" next to any city to add one.');
       return;
     }
   }
 
-  renderResults(stops);
+  try {
+    renderResults(stops);
+  } catch(e) {
+    console.error('renderResults error:', e);
+    showInputError('Something went wrong analyzing that itinerary. Try a simpler format: "City Month Day" per line.');
+  }
+}
+
+function showInputError(msg) {
+  let el = document.getElementById('input-error');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'input-error';
+    el.style.cssText = 'margin-top:10px;padding:10px 12px;background:#fde8e8;border:1px solid #C0392B;border-radius:4px;font-size:12px;color:#7A1A1A;font-family:-apple-system,sans-serif;line-height:1.5;';
+    document.querySelector('.analyze-btn').after(el);
+  }
+  el.textContent = msg;
+  el.style.display = 'block';
+  setTimeout(() => { if (el) el.style.display = 'none'; }, 6000);
 }
 
 function getShareUrl() {
