@@ -3799,7 +3799,56 @@ function matchDestination(text) {
       found.push(key);
     }
   }
+  // ── FUZZY FALLBACK: prefix / typo / substring matching ─────────────
+  if (found.length === 0 && normText.length >= 3 && normText.length <= 40) {
+    const allDestKeys = Object.keys(DESTS);
+    // Pass 1: prefix match — input starts with dest key or dest key starts with input
+    for (const key of allDestKeys.sort((a,b) => b.length - a.length)) {
+      const nk = normalizeText(key);
+      if ((nk.startsWith(normText) || normText.startsWith(nk)) && nk.length >= 3) {
+        if (!found.includes(key)) { found.push(key); break; }
+      }
+    }
+    // Pass 2: edit distance 1 (single char insert/delete/substitute) on first word
+    if (found.length === 0) {
+      const inputWords = normText.split(' ');
+      const firstWord = inputWords[0];
+      if (firstWord.length >= 4) {
+        for (const key of allDestKeys) {
+          const nk = normalizeText(key);
+          const keyFirstWord = nk.split(' ')[0];
+          if (Math.abs(keyFirstWord.length - firstWord.length) <= 1 && editDist1(firstWord, keyFirstWord)) {
+            if (!found.includes(key)) { found.push(key); break; }
+          }
+        }
+      }
+    }
+  }
+
   return found;
+}
+
+// Edit distance ≤ 1 check (faster than full Levenshtein for our use case)
+function editDist1(a, b) {
+  if (a === b) return true;
+  const la = a.length, lb = b.length;
+  if (Math.abs(la - lb) > 1) return false;
+  if (la === lb) {
+    let diffs = 0;
+    for (let i = 0; i < la; i++) { if (a[i] !== b[i]) diffs++; if (diffs > 1) return false; }
+    return diffs <= 1;
+  }
+  // One insertion/deletion
+  const [longer, shorter] = la > lb ? [a, b] : [b, a];
+  let i = 0, j = 0, skipped = false;
+  while (i < longer.length && j < shorter.length) {
+    if (longer[i] !== shorter[j]) {
+      if (skipped) return false;
+      skipped = true;
+      i++;
+    } else { i++; j++; }
+  }
+  return true;
 }
 
 function parsePastedItinerary(text) {
@@ -3968,7 +4017,7 @@ async function enrichFallbackDest(key, onEnriched) {
     lng: geo.lng,
     nearPorts: nearPortKeys,
     cityByDay,
-    sub: portNote,
+    sub: (geo.country ? geo.country + ' · ' : '') + (nearPortKeys.length > 0 ? portNote : 'No known cruise excursions'),
     note: null,
     shoulder: null,
     alt: null,
@@ -3980,6 +4029,26 @@ async function enrichFallbackDest(key, onEnriched) {
   onEnriched && onEnriched(_fallbackCache[key]);
 }
 
+
+// ─────────────────────────────────────────────────────────
+// CRUISE PRESSURE SCORE — population-adjusted 0-100 display metric
+// pressureRatio = cruise passengers per 1,000 residents
+// Converts to a felt-crowding score on a log curve:
+//   ratio  0  →  score  0  (no ships)
+//   ratio  3  →  score 15  (noticeable, small port city)
+//   ratio 10  →  score 35  (busy — Florence-level)
+//   ratio 30  →  score 65  (heavy — Positano-level)
+//   ratio 100 →  score 85  (severe — Dubrovnik Old Town)
+//   ratio 500 →  score 97  (overwhelming — Santorini)
+// For cities with no population data (fallback 100k), raw crowdScore is used
+function calcPressureScore(pressureRatio, estimatedShips, popK, crowdScore) {
+  if (!pressureRatio && estimatedShips === 0) return crowdScore; // no ships → use raw
+  if (popK === 100) return crowdScore; // fallback pop — use raw score
+  // Log scale: score = 100 × (1 - e^(-ratio/40))  → smooth asymptotic curve
+  const ratioScore = Math.round(100 * (1 - Math.exp(-pressureRatio / 40)));
+  // Blend with raw crowdScore (70% pressure-based, 30% raw) to preserve day-of-week variation
+  return Math.min(99, Math.round(ratioScore * 0.70 + crowdScore * 0.30));
+}
 function scoreStop(key, date) {
   const dest = getDestOrFallback(key);
   const dayIdx = getDayIdx(date);
@@ -4080,9 +4149,12 @@ function scoreStop(key, date) {
     else status = 'green';
   }
 
+  // Population-adjusted cruise pressure score for display (0-100)
+  const pressureScore = calcPressureScore(pressureRatio, estimatedShips, popK, crowdScore);
+
   return {
     key, date, dest, dayIdx, season,
-    status, cityVol, maxCruise, cruiseByDay, crowdScore,
+    status, cityVol, maxCruise, cruiseByDay, crowdScore, pressureScore,
     primaryPort, isExcursionDest, estimatedShips, pressureRatio, popK,
   };
 }
@@ -4434,8 +4506,8 @@ function renderCard(scored, idx) {
                   <div id="pill-low-${idx}" style="font-weight:700;color:#2A7050;line-height:1">${weekLow}</div>
                 </div>
                 <div style="text-align:center;padding:3px 6px;background:#f8f8f6;border-top:1px solid #e0e0e0;border-bottom:1px solid #e0e0e0">
-                  <div style="color:#aaa;line-height:1;margin-bottom:1px">Avg</div>
-                  <div id="pill-avg-${idx}" style="font-weight:700;color:#888;line-height:1">${weekAvg}</div>
+                  <div style="color:#aaa;line-height:1;margin-bottom:1px">Today</div>
+                  <div id="pill-avg-${idx}" style="font-weight:700;color:#888;line-height:1">${scored.pressureScore != null ? scored.pressureScore : weekAvg}</div>
                 </div>
                 <div style="text-align:center;padding:3px 6px;background:#fdf5f5;border-radius:0 4px 4px 0;border:1px solid #f0d0d0">
                   <div style="color:#aaa;line-height:1;margin-bottom:1px">High</div>
@@ -5195,12 +5267,18 @@ function runAnalysis() {
     }
     let missingDate = false;
     rows.forEach(row => {
-      const name = row.querySelector('.sname').textContent.trim().toLowerCase();
+      const name = row.querySelector('.sname').textContent.trim();
+      const nameKey = name.toLowerCase().trim();
       const dateText = row.querySelector('.sdate').textContent.trim();
-      const keys = matchDestination(name);
+      const keys = matchDestination(nameKey);
       const date = dateText && dateText !== '—' ? parseDate(dateText) : null;
       if (!date) missingDate = true;
-      keys.forEach(key => stops.push({ key, date }));
+      if (keys.length > 0) {
+        keys.forEach(key => stops.push({ key, date }));
+      } else if (nameKey.length >= 2) {
+        // City not in database — push as fallback key for geocoding
+        stops.push({ key: nameKey, date });
+      }
     });
     if (missingDate) {
       showInputError('Please set a date for each stop — click the "—" next to any city to add one.');
