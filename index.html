@@ -4405,21 +4405,47 @@ async function enrichCardWithLiveData(scored, idx) {
   }
 
   if (live.ship_count === 0) {
-    // No ships — recalculate with zero cruise volume
-    const cityVol = scored.dest.cityByDay[scored.dayIdx];
-    const liveScore = Math.round(cityVol * 0.20);
-    const liveStatus = liveScore >= 55 ? 'red' : liveScore >= 30 ? 'amber' : 'green';
+    // No cruise ships today — but day-trip pressure and city crowding still apply
+    // Only zero out the cruise component; keep dayTripRisk and cityVol scoring intact
+    const cityVol = scored.dest.cityByDay[scored.dayIdx] || 50;
+    const rawCityScore = Math.round(cityVol * 1.0); // 100% city vol, 0% cruise
+    // Re-apply dayTripBoost — cruise being absent doesn't reduce day-tripper crowds
+    const dayTripBoost = [0, 10, 25, 40][scored.dayTripRisk || 0];
+    const liveScore = Math.min(99, rawCityScore + dayTripBoost);
+    // Status: use same thresholds as scoreStop non-excursion path, but honour dayTripRisk upgrades
+    let liveStatus = liveScore >= 70 ? 'red' : liveScore >= 40 ? 'amber' : 'green';
+    if ((scored.dayTripRisk || 0) >= 3 && liveStatus === 'green') liveStatus = 'amber';
+    if ((scored.dayTripRisk || 0) >= 3 && liveStatus === 'amber') liveStatus = 'red';
+    if ((scored.dayTripRisk || 0) === 2 && liveStatus === 'green') liveStatus = 'amber';
     const liveLabel = liveStatus === 'red' ? 'AVOID' : liveStatus === 'amber' ? 'CAUTION' : 'CLEAR';
     updateCardStatus(idx, liveStatus, liveLabel);
     updateCrowdPills(idx, liveScore, scored.dest, scored.season, 0);
   } else {
-    // Live ships — normalize passenger count to 0–100 cruise index
-    const liveCruise = Math.min(100, Math.round(live.total_passengers / 100));
-    const cityVol = scored.dest.cityByDay[scored.dayIdx];
-    const liveScore = Math.round(cityVol * 0.20 + liveCruise * 0.80);
-    const liveStatus = (liveCruise >= 65 && scored.isExcursionDest) || liveScore >= 75 ? 'red'
-      : liveScore >= 55 || (liveCruise >= 45 && scored.isExcursionDest) ? 'amber'
-      : liveScore >= 35 ? 'amber' : 'green';
+    // Live ships present — use population-adjusted pressure scoring (same as scoreStop)
+    const liveCruise = Math.min(100, Math.round((live.total_passengers / (scored.primaryPort?.peakShips || 3) / 3000) * 100));
+    const cityVol = scored.dest.cityByDay[scored.dayIdx] || 50;
+    const rawCrowd = Math.round(cityVol * 0.20 + liveCruise * 0.80);
+    // Use peakShips to estimate actual ship count from live passengers
+    const liveShips = live.ship_count;
+    const popK = scored.popK || 100;
+    const livePressureRatio = (liveShips * 3000) / popK;
+    const livePressureScore = calcPressureScore(livePressureRatio, liveShips, popK, rawCrowd);
+    const dayTripBoost = [0, 10, 25, 40][scored.dayTripRisk || 0];
+    const liveScore = Math.min(99, livePressureScore + dayTripBoost);
+    // Status using same logic as scoreStop
+    let liveStatus;
+    if (scored.isExcursionDest || scored.dest.nearPorts?.length > 0) {
+      const hi = livePressureRatio >= 30 || liveShips >= 3;
+      const mo = livePressureRatio >= 10 || liveShips >= 1.5;
+      if (hi || rawCrowd >= 75) liveStatus = 'red';
+      else if (mo || rawCrowd >= 50) liveStatus = 'amber';
+      else liveStatus = 'green';
+    } else {
+      liveStatus = rawCrowd >= 70 ? 'red' : rawCrowd >= 40 ? 'amber' : 'green';
+    }
+    if ((scored.dayTripRisk || 0) >= 3 && liveStatus === 'green') liveStatus = 'amber';
+    if ((scored.dayTripRisk || 0) >= 3 && liveStatus === 'amber') liveStatus = 'red';
+    if ((scored.dayTripRisk || 0) === 2 && liveStatus === 'green') liveStatus = 'amber';
     const liveLabel = liveStatus === 'red' ? 'AVOID' : liveStatus === 'amber' ? 'CAUTION' : 'CLEAR';
     updateCardStatus(idx, liveStatus, liveLabel);
     updateCrowdPills(idx, liveScore, scored.dest, scored.season, liveCruise);
