@@ -4743,7 +4743,7 @@ function renderCard(scored, idx) {
             <span class="badge b-${status[0]}" id="badge-${idx}">${bl}</span>
             ${scored.dayTripRisk >= 2 ? `<span style="font-size:9px;font-weight:700;color:#C05000;letter-spacing:.04em;text-transform:uppercase;display:block;text-align:right;margin-top:2px">${scored.dayTripRisk >= 3 ? '⚡ Day trips' : '⚠ Day trips'}</span>` : ''}
           </div>
-          <span id="live-tag-${idx}" style="display:none;font-size:9px;color:#2A7050;font-weight:600;letter-spacing:.05em">LIVE</span>
+          <!-- live-tag-${idx} disabled until CruiseDig API active -->
         </div>
         <span class="chev" id="chev-${idx}">▾</span>
       </div>
@@ -5015,7 +5015,9 @@ function renderResults(stops) {
   // Fire async enrichments in parallel — weather + live port schedule + fallback geocoding
   scored.forEach((s,i) => {
     if (s.date) loadWeather(s, i);
-    if (s.date && s.dest.nearPorts.length > 0) enrichCardWithLiveData(s, i);
+    // enrichCardWithLiveData disabled — live CruiseDig API not yet active
+    // Uncomment when CruiseDig subscription is set up:
+    // if (s.date && s.dest.nearPorts.length > 0) enrichCardWithLiveData(s, i);
     // Geocode fallback destinations to get real location + nearest port
     if (s.dest.isFallback && !s.dest.geocoded) {
       enrichFallbackDest(s.key, (enriched) => {
