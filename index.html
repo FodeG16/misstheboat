@@ -109,7 +109,7 @@ textarea:focus{border-color:#2A7050;background:#fff}
 .traf-block{margin-bottom:12px}
 .traf-block:last-child{margin-bottom:0}
 .traf-ttl{font-size:11px;font-weight:600;color:#444;text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px;display:block;font-family:'DM Sans',sans-serif}
-.bar-chart{display:flex;gap:4px;align-items:flex-end;height:44px;margin-top:4px}
+.bar-chart{display:flex;gap:4px;align-items:flex-end;height:58px;margin-top:4px}
 .bc{display:flex;flex-direction:column;align-items:center;flex:1;min-width:0}
 .bbar{width:100%;border-radius:2px 2px 0 0;min-height:3px;background:#f0f0f0;transition:opacity .2s}
 .bbar.hi-r{background:#C0392B}.bbar.hi-a{background:#D4830A}.bbar.hi-g{background:#2A7050}
@@ -201,14 +201,14 @@ textarea:focus{border-color:#2A7050;background:#fff}
   .csub{font-size:12px}
   .stripe{width:9px}
   .ci{padding:12px 12px}
-  .bar-chart{height:36px}
+  .bar-chart{height:50px}
   .action-row{flex-wrap:wrap}
 }</style>
 </head>
 <body>
 <div class="page">
   <header class="hdr">
-    <div class="logo">Miss<span>TheBoat</span> ⛵</div>
+    <div class="logo" onclick="resetApp()" style="cursor:pointer">Miss<span>TheBoat</span> ⛵</div>
     <div class="tagline">Plan your trip, skip the crowds from cruise ships</div>
   </header>
 
@@ -243,9 +243,7 @@ textarea:focus{border-color:#2A7050;background:#fff}
     <div id="mode-manual" style="display:none">
       <div class="field-lbl">Trip stops</div>
       <div class="stop-list" id="stop-list">
-        <div class="stop-row"><span class="sname">Florence</span><span class="sdate">May 12, 2026</span><button class="stop-rem" onclick="this.parentElement.remove()">×</button></div>
-        <div class="stop-row"><span class="sname">Livorno → San Gimignano</span><span class="sdate">May 13, 2026</span><button class="stop-rem" onclick="this.parentElement.remove()">×</button></div>
-        <div class="stop-row"><span class="sname">Volterra</span><span class="sdate">May 14, 2026</span><button class="stop-rem" onclick="this.parentElement.remove()">×</button></div>
+        <!-- Default stops populated by JS on load — see populateDefaultStops() -->
       </div>
       <div class="add-row">
         <div style="flex:1;position:relative">
@@ -257,7 +255,10 @@ textarea:focus{border-color:#2A7050;background:#fff}
       </div>
     </div>
 
-    <button class="analyze-btn" onclick="runAnalysis()">Check cruise traffic →</button>
+    <div style="display:flex;gap:8px;margin-top:1.25rem">
+      <button class="analyze-btn" onclick="runAnalysis()" style="flex:1;margin-top:0">Check cruise traffic →</button>
+      <button onclick="resetApp()" style="padding:13px 16px;font-size:12px;font-weight:600;border:1.5px solid #e8e8e8;border-radius:10px;background:#fff;color:#888;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap" title="Clear all and start over">Clear</button>
+    </div>
   </div>
 
   <!-- EXPLORE VIEW -->
@@ -369,6 +370,10 @@ textarea:focus{border-color:#2A7050;background:#fff}
       <button class="copy-btn" onclick="nativeShare()" id="native-share-btn" style="display:none;background:#1a1a1a;color:#fff;border-color:#1a1a1a">Share ↗</button>
     </div>
     <div id="share-btns" style="display:none;margin:.5rem 1.5rem 0;display:flex;gap:6px;flex-wrap:wrap"></div>
+  </div>
+
+  <div style="text-align:center;padding:2rem 1.5rem 1rem;border-top:1px solid #f0f0f0;margin-top:1rem">
+    <a href="mailto:feedback@misstheboat.app?subject=MissTheBoat%20Feedback" style="font-size:12px;color:#888;text-decoration:none;font-family:'DM Sans',sans-serif">Questions, Comments, Feedback?</a>
   </div>
 </div>
 
@@ -2102,7 +2107,7 @@ const DESTS = {
     sub:'Film festival city',
     note:'Occasional tender stop for smaller ships. La Croisette and the Palais des Festivals are the cruise focal points. Lérins Islands (free ferry) are better than the town on busy days.',
     shoulder:'Forville market early morning — local Provençal produce, no tourist stalls.',
-    alt:null,
+    alt:'Île Sainte-Marguerite (Lérins Islands) — 15 min ferry, Mediterranean nature reserve, near-zero crowds even when Cannes is busy.',
     tips:['Île Sainte-Marguerite (Lérins Islands) by ferry — Mediterranean nature reserve, the real Man in the Iron Mask prison, almost no crowds','Forville market for breakfast — local cheese, tapenade, socca, entirely non-touristy','Le Suquet (old town on the hill) — cruise groups stay on La Croisette, the old town is peaceful','Mougins village 10km inland — where Picasso spent his last years, Michelin-starred restaurants, zero cruise traffic'],
   },
   'arles': {
@@ -3267,6 +3272,26 @@ const DESTS = {
     dayTripNote: 'Day-trip from Barcelona (1.5h by rack railway). The cable car and rack railway platform are mobbed from 11am. On summer weekends the mountain receives 10,000+ visitors concentrated in 200m of walkway.',
     dayTripAlt: 'Sant Joan funicular to the summit area: 10 min above the crowds, same views, almost nobody. Or Montserrat in January–February.',
     tips: null,
+  },
+'paris': {
+    name:'Paris', country:'France', lat:48.857, lng:2.352,
+    nearPorts:[],
+    cityByDay:[60,72,65,75,80,90,85],
+    sub:'Not a cruise excursion destination',
+    note:'No major cruise ports within excursion range. Heavy year-round tourism from independent travelers, but not cruise-driven.',
+    shoulder:'Major sites (Louvre, Eiffel Tower) before 9am or after 5pm regardless of season.',
+    alt:null,
+    tips:null,
+  },
+  'london': {
+    name:'London', country:'United Kingdom', lat:51.507, lng:-0.128,
+    nearPorts:[],
+    cityByDay:[58,68,62,70,75,85,80],
+    sub:'Not a cruise excursion destination',
+    note:'No major Mediterranean cruise ports within excursion range. Heavy year-round tourism, not cruise-driven.',
+    shoulder:null,
+    alt:null,
+    tips:null,
   },
 };
 
@@ -4648,7 +4673,7 @@ function renderShipCount(cruiseByDay, activeDay) {
   for (let i = 0; i < 7; i++) {
     const n = counts[i];
     const isAct = i === activeDay;
-    const px = n === 0 ? 3 : Math.max(6, Math.round((n / maxCount) * 40));
+    const px = n === 0 ? 3 : Math.max(6, Math.round((n / maxCount) * 32));
     let barCls = 'bbar';
     if (n === 0) barCls += ' lo-n';
     else if (isAct) barCls += n >= 4 ? ' hi-r' : n >= 2 ? ' hi-a' : ' hi-g';
@@ -5484,6 +5509,55 @@ document.addEventListener('click', e => {
   }
 });
 
+function resetApp() {
+  // Clear paste textarea
+  const pasteEl = document.getElementById('paste-input');
+  if (pasteEl) pasteEl.value = '';
+  // Clear manual stop list
+  const stopList = document.getElementById('stop-list');
+  if (stopList) stopList.innerHTML = '';
+  // Clear manual add fields
+  const newDest = document.getElementById('new-dest');
+  const newDate = document.getElementById('new-date');
+  if (newDest) newDest.value = '';
+  if (newDate) newDate.value = '';
+  // Clear any parse error
+  const errEl = document.getElementById('parse-error-msg');
+  if (errEl) errEl.textContent = '';
+  // Re-populate fresh default stops
+  populateDefaultStops();
+  // Hide results-related UI
+  const shareRow = document.getElementById('share-row');
+  if (shareRow) shareRow.style.display = 'none';
+  const resultsTab = document.getElementById('results-tab');
+  if (resultsTab) resultsTab.style.display = 'none';
+  // Clear the URL hash
+  history.replaceState(null, '', window.location.pathname);
+  // Go back to Plan tab
+  showView('input');
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function populateDefaultStops() {
+  const list = document.getElementById('stop-list');
+  if (!list || list.children.length > 0) return; // don't overwrite if already populated
+  const base = new Date();
+  base.setMonth(base.getMonth() + 1);
+  const defaults = [
+    { name: 'Florence', offset: 0 },
+    { name: 'San Gimignano', offset: 1 },
+    { name: 'Volterra', offset: 2 },
+  ];
+  defaults.forEach(d => {
+    const date = new Date(base);
+    date.setDate(date.getDate() + d.offset);
+    const row = document.createElement('div');
+    row.className = 'stop-row';
+    row.innerHTML = `<span class="sname">${d.name}</span><span class="sdate">${date.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</span><button class="stop-rem" onclick="this.parentElement.remove()">×</button>`;
+    list.appendChild(row);
+  });
+}
+
 function addManualStop() {
   const dest = document.getElementById('new-dest').value.trim();
   const dt = document.getElementById('new-date').value;
@@ -5658,6 +5732,7 @@ function showView(v) {
 // INIT: Load from URL hash if present
 // ─────────────────────────────────────────────────────────
 function init() {
+  populateDefaultStops();
   const hash = window.location.hash.slice(1);
   if (hash && hash.includes('|')) {
     const stops = hash.split(',').map(part => {
