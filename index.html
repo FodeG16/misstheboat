@@ -9,13 +9,13 @@
 <!-- Open Graph — controls how the link looks when shared on WhatsApp, iMessage, X, LinkedIn -->
 <meta property="og:title" content="MissTheBoat — Avoid cruise ship crowds">
 <meta property="og:description" content="See exactly when cruise ships hit your destinations. Color-coded crowd scores, insider tips, and quieter alternatives for every Mediterranean stop.">
-<meta property="og:image" content="https://misstheboat.vercel.app/og-image.png">
-<meta property="og:url" content="https://misstheboat.vercel.app">
+<meta property="og:image" content="https://misstheboat.app/og-image.png">
+<meta property="og:url" content="https://misstheboat.app">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="MissTheBoat — Avoid cruise ship crowds">
 <meta name="twitter:description" content="See exactly when cruise ships hit your destinations. Color-coded crowd scores, insider tips, and quieter alternatives for every Mediterranean stop.">
-<meta name="twitter:image" content="https://misstheboat.vercel.app/og-image.png">
+<meta name="twitter:image" content="https://misstheboat.app/og-image.png">
 
 <!-- Favicon — emoji favicon works in all modern browsers, no image file needed -->
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⛵</text></svg>">
@@ -203,13 +203,70 @@ textarea:focus{border-color:#2A7050;background:#fff}
   .ci{padding:12px 12px}
   .bar-chart{height:50px}
   .action-row{flex-wrap:wrap}
-}</style>
+}
+/* ── vars used by inline styles in new markup ── */
+:root{--mut:#888;--line:#eee;--line2:#ddd}
+
+/* ── Hero: live board (original palette) ── */
+.hero{padding:1.6rem 1.5rem 1.5rem;background:#fff;border-bottom:1px solid #f0f0f0}
+.hero-kicker{font-size:10.5px;font-weight:700;letter-spacing:.1em;color:#2A7050;text-transform:uppercase;display:flex;align-items:center;gap:8px;margin-bottom:12px;font-family:'DM Sans',sans-serif}
+.live-dot{width:7px;height:7px;border-radius:50%;background:#C0392B;box-shadow:0 0 0 0 rgba(192,57,43,.4);animation:pulse 2.2s ease-out infinite;flex-shrink:0}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(192,57,43,.35)}70%{box-shadow:0 0 0 8px rgba(192,57,43,0)}100%{box-shadow:0 0 0 0 rgba(192,57,43,0)}}
+.hero-h1{font-family:'DM Serif Display',Georgia,serif;font-size:clamp(30px,7vw,38px);font-weight:400;line-height:1.05;letter-spacing:-.03em;color:#000;margin-bottom:8px}
+.hero-h1 em{font-style:italic;color:#2A7050}
+.hero-sub{font-size:14px;color:#444;line-height:1.6;max-width:46ch;margin-bottom:1.1rem;font-family:'DM Sans',sans-serif}
+.board{border:1px solid #e8e8e8;border-radius:12px;overflow:hidden;background:#fff}
+.brow{display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:10px;width:100%;padding:11px 14px;background:#fff;border:none;border-bottom:1px solid #f0f0f0;cursor:pointer;text-align:left;transition:background .15s;font-family:'DM Sans',sans-serif}
+.brow:last-child{border-bottom:none}
+.brow:hover{background:#fafafa}
+.brow-name{font-family:'DM Serif Display',Georgia,serif;font-size:16px;font-weight:400;color:#000;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brow-read{font-family:'SF Mono',Monaco,monospace;font-size:10px;letter-spacing:.03em;color:#999;white-space:nowrap}
+.bverdict{font-size:10px;font-weight:700;letter-spacing:.06em;padding:4px 9px;border-radius:6px;min-width:64px;text-align:center;text-transform:uppercase;font-family:'DM Sans',sans-serif}
+.bv-r{background:#C0392B;color:#fff}
+.bv-a{background:#D4830A;color:#fff}
+.bv-g{background:#2A7050;color:#fff}
+.board-foot{font-size:11px;color:#999;margin-top:8px;font-family:'DM Sans',sans-serif}
+
+/* ── Sample-trip chips ── */
+.try-panel{padding:1.4rem 1.5rem 0}
+.try-chips{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-top:10px}
+.chip{display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:11px 14px;border:1px solid #e8e8e8;border-radius:10px;background:#fff;cursor:pointer;transition:border-color .15s,background .15s,transform .1s;text-align:left;font-family:'DM Sans',sans-serif}
+.chip:hover{border-color:#2A7050;background:#fafdf8}
+.chip:active{transform:scale(.98)}
+.chip-name{font-family:'DM Serif Display',Georgia,serif;font-size:15px;font-weight:400;color:#000;letter-spacing:-.01em}
+.chip-sub{font-size:10.5px;letter-spacing:.02em;color:#888;text-transform:uppercase}
+.divide{display:flex;align-items:center;gap:12px;margin:1.5rem 1.5rem 0;color:#bbb}
+.divide::before,.divide::after{content:'';flex:1;height:1px;background:#f0f0f0}
+.divide span{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;font-family:'DM Sans',sans-serif;font-weight:500}
+
+/* ── Classes replacing former inline styles ── */
+.logo-mark{color:#2A7050;margin-left:6px;font-size:16px}
+.trip-kicker{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#2A7050;margin-bottom:7px;font-family:'DM Sans',sans-serif}
+.clear-btn{padding:13px 16px;font-size:12px;font-weight:600;border:1.5px solid #e8e8e8;border-radius:10px;background:#fff;color:#888;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap}
+.ai-btn{padding:4px 10px;font-size:11px;font-weight:600;border:1px solid #2A7050;border-radius:6px;background:#EAF3DE;color:#164030;cursor:pointer;flex-shrink:0;margin-left:8px;font-family:'DM Sans',sans-serif}
+
+:focus-visible{outline:2px solid #2A7050;outline-offset:2px;border-radius:4px}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+
+/* ── Mobile additions for new components ── */
+@media(max-width:520px){
+  .try-panel{padding-left:.875rem;padding-right:.875rem}
+  .divide{margin-left:.875rem;margin-right:.875rem}
+  .hero{padding:1.35rem .875rem 1.25rem}
+  .try-chips{grid-template-columns:1fr 1fr}
+  .brow{padding:10px 12px;gap:2px 10px;grid-template-columns:1fr auto;grid-template-rows:auto auto}
+  .brow-name{font-size:15px;grid-column:1;grid-row:1}
+  .brow-read{grid-column:1;grid-row:2;font-size:9px}
+  .bverdict{grid-column:2;grid-row:1/span 2;align-self:center;min-width:58px}
+  .brow,.chip,.mbtn{min-height:44px}
+}
+</style>
 </head>
 <body>
 <div class="page">
   <header class="hdr">
-    <div class="logo" onclick="resetApp()" style="cursor:pointer">Miss<span>TheBoat</span> ⛵</div>
-    <div class="tagline">Plan your trip, skip the crowds from cruise ships</div>
+    <div class="logo" onclick="resetApp()" style="cursor:pointer">Miss the Boat<span class="logo-mark">&#9873;</span></div>
+    <div class="tagline">Cruise-crowd forecasts &middot; Mediterranean</div>
   </header>
 
   <nav class="nav">
@@ -219,10 +276,29 @@ textarea:focus{border-color:#2A7050;background:#fff}
   </nav>
 
   <!-- INPUT VIEW -->
-  <div id="view-input" class="panel">
-    <div style="padding-bottom:1.25rem;border-bottom:1px solid #f5f5f5;margin-bottom:1.25rem">
-      <div style="font-family:'DM Serif Display',Georgia,serif;font-size:28px;font-weight:400;line-height:1.05;color:#000;letter-spacing:-.03em;margin-bottom:8px">Ships happen.<br>Plan around them.</div>
-    </div>
+  <div id="view-input">
+
+    <section class="hero">
+      <div class="hero-kicker"><span class="live-dot"></span><span id="hero-date">TODAY</span> &middot; CRUISE PRESSURE INDEX</div>
+      <h1 class="hero-h1">Ships happen.<br><em>Plan around them.</em></h1>
+      <p class="hero-sub">Every stop on your trip, scored against cruise port schedules. Know which days bring 15,000 day-trippers &mdash; and which days the same streets are yours.</p>
+      <div class="board" id="now-board" aria-live="polite"></div>
+      <div class="board-foot">From seasonal port-call patterns &middot; tap a place for its full forecast</div>
+    </section>
+
+    <section class="try-panel">
+      <div class="field-lbl">Try a sample trip &mdash; one tap, no signup</div>
+      <div class="try-chips">
+        <button class="chip" onclick="loadExample('greek')"><span class="chip-name">Greek Isles</span><span class="chip-sub">Athens &rarr; Santorini &middot; 5 days</span></button>
+        <button class="chip" onclick="loadExample('amalfi')"><span class="chip-name">Amalfi Coast</span><span class="chip-sub">Positano &rarr; Capri &middot; 4 days</span></button>
+        <button class="chip" onclick="loadExample('tuscany')"><span class="chip-name">Tuscany</span><span class="chip-sub">Florence &rarr; Lucca &middot; 5 days</span></button>
+        <button class="chip" onclick="loadExample('dalmatia')"><span class="chip-name">Dalmatian Coast</span><span class="chip-sub">Split &rarr; Kotor &middot; 4 days</span></button>
+      </div>
+    </section>
+
+    <div class="divide"><span>or check your own trip</span></div>
+
+    <div class="panel" id="own-trip">
     <div class="modetog">
       <button class="mbtn on" onclick="setMode('paste')">Paste itinerary</button>
       <button class="mbtn" onclick="setMode('manual')">Add stops manually</button>
@@ -231,12 +307,12 @@ textarea:focus{border-color:#2A7050;background:#fff}
     <!-- Paste mode -->
     <div id="mode-paste">
       <div class="field-lbl">Your itinerary</div>
-      <textarea id="paste-input" placeholder="May 12 – Arrive Florence&#10;May 13 – Livorno, then San Gimignano&#10;May 14 – Siena, then Volterra&#10;May 15 – Montalcino&#10;May 16 – Pisa + Lucca&#10;May 17 – Florence&#10;&#10;Paste any plain text — hotel confirmations, Google trip text, TripIt exports, travel blog itineraries, anything."></textarea>
+      <textarea id="paste-input" placeholder="May 12 &ndash; Arrive Florence&#10;May 13 &ndash; Livorno, then San Gimignano&#10;May 14 &ndash; Siena, then Volterra&#10;May 15 &ndash; Montalcino&#10;May 16 &ndash; Pisa + Lucca&#10;May 17 &ndash; Florence&#10;&#10;Paste any plain text &mdash; hotel confirmations, Google trip text, TripIt exports, travel blog itineraries, anything."></textarea>
       <div class="hint" style="display:flex;justify-content:space-between;align-items:center">
-        <span>Plain text, copy-paste from Google Trips, TripIt, booking confirmations, or any format.</span>
-        <button onclick="parseWithAI()" id="ai-parse-btn" style="padding:4px 10px;font-size:11px;font-weight:600;border:1px solid #2A7050;border-radius:6px;background:#EAF3DE;color:#164030;cursor:pointer;flex-shrink:0;margin-left:8px">✦ Parse with AI</button>
+        <span>Any plain text works &mdash; booking confirmations, TripIt exports, notes.</span>
+        <button onclick="parseWithAI()" id="ai-parse-btn" class="ai-btn">&#10022; Parse with AI</button>
       </div>
-      <div id="ai-parse-status" style="display:none;font-size:12px;color:#888;margin-top:6px;padding:8px 10px;background:#fafaf8;border-radius:6px;border:1px solid #eee"></div>
+      <div id="ai-parse-status" style="display:none;font-size:12px;color:var(--mut);margin-top:6px;padding:8px 10px;background:#FAFCFB;border-radius:6px;border:1px solid var(--line)"></div>
     </div>
 
     <!-- Manual mode -->
@@ -248,7 +324,7 @@ textarea:focus{border-color:#2A7050;background:#fff}
       <div class="add-row">
         <div style="flex:1;position:relative">
           <input type="text" id="new-dest" class="idest" placeholder="Destination" autocomplete="off" oninput="showDestSuggestions(this.value)" onkeydown="handleDestKey(event)" onfocus="showDestSuggestions(this.value)" style="width:100%"/>
-          <div id="dest-dropdown" style="display:none;position:absolute;left:0;right:0;top:100%;z-index:100;background:#fff;border:1px solid #777;border-top:none;border-radius:0 0 8px 8px;box-shadow:0 4px 12px rgba(0,0,0,.1);max-height:200px;overflow-y:auto"></div>
+          <div id="dest-dropdown" style="display:none;position:absolute;left:0;right:0;top:100%;z-index:100;background:#fff;border:1px solid var(--line2);border-top:none;border-radius:0 0 8px 8px;box-shadow:0 4px 12px rgba(11,27,41,.1);max-height:200px;overflow-y:auto"></div>
         </div>
         <input type="date" id="new-date" class="idate" />
         <button class="add-btn" onclick="addManualStop()">+ Add</button>
@@ -256,9 +332,10 @@ textarea:focus{border-color:#2A7050;background:#fff}
     </div>
 
     <div style="display:flex;gap:8px;margin-top:1.25rem">
-      <button class="analyze-btn" onclick="runAnalysis()" style="flex:1;margin-top:0">Check cruise traffic →</button>
-      <button onclick="resetApp()" style="padding:13px 16px;font-size:12px;font-weight:600;border:1.5px solid #e8e8e8;border-radius:10px;background:#fff;color:#888;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap" title="Clear all and start over">Clear</button>
+      <button class="analyze-btn" onclick="runAnalysis()" style="flex:1;margin-top:0">Check cruise traffic &rarr;</button>
+      <button onclick="resetApp()" class="clear-btn" title="Clear all and start over">Clear</button>
     </div>
+  </div>
   </div>
 
   <!-- EXPLORE VIEW -->
@@ -334,7 +411,7 @@ textarea:focus{border-color:#2A7050;background:#fff}
   <!-- RESULTS VIEW -->
   <div id="view-results" style="display:none">
     <div class="trip-hdr">
-      <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#2A7050;margin-bottom:7px;font-family:'DM Sans',sans-serif">Ahead of the crowd.</div>
+      <div class="trip-kicker">Crowd forecast</div>
       <div class="trip-title" id="trip-title">Tuscany, May 12–19</div>
       <div class="trip-sub" id="trip-sub">Loading...</div>
     </div>
@@ -6370,7 +6447,72 @@ async function generateAIItinerary() {
   }
 }
 
+
+// ─────────────────────────────────────────────────────────
+// SAMPLE TRIPS — one-tap demos using the real dataset
+// ─────────────────────────────────────────────────────────
+const EXAMPLES = {
+  greek:    ['athens','mykonos','santorini','naxos','hydra'],
+  amalfi:   ['positano','amalfi','ravello','capri'],
+  tuscany:  ['florence','siena','san gimignano','montalcino','lucca'],
+  dalmatia: ['split','hvar','dubrovnik','kotor'],
+};
+function loadExample(k) {
+  const keys = EXAMPLES[k];
+  if (!keys) return;
+  const base = new Date();
+  base.setDate(base.getDate() + 14);
+  const stops = keys.map((key, i) => {
+    const d = new Date(base);
+    d.setDate(d.getDate() + i);
+    return { key, date: d };
+  });
+  try {
+    renderResults(stops);
+    if (typeof gtag === 'function') gtag('event', 'sample_trip', { trip: k });
+  } catch(e) { console.error('loadExample error:', e); }
+}
+function loadSpot(key) {
+  try {
+    renderResults([{ key, date: new Date() }]);
+    if (typeof gtag === 'function') gtag('event', 'board_tap', { dest: key });
+  } catch(e) { console.error('loadSpot error:', e); }
+}
+
+// ─────────────────────────────────────────────────────────
+// LIVE BOARD — today's cruise pressure at marquee destinations
+// ─────────────────────────────────────────────────────────
+const BOARD_SPOTS = ['santorini','dubrovnik','positano','mykonos','florence','barcelona'];
+function renderNowBoard() {
+  const el = document.getElementById('now-board');
+  if (!el) return;
+  const today = new Date();
+  const dEl = document.getElementById('hero-date');
+  if (dEl) dEl.textContent = today.toLocaleDateString('en-US', {weekday:'short', month:'short', day:'numeric'}).toUpperCase();
+  const scored = [];
+  for (const key of BOARD_SPOTS) {
+    try {
+      const s = scoreStop(key, today);
+      scored.push({ key, s });
+    } catch(e) { /* skip on error */ }
+  }
+  scored.sort((a, b) => b.s.pressureScore - a.s.pressureScore);
+  el.innerHTML = scored.map(({key, s}) => {
+    const name = (DESTS[key] && DESTS[key].name) || key;
+    const n = Math.round(s.estimatedShips);
+    const ships = s.estimatedShips >= 0.95 ? ('\u2248' + n + ' SHIP' + (n > 1 ? 'S' : ''))
+                : s.estimatedShips > 0 ? '&lt;1 SHIP' : 'NO SHIPS';
+    const v = s.status === 'red' ? ['AVOID','r'] : s.status === 'amber' ? ['CAUTION','a'] : ['CLEAR','g'];
+    return '<button class="brow" onclick="loadSpot(\'' + key + '\')" aria-label="' + name + ' today: ' + v[0] + '">' +
+      '<span class="brow-name">' + name + '</span>' +
+      '<span class="brow-read">' + ships + ' &middot; IDX ' + s.pressureScore + '</span>' +
+      '<span class="bverdict bv-' + v[1] + '">' + v[0] + '</span></button>';
+  }).join('');
+}
+
 init();
+renderNowBoard();
+
 </script>
 </body>
 </html>
