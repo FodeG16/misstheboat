@@ -307,6 +307,29 @@ const METHODOLOGY = page({
 </article>`,
 });
 
+
+const TERMS = page({
+  title: 'Terms of Use | Miss the Boat',
+  desc: 'Terms of use for misstheboat.app: personal planning use permitted; scraping, bulk extraction, and redistribution of the dataset are not.',
+  canonical: `${BASE}/terms/`,
+  jsonld: [],
+  breadcrumb: `<a href="/">Home</a> &rsaquo; Terms`,
+  body: `
+<article>
+<h1>Terms of use</h1>
+<p class="answer">MissTheBoat is free to use for personal trip planning. The data behind it is not free to take.</p>
+<section><h2>Permitted use</h2>
+<p>Use the planner, browse the destination and port pages, share result links, and cite individual figures with attribution ("MissTheBoat seasonal estimate") for articles, posts, or research.</p></section>
+<section><h2>Not permitted</h2>
+<p>Scraping, crawling for dataset extraction, bulk downloading, or republishing the underlying destination, port, or scoring data &mdash; in whole or substantial part &mdash; is prohibited. Pages render the data; they are not a distribution of the database. Automated access for AI training is governed by robots.txt.</p></section>
+<section><h2>No warranty</h2>
+<p>All crowd figures are modeled seasonal estimates, provided as-is for planning purposes, with no guarantee of accuracy for any specific date. See the <a href="/methodology/">methodology</a> for what is measured versus modeled. Travel decisions are yours.</p></section>
+<section><h2>Affiliate disclosure</h2>
+<p>Some outbound booking links are affiliate links; MissTheBoat may earn a commission at no cost to you. Affiliations never influence crowd scores.</p></section>
+<p class="sub">Questions or corrections: reach out via the site. Last updated July 2026.</p>
+</article>`,
+});
+
 // ── 7. Write everything ──
 function write(rel, content) {
   const f = path.join(ROOT, rel);
@@ -321,12 +344,14 @@ portKeys.forEach(k => write(`ports/${slug(k)}/index.html`, portPage(k)));
 write('destinations/index.html', listIndexPage('destinations', destKeys));
 write('ports/index.html', listIndexPage('ports', portKeys));
 write('methodology/index.html', METHODOLOGY);
+write('terms/index.html', TERMS);
 
 const urls = [
   { loc: `${BASE}/`, pri: '1.0' },
   { loc: `${BASE}/destinations/`, pri: '0.8' },
   { loc: `${BASE}/ports/`, pri: '0.8' },
   { loc: `${BASE}/methodology/`, pri: '0.5' },
+  { loc: `${BASE}/terms/`, pri: '0.3' },
   ...destKeys.map(k => ({ loc: `${BASE}/destinations/${slug(k)}/`, pri: '0.7' })),
   ...portKeys.map(k => ({ loc: `${BASE}/ports/${slug(k)}/`, pri: '0.6' })),
 ];

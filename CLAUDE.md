@@ -16,6 +16,7 @@ misstheboat.app — cruise-crowd forecasts for the Mediterranean. Single-page ap
 | api/ (parse.js, schedule.js, value.js) | Vercel serverless functions (AI itinerary parsing etc.). Untouched this session. |
 | cowork-skills/ | 5 SKILL.md files for the MTB-Growth Cowork project (page-generator, crowd-report, thread-scout, data-story, growth-report). |
 | docs/DEPLOY.md | Deploy + post-deploy runbook. |
+| docs/growth-plan.md | The full SEO/GEO/marketing growth plan — single source of strategy. All planning chats retired; repo is the system of record. |
 
 ## CRITICAL: DESTS insertion rule (from prior sessions)
 Always insert new DESTS entries **before** the `};` closing DESTS. Never insert after the REGIONS comment — breaks syntax every time.
@@ -30,6 +31,7 @@ The old catch-all rewrite `/(.*) -> /index.html` was REMOVED July 9, 2026 — it
 - ✅ sitemap.xml (294 URLs), robots.txt (split crawler policy), llms.txt, canonical tags.
 - ✅ og-image.png generated (was missing since April P0 list — meta tags referenced a nonexistent file).
 - ✅ OG/twitter meta fixed to misstheboat.app (was vercel.app).
+- ✅ /terms/ page live (scraping/redistribution prohibition, no-warranty, affiliate disclosure) — DRAFT for Greg legal review, not legal advice.
 - ✅ Growth plan finalized: programmatic SEO + GEO + weekly crowd report + quarterly PR data story (PRIMARY SOURCES ONLY — port authority/MedCruise throughput ÷ census; never pitch modeled figures to press) + community thread scouting (monitoring automated, posting ALWAYS manual).
 
 ## NEXT STEPS — priority order
