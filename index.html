@@ -6451,6 +6451,28 @@ async function generateAIItinerary() {
 
 
 // ─────────────────────────────────────────────────────────
+// FUNNEL EVENTS — share_click + affiliate_click (delegated)
+// ─────────────────────────────────────────────────────────
+document.addEventListener('click', function(e) {
+  if (typeof gtag !== 'function') return;
+  const aff = e.target.closest && e.target.closest('.aff-btn');
+  if (aff) {
+    const card = aff.closest('.card');
+    const dest = card ? (card.querySelector('.cname') || {}).textContent : '';
+    const partner = (aff.className.match(/aff-btn\s+(\S+)/) || [,'unknown'])[1];
+    gtag('event', 'affiliate_click', { partner: partner, destination: (dest || '').trim() });
+    return;
+  }
+  const share = e.target.closest && e.target.closest('.share-pill, .copy-btn');
+  if (share) {
+    const channel = share.classList.contains('wa') ? 'whatsapp'
+                  : share.classList.contains('sms') ? 'sms'
+                  : share.classList.contains('copy-btn') ? 'copy' : 'other';
+    gtag('event', 'share_click', { channel: channel });
+  }
+});
+
+// ─────────────────────────────────────────────────────────
 // SAMPLE TRIPS — one-tap demos using the real dataset
 // ─────────────────────────────────────────────────────────
 const EXAMPLES = {

@@ -37,14 +37,21 @@ The old catch-all rewrite `/(.*) -> /index.html` was REMOVED July 9, 2026 — it
 2. **[GREG]** Set up MTB-Growth Cowork project with the 5 skills in cowork-skills/. Schedule: daily thread-scout, Mon crowd-report, Fri growth-report, monthly page-generator, quarterly data-story.
 3. **[NEXT SESSION]** Run mtb-data-story within 2 weeks — peak Med season + overtourism news cycle now.
 4. **[NEXT]** Weekly crowd report page template (/reports/) — first run creates the pattern.
-5. **[NEXT]** share_click + affiliate_click GA4 events (15 min).
-6. **[NEXT]** Email capture block on homepage (needs Buttondown/Beehiiv account first).
+5. **[NEXT]** Email capture block on homepage (needs Buttondown/Beehiiv account first).
 7. **[LATER]** Per-page OG chart images; Tier 2 best-time pages; Tier 3 month pages only after Tier 1 shows GSC impressions.
 8. **[LATER]** V2 live AIS data via server-side API (first genuinely proprietary layer); Discover Cars ID still PENDING; GYG API token still pending.
 
 ## Known bugs / watchlist (carried from prior sessions)
 - Bug 4 (phantom Kotor card) — unconfirmed, needs re-test
 - Hotels/VRBO links static, not city-specific
+
+## Phase 0 measurement status (July 9)
+- GA4 property EXISTS (G-LCQ0RJ1LR6), snippet on app + all 294 pages. Do NOT create a new property.
+- Events instrumented: own_trip (activation, key event candidate), sample_trip, board_tap, share_click (channel: whatsapp/sms/copy), affiliate_click (partner + destination). Greg: mark own_trip, share_click, affiliate_click as Key events after Realtime test.
+- Channel tracking: use native "AI Assistant" group (May 2026) + custom "AI Referrals" group in parallel (regex in mtb-growth-report SKILL.md), custom rule ordered ABOVE Referral. Review regex quarterly.
+- GSC/Bing fully unblocked — sitemap is live. GSC Domain property via DNS TXT preferred (covers www/non-www); GA-verification is the fast fallback. Bing: Import from GSC.
+- Weekly funnel format: Sessions (AI flagged) / Activation rate (own_trip/sessions) / Share rate (share_click/activations) / Affiliate rate (affiliate_click/activations).
+- Parallel chat "MTB growth plan execution" RETIRED July 9. Its outputs (llms.txt, methodology, skills spec, Phase 0 doc) are fully reconciled into this repo. The ~236 vs 224 destination discrepancy remains open — if Greg finds unpushed DESTS additions, add via data-edit session here.
 
 ## Cross-chat reconciliation (July 9, second push)
 - A parallel chat ("MTB growth plan execution") produced llms.txt, methodology copy, and a Cowork skills spec. Reconciled here: methodology page now carries the verified model documentation (asymptotic curve 100x(1-e^(-ratio/40)), 70/30 blend, 99 cap, day-trip boost tiers, CruiseDig same-day supplement via api/schedule.js, population-placeholder disclosure) — all claims checked against scoreStop/calcPressureScore before publishing. llms.txt upgraded to the richer version.

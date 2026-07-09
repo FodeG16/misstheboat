@@ -7,9 +7,8 @@ description: Weekly one-page growth KPI memo for misstheboat.app pulling Google 
 
 ## KPIs (report all, week-over-week)
 1. GSC: indexed pages, impressions, clicks, avg position, top 10 queries, top 10 pages.
-2. GA4: sessions by channel — Organic, Direct, Referral, and the custom AI channel group (chatgpt.com, claude.ai, perplexity.ai, gemini.google.com, copilot.microsoft.com).
-3. Activation: own_trip, sample_trip, board_tap event counts; activation rate = (own_trip + sample_trip) / sessions.
-4. share_click and affiliate_click counts.
+2. GA4: sessions by channel — Organic, Direct, Referral, plus BOTH the native "AI Assistant" channel group (shipped May 2026, Admin > Attribution settings) AND the custom "AI Referrals" group. The custom group is the safety net: native misses Perplexity and doesn't reclassify history. Custom regex (session source, case-insensitive, ordered ABOVE Referral): ^(chatgpt\.com|chat\.openai\.com|claude\.ai|anthropic\.com|perplexity\.ai|gemini\.google\.com|bard\.google\.com|copilot\.microsoft\.com|bing\.com/chat|you\.com|poe\.com|character\.ai|meta\.ai|grok\.com|grok\.x\.ai) — review the list quarterly.
+3. Funnel (same four numbers, same format, every week): Sessions by channel (flag AI Referrals separately); Activation rate = own_trip / sessions; Share rate = share_click / activations; Affiliate rate = affiliate_click / activations. Also report sample_trip and board_tap as leading indicators.
 5. Bounce rate and avg engagement time.
 
 ## Format
