@@ -9,6 +9,7 @@
 <!-- Open Graph — controls how the link looks when shared on WhatsApp, iMessage, X, LinkedIn -->
 <meta property="og:title" content="MissTheBoat — Avoid cruise ship crowds">
 <meta property="og:description" content="See exactly when cruise ships hit your destinations. Color-coded crowd scores, insider tips, and quieter alternatives for every Mediterranean stop.">
+<link rel="canonical" href="https://misstheboat.app/">
 <meta property="og:image" content="https://misstheboat.app/og-image.png">
 <meta property="og:url" content="https://misstheboat.app">
 <meta property="og:type" content="website">
@@ -5691,6 +5692,7 @@ function runAnalysis() {
 
   try {
     renderResults(stops);
+    if (typeof gtag === 'function') gtag('event', 'own_trip', { stops: stops.length });
   } catch(e) {
     console.error('renderResults error:', e);
     showInputError('Something went wrong analyzing that itinerary. Try a simpler format: "City Month Day" per line.');

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Methodology — How the Crowd Estimates Work | Miss the Boat</title>
+<meta name="description" content="How MissTheBoat models cruise crowd pressure: data sources, the pressure index, what is measured vs. estimated, and known limitations.">
+<link rel="canonical" href="https://misstheboat.app/methodology/">
+<meta property="og:title" content="Methodology — How the Crowd Estimates Work | Miss the Boat">
+<meta property="og:description" content="How MissTheBoat models cruise crowd pressure: data sources, the pressure index, what is measured vs. estimated, and known limitations.">
+<meta property="og:url" content="https://misstheboat.app/methodology/">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://misstheboat.app/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/pages.css">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LCQ0RJ1LR6"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-LCQ0RJ1LR6');</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Dataset","name":"MissTheBoat Mediterranean Cruise Crowd Patterns","description":"Modeled day-of-week cruise crowd pressure estimates for Mediterranean destinations, derived from published seasonal port-call patterns, census population data, and day-of-week traffic patterns.","url":"https://misstheboat.app/methodology/","creator":{"@type":"Organization","name":"MissTheBoat"},"license":"https://misstheboat.app/methodology/"}</script>
+</head>
+<body>
+<div class="wrap">
+<header class="hdr"><a class="logo" href="/">Miss the Boat<span class="flag">&#9873;</span></a><span class="tag">Cruise-crowd forecasts &middot; Mediterranean</span></header>
+<nav class="crumbs"><a href="/">Home</a> &rsaquo; Methodology</nav>
+
+<article>
+<h1>How the numbers work</h1>
+<p class="answer">Every figure on this site is a <strong>modeled seasonal estimate</strong>, not live vessel tracking. This page explains exactly what goes in, what comes out, and where the model can be wrong.</p>
+<section><h2>Inputs</h2>
+<ul class="tips">
+<li><strong>Port-call patterns:</strong> curated seasonal day-of-week call intensity for 66 Mediterranean cruise ports, compiled from published cruise line itineraries and port schedules.</li>
+<li><strong>Excursion mapping:</strong> which destinations sit within typical shore-excursion range of each port, and which nearby places the excursion circuit skips.</li>
+<li><strong>City traffic patterns:</strong> baseline day-of-week visitor patterns per destination, independent of cruise traffic.</li>
+<li><strong>Population data:</strong> census figures used to compute passengers-per-resident pressure.</li>
+<li><strong>Weather:</strong> historical data from the Open-Meteo archive API (the one live data source).</li>
+</ul></section>
+<section><h2>The pressure index</h2>
+<p>For a given destination and date, the model combines estimated ship arrivals at nearby ports, excursion spillover, baseline city traffic for that weekday, and local population into a 0&ndash;100 pressure index. Verdicts: <strong>Avoid</strong> (high pressure), <strong>Caution</strong>, <strong>Clear</strong>.</p></section>
+<section><h2>What this is not</h2>
+<p>Ship counts shown as &ldquo;&asymp;5 ships&rdquo; are seasonal-pattern estimates, not AIS tracking. A specific date can differ from the pattern &mdash; itineraries change, ships cancel, weather diverts. Treat verdicts as planning guidance, not measurements. Live vessel data is on the roadmap.</p></section>
+<section><h2>Corrections</h2>
+<p>Spot an error in a destination page? The dataset is actively maintained &mdash; use the contact link on the homepage.</p></section>
+</article>
+<footer class="foot">
+<p class="est">All ship counts and crowd indices are <strong>seasonal estimates</strong> modeled from published port-call patterns, census data, and day-of-week traffic patterns &mdash; not live vessel tracking. <a href="/methodology/">How the numbers work &rarr;</a></p>
+<p class="foot-links"><a href="/">Trip planner</a> &middot; <a href="/methodology/">Methodology</a> &middot; &copy; 2026 MissTheBoat</p>
+</footer>
+</div>
+</body>
+</html>
