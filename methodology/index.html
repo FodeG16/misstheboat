@@ -4,10 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Methodology — How the Crowd Estimates Work | Miss the Boat</title>
-<meta name="description" content="How MissTheBoat models cruise crowd pressure: data sources, the pressure index, what is measured vs. estimated, and known limitations.">
+<meta name="description" content="How MissTheBoat models cruise crowd pressure: data sources, the pressure score, what is measured vs. modeled, and known limitations.">
 <link rel="canonical" href="https://misstheboat.app/methodology/">
 <meta property="og:title" content="Methodology — How the Crowd Estimates Work | Miss the Boat">
-<meta property="og:description" content="How MissTheBoat models cruise crowd pressure: data sources, the pressure index, what is measured vs. estimated, and known limitations.">
+<meta property="og:description" content="How MissTheBoat models cruise crowd pressure: data sources, the pressure score, what is measured vs. modeled, and known limitations.">
 <meta property="og:url" content="https://misstheboat.app/methodology/">
 <meta property="og:type" content="website">
 <meta property="og:image" content="https://misstheboat.app/og-image.png">
@@ -25,22 +25,41 @@
 <nav class="crumbs"><a href="/">Home</a> &rsaquo; Methodology</nav>
 
 <article>
-<h1>How the numbers work</h1>
-<p class="answer">Every figure on this site is a <strong>modeled seasonal estimate</strong>, not live vessel tracking. This page explains exactly what goes in, what comes out, and where the model can be wrong.</p>
-<section><h2>Inputs</h2>
+<h1>How MissTheBoat scores crowd pressure</h1>
+<p class="answer"><strong>Every score on this site is a modeled estimate, not a live measurement, unless a page explicitly says otherwise.</strong> We label estimates as estimates because that&rsquo;s what makes the site useful to fact-check &mdash; and citable.</p>
+<p>MissTheBoat combines two signals for each destination and day:</p>
 <ul class="tips">
-<li><strong>Port-call patterns:</strong> curated seasonal day-of-week call intensity for 66 Mediterranean cruise ports, compiled from published cruise line itineraries and port schedules.</li>
-<li><strong>Excursion mapping:</strong> which destinations sit within typical shore-excursion range of each port, and which nearby places the excursion circuit skips.</li>
-<li><strong>City traffic patterns:</strong> baseline day-of-week visitor patterns per destination, independent of cruise traffic.</li>
-<li><strong>Population data:</strong> census figures used to compute passengers-per-resident pressure.</li>
-<li><strong>Weather:</strong> historical data from the Open-Meteo archive API (the one live data source).</li>
+<li><strong>Cruise pressure</strong> &mdash; how many cruise passengers are likely passing through the nearest port(s) and heading to this destination on excursions, sized against the destination&rsquo;s population.</li>
+<li><strong>Day-trip risk</strong> &mdash; for a small set of destinations with structurally severe overtourism independent of cruise traffic (San Gimignano, Positano, and roughly twenty others), a fixed adjustment reflecting known visitor-to-resident pressure.</li>
+</ul>
+<section><h2>The pressure score, in plain terms</h2>
+<p>A cruise ship docking in a city of 400,000 people (Naples) doesn&rsquo;t crowd it the way the same ship docking in a town of 8,000 (San Gimignano) does. Raw ship counts or passenger counts alone miss this. So the model:</p>
+<ul class="tips">
+<li>Estimates ship calls at the nearest port(s) for the date, by season and day of week.</li>
+<li>Multiplies by an average passengers-per-ship figure to get an estimated passenger count.</li>
+<li>Divides by the destination&rsquo;s population to produce a pressure ratio.</li>
+<li>Runs that ratio through an asymptotic curve, not a straight line &mdash; so a ratio of 40 doesn&rsquo;t score twice as crowded as a ratio of 20. Crowding <em>feels</em> worse at the low end of the scale than the math would suggest linearly, and flattens out at the high end once a place is already overwhelmed.</li>
+<li>Blends that (70% weight) with a raw day-of-week crowd index for the destination itself (30% weight), since not all crowding is cruise-driven.</li>
+<li>Adds a fixed point boost for the destinations independently flagged for severe day-tripper overtourism.</li>
+<li>Caps the final score at 99. Nothing on this site claims certainty.</li>
 </ul></section>
-<section><h2>The pressure index</h2>
-<p>For a given destination and date, the model combines estimated ship arrivals at nearby ports, excursion spillover, baseline city traffic for that weekday, and local population into a 0&ndash;100 pressure index. Verdicts: <strong>Avoid</strong> (high pressure), <strong>Caution</strong>, <strong>Clear</strong>.</p></section>
-<section><h2>What this is not</h2>
-<p>Ship counts shown as &ldquo;&asymp;5 ships&rdquo; are seasonal-pattern estimates, not AIS tracking. A specific date can differ from the pattern &mdash; itineraries change, ships cancel, weather diverts. Treat verdicts as planning guidance, not measurements. Live vessel data is on the roadmap.</p></section>
-<section><h2>Corrections</h2>
-<p>Spot an error in a destination page? The dataset is actively maintained &mdash; use the contact link on the homepage.</p></section>
+<section><h2>What&rsquo;s measured vs. modeled</h2>
+<table class="wk">
+<thead><tr><th scope="col">Signal</th><th scope="col">Status</th><th scope="col">Source</th></tr></thead>
+<tbody>
+<tr><th scope="row">Historical weather</th><td><strong>Measured</strong></td><td>Open-Meteo climate archive &mdash; ERA5 reanalysis, 1991&ndash;2020 monthly normals. Real API.</td></tr>
+<tr><th scope="row">Cruise port call volume</th><td><strong>Modeled</strong></td><td>Curated seasonal patterns per port (peak ship counts, day-of-week distribution), built from published port schedules. Typical seasonal patterns, not this specific week&rsquo;s actual arrivals.</td></tr>
+<tr><th scope="row">Excursion destination mapping</th><td><strong>Modeled, ~90% verified</strong></td><td>Curated from published cruise-line and tour-operator excursion listings per port. Being cross-checked against operator data as access becomes available.</td></tr>
+<tr><th scope="row">Population figures</th><td><strong>Measured where sourced</strong></td><td>Public census and statistics-office figures for most destinations. Where a confirmed figure isn&rsquo;t yet sourced, the model uses a flagged placeholder &mdash; disclosed, not hidden.</td></tr>
+<tr><th scope="row">Day-trip risk flags</th><td><strong>Modeled</strong></td><td>Based on published overtourism reporting and visitor-to-resident ratios for destinations with known structural crowding (Venice, Dubrovnik Old Town, Santorini&rsquo;s Oia, etc.) &mdash; precedent cases, not this site&rsquo;s own survey.</td></tr>
+</tbody>
+</table></section>
+<section><h2>A note on &ldquo;today&rsquo;s&rdquo; ship counts</h2>
+<p>Select ports show a same-day arrivals check pulled from a third-party cruise schedule aggregator. This is a best-effort, real-time supplement layered on top of the seasonal model &mdash; not a substitute for it. It depends on a third party&rsquo;s page structure and can fail silently if that structure changes; when it&rsquo;s unavailable, the site falls back to the seasonal estimate and says so.</p></section>
+<section><h2>Why estimates, not live tracking, for most of the dataset</h2>
+<p>Live AIS ship-tracking data exists and could replace the seasonal model outright. It isn&rsquo;t in production yet because of cost, not feasibility &mdash; it&rsquo;s a planned upgrade, not a current claim. Until then, every figure on this site is exactly as accurate as &ldquo;typical for this port, this season, this day of week&rdquo; &mdash; which is enough to plan around, and is stated as such everywhere it appears.</p></section>
+<section><h2>Updates and corrections</h2>
+<p>Seasonal patterns and destination data are reviewed and refreshed monthly. Population and excursion data are corrected as better sources are confirmed. Spot a stale figure or a wrong excursion mapping? Reach out via the site &mdash; corrections land in the next monthly refresh.</p></section>
 </article>
 <footer class="foot">
 <p class="est">All ship counts and crowd indices are <strong>seasonal estimates</strong> modeled from published port-call patterns, census data, and day-of-week traffic patterns &mdash; not live vessel tracking. <a href="/methodology/">How the numbers work &rarr;</a></p>

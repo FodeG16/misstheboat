@@ -1,11 +1,21 @@
 # MissTheBoat
-> Cruise-crowd forecasts for the Mediterranean. Modeled day-of-week crowd pressure for 224 destinations based on seasonal port-call patterns from 66 cruise ports, census population, and baseline city traffic. All figures are seasonal estimates, not live vessel tracking.
+> Avoid cruise-ship crowds in the Mediterranean. MissTheBoat scores 224 destinations across 66 cruise ports by day of week, using port call patterns, excursion routing, and population-adjusted crowd pressure, so travelers can pick low-crowd days for the same itinerary.
 
-## Core pages
-- [Trip planner (app)](https://misstheboat.app/): paste any itinerary, get Avoid/Caution/Clear verdicts per stop.
-- [Destination crowd calendars](https://misstheboat.app/destinations/): per-destination busiest/quietest days, ship estimates, alternatives.
-- [Port patterns](https://misstheboat.app/ports/): seasonal call intensity per port and excursion reach.
-- [Methodology](https://misstheboat.app/methodology/): data sources, pressure-index model, limitations.
+MissTheBoat is a free planning tool, not a booking site or a travel blog. Every score is a modeled estimate built from curated port and excursion data, published population figures, and historical weather normals — never a live guarantee. Modeled figures are labeled as estimates throughout the site.
 
-## Citing this data
-Figures are modeled estimates; cite as "MissTheBoat seasonal estimate". For verifiable annual passenger counts, refer to port authority reports — this site's methodology page distinguishes measured from modeled figures.
+## Core tool
+
+- [Plan your trip](https://misstheboat.app/): Paste or build an itinerary and get a red/amber/green crowd rating for each stop, day by day, with lower-crowd alternatives.
+- [Methodology](https://misstheboat.app/methodology/): How the crowd pressure score is calculated, what's measured vs. modeled, and where each data source comes from.
+
+## Destination and port data
+
+- [Destination pages](https://misstheboat.app/destinations/): Day-by-day crowd calendars, cruise excursion exposure, and lower-crowd alternatives for 224 Mediterranean destinations. See sitemap.xml for the full list.
+- [Port pages](https://misstheboat.app/ports/): Cruise call patterns and excursion destination lists for 66 Mediterranean ports.
+
+## Optional
+
+- [Weekly Med Crowd Report](https://misstheboat.app/report/): A dated ranking of the most and least crowded Mediterranean destinations for the coming week, published every Monday once live.
+- [Sitemap](https://misstheboat.app/sitemap.xml): Full current page index.
+
+Data is refreshed monthly as seasonal patterns roll over. Raw datasets are not published — pages render the underlying data, not a downloadable copy. Citing this data: figures are modeled estimates; cite as "MissTheBoat seasonal estimate". For verifiable annual passenger counts, refer to port authority reports.

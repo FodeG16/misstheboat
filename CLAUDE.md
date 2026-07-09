@@ -46,6 +46,13 @@ The old catch-all rewrite `/(.*) -> /index.html` was REMOVED July 9, 2026 — it
 - Bug 4 (phantom Kotor card) — unconfirmed, needs re-test
 - Hotels/VRBO links static, not city-specific
 
+## Cross-chat reconciliation (July 9, second push)
+- A parallel chat ("MTB growth plan execution") produced llms.txt, methodology copy, and a Cowork skills spec. Reconciled here: methodology page now carries the verified model documentation (asymptotic curve 100x(1-e^(-ratio/40)), 70/30 blend, 99 cap, day-trip boost tiers, CruiseDig same-day supplement via api/schedule.js, population-placeholder disclosure) — all claims checked against scoreStop/calcPressureScore before publishing. llms.txt upgraded to the richer version.
+- SETTLED CONVENTIONS: /destinations/[slug]/ directories (not .html); weekly report at /report/[week]/. The other chat's spec used [slug].html — superseded.
+- DISCREPANCY FLAG: other chat's spec says ~236 destinations; live repo has 224. If that chat holds unpushed data additions, it must PULL this repo before pushing — never push an older index.html over this deploy.
+- RULE: one chat pushes at a time. This repo's CLAUDE.md is the coordination point — every session reads it first.
+- generate.js ROOT path fixed (was pointing at a site/ subfolder that only existed in the build sandbox — would have broken the first monthly Cowork regeneration).
+
 ## Session notes
 - Greg now has a direct-push workflow: Claude sandbox clones with a fine-grained PAT (Contents: R/W, misstheboat only), commits, pushes; Vercel auto-deploys. Old manual-upload workflow retired. Rotate/revoke the PAT after each session batch; issue fresh for monthly regeneration.
 - Greg is non-technical: explain every terminal step explicitly.
